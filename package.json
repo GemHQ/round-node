@@ -1,0 +1,11 @@
+{
+  "name": "round",
+  "version": "0.1.0",
+  "description": "Client for the Gem cryptocurrency API",
+  "main": "src/index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
