@@ -1,0 +1,14 @@
+---
+backup_private_seed: tprv8ZgxMBicQKsPctV8gbDVfktNu7D7ziLGskKbFi5Xk2MktubH3QaRTs5tzJda33WHrq1oUDQeDhfdviwLaKDHjkFLnwTpWmkBr911y3GdgSV
+passphrase: foo bar baz
+wallet:
+  name: default
+  network: testnet3
+  backup_public_seed: tpubD6NzVbkrYhZ4WMWvaEt65AYVU8j4A3XBT3vNYE7qAJA9jPr3foQ1eMhmATpwaCP3Ct7RrKSxttFBTTBiEx55zbQKLuaCmiNNdBRY3byAuhY
+  primary_public_seed: tpubD6NzVbkrYhZ4YCp4gdA49BbcoxkfM4fYMAGLNAvFvL768dQYHGFGjKJjHH9J3EmcarZPFLSNi7ZdcDWxYmfHDaQK8otciB7pmTtcSMGqLu8
+  primary_private_seed:
+    salt: 06cd0c83c04ab1aa440799ead775273e
+    iterations: 100000
+    nonce: c4706ce182cf1e65f6e7557aaf87fb1b2ccb5380b831375b
+    ciphertext: caca3456a969955dcc2d0d175adacb476ff0b5a659e981d352083edc13fcc8c1e1939f321c1a836b58ee39bc512c0d401b7934eceb14612576aaa415fc5fad32586f2ebbd8a0caf0dc6efddcff57d7feed4e621525249b98e68509e9fa10e8605949a5c5f7e35b3ce3eadef41fa7cae514265af89d6de67a6cbe68c7454ce8
+
