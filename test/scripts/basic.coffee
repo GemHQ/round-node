@@ -4,12 +4,12 @@ yaml = require "js-yaml"
 
 Round = require "../../src"
 
-string = fs.readFileSync "test/data/wallet.yaml"
+string = fs.readFileSync "../data/wallet.yaml"
 data = yaml.safeLoad(string)
 
 
 
-Round.client "http://localhost:8998/", (error, client) ->
+Round.client "http://localhost:8999/", (error, client) ->
   throw error if error
   {patchboard} = client
   {resources} = patchboard

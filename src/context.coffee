@@ -1,29 +1,112 @@
 
-module.exports = class Context
-  constructor: ->
-    @schemes = {}
+crypto = require 'crypto'
 
-  # Supply this context with credentials for a particular
-  # Authorization scheme
-  authorize: (scheme, params) ->
-    if scheme == "Basic"
-      {login, password} = params
-      encoded = new Buffer("#{login}:#{password}").toString("base64")
-      @schemes[scheme] = encoded
-    else
-      @schemes[scheme] = @format_params(params)
+credentialFields = [
+  'app_url', 'api_token', 'user_url', 'user_token', 'device_id',
+  'instance_id', 'key', 'secret', 'email', 'privkey'
+]
+
+module.exports = class Context
+
+  constructor: ->
+    @schemes =
+      'Gem-Developer':
+        usage: null
+      'Gem-Application':
+        usage: null
+      'Gem-User':
+        usage: null
+      'Gem-OOB-OTP':
+        usage: null
+
+  # Supply auth scheme credentials for a particular auth scheme
+  # Creates an authorization string that will be placed in the header
+  authorize: (scheme, credentials) ->
+    params = {}
+    
+    if scheme not of @schemes
+      return
+
+    for field in credentialFields
+      if field in credentials
+        # add the credential to the Context instance
+        @[field] = credentials[field]
+        if field not in ['privkey', 'app_url', 'user_url']
+          params[field] = options[field]
+
+    @schemes[scheme]['credentials'] = @formatParams params
+
 
   # Select an Authorization scheme and supply credentials
-  authorizer: (schemes, resource, action) ->
+  authorizer: (schemes, resource, action, requestArgs) ->
+    
+    # !!! first check if the user has provide a schemes object somehow !!!
+    # !!! is schemes an object or an array? !!!
+    
     for scheme in schemes
-      if credential = @schemes[scheme]
-        return {scheme, credential}
+      if scheme in @schemes and 'credential' of @schemes[scheme]
+        if scheme is 'Gem-Developer'
+          # !!! what is the comma doing? !!!
+          return scheme, """
+            #{@schemes[scheme]['credential']},
+            #{@devSignature(requestArgs['body'])}
+            """
+        else
+          # !!! what is the comma doing? !!!
+          scheme, @schemes[scheme]['credential']
 
-    return undefined
+  devSignature: (requestBody) -> 
+    body = JSON.parse requestBody
+    key = crypto.createSign 
 
-  format_params: (params) ->
+
+  formatParams: (params) ->
     parts = for key, value of params
       "#{key}=\"#{value}\""
     parts.join(", ")
+
+
+for x of obj
+  console.log x
+
+
+
+c = """
+#{a} and
+#{b}
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
