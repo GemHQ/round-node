@@ -3,8 +3,7 @@ crypto = require 'crypto'
 base64url = require 'base64-url'
 credentialFields = [
   'app_url', 'api_token', 'user_url', 'user_token', 'device_id',
-  'instance_id', 'key', 'secret', 'email', 'privkey'
-]
+  'instance_id', 'key', 'secret', 'email', 'privkey' ]
 
 module.exports = class Context
 
@@ -24,34 +23,30 @@ module.exports = class Context
   authorize: (scheme, credentials) ->
     params = {}
     
-    if scheme not of @schemes
-      return
-
-    for field in credentialFields
-      if field in credentials
+    return if scheme not of @schemes
+      
+    for field of credentials
+      if field in credentialFields
         # add the credential to the Context instance
         @[field] = credentials[field]
         if field not in ['privkey', 'app_url', 'user_url']
-          params[field] = options[field]
+          params[field] = credentials[field]
 
     @schemes[scheme]['credentials'] = @formatParams params
 
 
   # Select an Authorization scheme and supply credentials
-  authorizer: (schemes, resource, action, requestArgs) ->
-    
-    # !!! first check if the user has provide a schemes object somehow !!!
-    # !!! is schemes an object or an array? !!!
-    
+  authorizer: (schemes, resource, action, request) ->
+    body = request['body'] if 'body' of request
+    body ?= {}
+    return {scheme: '', credential: ''} if arguments.length < 4
+
     for scheme in schemes
-      if scheme in @schemes and 'credential' of @schemes[scheme]
+      if scheme of @schemes and 'credentials' of @schemes[scheme]
         if scheme is 'Gem-Developer'
           return {
             scheme,
-            credential: """
-                      #{@schemes[scheme]['credential']},
-                      #{@devSignature(requestArgs['body'])}
-                      """
+            credential: "#{@schemes[scheme]['credentials']}, signature=\"#{@devSignature(body)}\""
           }
         else
           { scheme, credential: @schemes[scheme]['credential'] }
@@ -60,9 +55,9 @@ module.exports = class Context
     body = JSON.stringify requestBody
     signer = crypto.createSign 'RSA-SHA256'
     date = new Date()
-    signer.update "#{requestBody}-#{date.getFullYear()}/#{date.getMonth() + 1}/#{date.getDate()}"
+    signer.update "#{body}-#{date.getFullYear()}/#{date.getMonth() + 1}/#{date.getDate()}"
     signature = signer.sign @privkey
-    base64url signature
+    base64url.encode signature
 
   formatParams: (params) ->
     parts = for key, value of params

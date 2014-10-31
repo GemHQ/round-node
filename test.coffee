@@ -16,7 +16,8 @@ Ht59UDik/Y8a/8/Fr500VF6mNV8+1fsy3rLp/is840Uomd++V3iuFCjzVIsJPo1y
 JlY/qSrPr4z2y/sH8GbiiuI3vDM+OW3RFDReBx6c0m/3x7UaBW7++lWveuIWB4aT
 HY+dXai8khSDDFobckR6EjfrCvIJlFAdi+frMZx7g31gxMaCXMbERDjQUS8vWvdG
 rQIDAQAB
------END PUBLIC KEY-----"""
+-----END PUBLIC KEY-----
+"""
 
 privkey = """-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAwJyfSUKm9Xd48yfImxDXDoBqh7O6PacgDfmXBEztFFA3A4Re
@@ -46,37 +47,29 @@ cY8ZVD2l4RqnCto6mgAsXxkVlbbM3u0vg2Cvfz97WuI/cYPofGD8K2IY4E4k1zWd
 nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
 -----END RSA PRIVATE KEY-----
 """
-start = -> Round.client
 
-# module.exports = {
-#   client: () -> Round.client 'http://localhost:8999', (err, cli) -> cli,
-#   pubkey: pubkey
-#   privkey: privkey
-#   email: email
-# }
 
 module.exports = {
-  one: 1
-  two: -> 
-    console.log @one
+  client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
+  pubkey: pubkey
+  privkey: privkey
+  email: email
+  creds: {email: email(), pubkey, privkey }
 }
 
-creds = {email: email(), pubkey: pubkey}
 
-Round.client 'http://localhost:8999', (err, client) ->
+creds = {email: email(), pubkey, privkey }
+
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
   
   client.developer().create creds, (error, developer) ->
-    console.log developer
+    console.log client._developer
+    # console.log developer.application
+
+    # console.log developer.url
+    # console.log client.patchboard.resources.developer(developer.url).applications
+    # console.log client.patchboard.resources
 
 
 
-
-
-
-
-
-
-
-
-
-#content = { email, wallet: data.wallet }
+# content = { email, wallet: data.wallet }

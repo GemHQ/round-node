@@ -10,7 +10,7 @@ defaultNetwork = 'testnet3'
 
 module.exports = {
 
-  url: gemUrl
+  url: defaultUrl
 
   client: (url=defaultUrl,network=defaultNetwork, callback) ->
     if @patchboard?
@@ -42,6 +42,3 @@ module.exports = {
 
 }
 
-
-func = (a=1, b, c=2, d) ->
-  console.log a, b, c, d
