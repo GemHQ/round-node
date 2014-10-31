@@ -10,7 +10,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer"
+    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer",
+    "base64-url": "1.0.0"
   },
   "devDependencies": {
     "js-yaml": "^3.2.2",

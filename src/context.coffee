@@ -1,6 +1,6 @@
 
 crypto = require 'crypto'
-
+base64url = require 'base64-url'
 credentialFields = [
   'app_url', 'api_token', 'user_url', 'user_token', 'device_id',
   'instance_id', 'key', 'secret', 'email', 'privkey'
@@ -46,35 +46,28 @@ module.exports = class Context
     for scheme in schemes
       if scheme in @schemes and 'credential' of @schemes[scheme]
         if scheme is 'Gem-Developer'
-          # !!! what is the comma doing? !!!
-          return scheme, """
-            #{@schemes[scheme]['credential']},
-            #{@devSignature(requestArgs['body'])}
-            """
+          return {
+            scheme,
+            credential: """
+                      #{@schemes[scheme]['credential']},
+                      #{@devSignature(requestArgs['body'])}
+                      """
+          }
         else
-          # !!! what is the comma doing? !!!
-          scheme, @schemes[scheme]['credential']
+          { scheme, credential: @schemes[scheme]['credential'] }
 
   devSignature: (requestBody) -> 
-    body = JSON.parse requestBody
-    key = crypto.createSign 
-
+    body = JSON.stringify requestBody
+    signer = crypto.createSign 'RSA-SHA256'
+    date = new Date()
+    signer.update "#{requestBody}-#{date.getFullYear()}/#{date.getMonth() + 1}/#{date.getDate()}"
+    signature = signer.sign @privkey
+    base64url signature
 
   formatParams: (params) ->
     parts = for key, value of params
       "#{key}=\"#{value}\""
     parts.join(", ")
-
-
-for x of obj
-  console.log x
-
-
-
-c = """
-#{a} and
-#{b}
-"""
 
 
 

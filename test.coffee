@@ -17,6 +17,7 @@ JlY/qSrPr4z2y/sH8GbiiuI3vDM+OW3RFDReBx6c0m/3x7UaBW7++lWveuIWB4aT
 HY+dXai8khSDDFobckR6EjfrCvIJlFAdi+frMZx7g31gxMaCXMbERDjQUS8vWvdG
 rQIDAQAB
 -----END PUBLIC KEY-----"""
+
 privkey = """-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAwJyfSUKm9Xd48yfImxDXDoBqh7O6PacgDfmXBEztFFA3A4Re
 oEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrhskXrWMtnt+HUzwEwdN0At3V0e3Xd
@@ -66,7 +67,6 @@ Round.client 'http://localhost:8999', (err, client) ->
   
   client.developer().create creds, (error, developer) ->
     console.log developer
-
 
 
 
