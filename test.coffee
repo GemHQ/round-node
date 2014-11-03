@@ -49,26 +49,24 @@ nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
 """
 
 
-module.exports = {
-  client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
-  pubkey: pubkey
-  privkey: privkey
-  email: email
-  creds: {email: email(), pubkey, privkey }
-}
+# module.exports = {
+#   client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
+#   pubkey: pubkey
+#   privkey: privkey
+#   email: email
+#   creds: {email: email(), pubkey, privkey }
+# }
 
 
 creds = {email: email(), pubkey, privkey }
 
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   
-  client.developer().create creds, (error, developer) ->
-    console.log client._developer
-    # console.log developer.application
+  client.developers().create creds, (error, developer) ->
+    developer.applications.list (err, apps) ->
+      console.log err, apps
 
-    # console.log developer.url
-    # console.log client.patchboard.resources.developer(developer.url).applications
-    # console.log client.patchboard.resources
+
 
 
 
