@@ -25,34 +25,15 @@ module.exports = class Client
       create: (credentials, callback) =>
         @resources.developers.create credentials, (error, developer) =>
           unless @_developer?
-            callback error if error
-            # !!! should @_developer be saved on the client or the developer function !!!
+            callback error if erro  r
             # !!! this is being set on create. Should it be set on authorize instead? !!!
+            # !!! why do we memoize this? How about if they want to create a 2nd dev !!!
             @_developer = developer
             if credentials.privkey
               @patchboard.context.authorize 'Gem-Developer', credentials
-            # @developer.resource = @_developer
+
           callback null, @_developer
 
-      authorize: (credentials) =>
-        @patchboard.context.authorize 'Gem-Developer', credentials
-        @patchboard.resources.developer(credentials.email)
-
-
-      # get: ->
-      #   return @_developer if @_developer?
-      #   throw """Must authenticate as a developer before accessing
-      #           the developer resource"""
-      
-      applications: =>
-         return @_developer.applications if @_developer
-         throw 'Must authenticate as a developer first.'
-
-
-      # applications: () =>
-      #   # console.log(@)
-      #   resource = @patchboard.resources.application(@developer.resource.applications.url)
-      #   resource.get()
     }
 
 

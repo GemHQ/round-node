@@ -6,13 +6,15 @@ Client = require "./client"
 
 defaultUrl = 'http://localhost:8999'
 defaultNetwork = 'testnet3'
-
+schemes = ['developer', 'application', 'device', 'otp']
 
 module.exports = {
 
   url: defaultUrl
 
-  client: (url=defaultUrl,network=defaultNetwork, callback) ->
+  # default values are only used if the user
+  # explicitely eneters 'null' or 'undefined' for those values
+  client: (url=defaultUrl, network=defaultNetwork, callback) ->
     if @patchboard?
       callback null, new Client(@patchboard)
     else
@@ -22,23 +24,28 @@ module.exports = {
         else
           callback(null, new Client(@patchboard)) if callback
 
-  
 
-  # scheme is an object
-  # authenticate: (scheme) ->
-  #   url = args.url || defaultUrl
-  #   network = args.network || defaultNetwork
-  #   if scheme.developer then return @authenticateDeveloper url, scheme.developer
-  #   if scheme.application then return @authenticateApplication url scheme.application
-  #   if scheme.device then return @authenticateDevice url scheme.device
-  #   if scheme.otp then return @authenticateOtp url scheme.otp
-  #   else throw "Supported authentication schemes are #{Object.keys(Context.schemes.keys).join(' ')}"
+  # args is an object
+  authenticate: (args, callback) ->
+    url = args.url || defaultUrl
+    network = args.network || defaultNetwork
+    if args.developer then return @authenticateDeveloper url, args.developer, network, callback
+    if args.application then return @authenticateApplication url, args.application, network, callback
+    if args.device then return @authenticateDevice url, args.device, network, callback
+    if args.otp then return @authenticateOtp url, args.otp, network, callback
+    else throw """Please supply a supported authentication scheme.
+                  Supported authentication schemes are #{schemes.join(', ')}"""
 
-  # authenticateDeveloper: (url, developer, network, callback) ->
-  #   if developer.email and developer.privkey
-  #     client = @client url, network, (error, developer) ->
 
+  authenticateDeveloper: (url, developer, network, callback) ->
+    if 'email' of developer and 'privkey' of developer
+      # create a new client object
+      @client url, network, (error, client) ->
+        # authorize the client with developer permissions
+        client.patchboard.context.authorize 'Gem-Developer', developer
+        
+        callback error if error
+        callback null, client
 
 
 }
-

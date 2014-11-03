@@ -30,7 +30,7 @@ module.exports = class Context
     params = {}
     
     return if scheme not of @schemes
- 
+    
     for field of credentials
       if field in credentialFields
         # adds the credential to the Context instance
@@ -49,7 +49,7 @@ module.exports = class Context
 
     for scheme in schemes
       if scheme of @schemes and 'credentials' of @schemes[scheme]
-        if scheme is 'Gem-Developer' 
+        if scheme is 'Gem-Developer'
           return {
             scheme,
             credential: "#{@schemes[scheme]['credentials']},signature=\"#{@devSignature(body)}\""

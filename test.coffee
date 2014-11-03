@@ -49,25 +49,50 @@ nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
 """
 
 
-# module.exports = {
-#   client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
-#   pubkey: pubkey
-#   privkey: privkey
-#   email: email
-#   creds: {email: email(), pubkey, privkey }
-# }
+module.exports = {
+  client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
+  pubkey: pubkey
+  privkey: privkey
+  email: email
+  creds: {email: email(), pubkey, privkey }
+}
 
 
 creds = {email: email(), pubkey, privkey }
+devcreds = { developer: {email: 'js-test-1415052740151@mail.com', pubkey, privkey } }
+
+
+
+# Tests Authenticate method.
+# Returns a developer-authorized client object
+Round.authenticate devcreds, (err, client) ->  
+  client.resources.developers.get (err, dev) ->
+    console.log "!!!!! Round.authenticate works !!!!!"
+    console.log err#, dev
+
 
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   
+  # Tests if context.authorize works for a developer
+  client.patchboard.context.authorize 'Gem-Developer', devcreds
+  client.resources.developers.get (err, dev) ->
+    console.log "!!!!! client.patchboard.context.authorize works !!!!!"
+    console.log err#, dev
+  
+  # Tests if developer has been created AND authorized
+  # using the 'create' convenience method
   client.developers().create creds, (error, developer) ->
     developer.applications.list (err, apps) ->
-      console.log err, apps
+      console.log "!!!!! client.developer.create works !!!!!"
+      console.log err#, apps
+      
+      # tests that the developer can be accessed from the client
+      client.patchboard.resources.developers.get (err, dev) ->
+        console.log "!!!!! resources.developers.get works after dev has been created !!!!!"
+        console.log err#, dev 
 
 
 
 
 
-# content = { email, wallet: data.wallet }
+# # content = { email, wallet: data.wallet }
