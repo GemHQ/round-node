@@ -43,7 +43,7 @@ module.exports = class Context
 
   # Called by Patchboard on every request
   authorizer: (schemes, resource, action, request) ->
-    body =  if 'body' of request then request['body'] else {}
+    body =  if 'body' of request then request['body'] else '{}'
 
     return {scheme: '', credential: ''} if arguments.length < 4
 
@@ -59,10 +59,10 @@ module.exports = class Context
 
 
   devSignature: (requestBody) ->
-    body = JSON.stringify requestBody
     signer = crypto.createSign 'RSA-SHA256'
     date = new Date()
-    content =  "#{body}-#{date.getUTCFullYear()}/#{formatDate(date.getUTCMonth() + 1)}/#{formatDate(date.getUTCDate())}"
+    content =  "#{requestBody}-#{date.getUTCFullYear()}/#{formatDate(date.getUTCMonth() + 1)}/#{formatDate(date.getUTCDate())}"
+    console.log content
     signer.update content
     signature = signer.sign @privkey
     base64url.encode signature
