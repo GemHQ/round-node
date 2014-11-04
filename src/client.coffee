@@ -16,31 +16,56 @@ module.exports = class Client
       callback null, @_developer
       
 
-  developers: ->
-    {
+  developers: -> {
       # callback takes an error and a developer
       # credentials requires email and pubkey
       # credentials can also take a privkey to authorize
       # the client as a developer
       create: (credentials, callback) =>
+        return callback(null, @_developer) if @_developer?
+
         @resources.developers.create credentials, (error, developer) =>
-          unless @_developer?
-            callback error if erro  r
+            return callback(error) if error
             # !!! this is being set on create. Should it be set on authorize instead? !!!
             # !!! why do we memoize this? How about if they want to create a 2nd dev !!!
             @_developer = developer
+            
             if credentials.privkey
               @patchboard.context.authorize 'Gem-Developer', credentials
+              callback null, @_developer
 
-          callback null, @_developer
+        
 
     }
 
+  developer: -> {
 
+    applications: (callback) =>
+      return callback @_applications if @_applications
+      
+      if @_developer
+        @_developer.applications.list (error, applications) =>
+          @_applications = applications
+          callback(error) if error
+          callback null, @_applications
+      else
+        @resources.developers.get (error, developer) =>
+          @_developer = developer
 
+          @_developer.applications.list (error, applications) =>
+            @_applications = applications
+            callback(error) if error
+            callback null, @_applications
 
+      # getDeveloperApplications = (developerResource, callback) =>
+ 
+  }
+    
+    # if not @_developer?
+    #   @resources.developers.get (err, developer) ->
+    #     throw err if err
 
-
+    #     @_developer = developer
 
 
 

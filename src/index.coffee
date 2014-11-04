@@ -46,6 +46,8 @@ module.exports = {
         
         callback error if error
         callback null, client
+    else
+      throw "Must provide email and privkey"
 
 
 }

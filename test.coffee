@@ -48,6 +48,7 @@ nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
 -----END RSA PRIVATE KEY-----
 """
 
+# content = { email, wallet: data.wallet }
 
 module.exports = {
   client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
@@ -55,33 +56,43 @@ module.exports = {
   privkey: privkey
   email: email
   creds: {email: email(), pubkey, privkey }
+  dcreds: {email: 'js-test-1415052740151@mail.com', pubkey, privkey }
 }
 
 
 creds = {email: email(), pubkey, privkey }
+dcreds = {email: 'js-test-1415052740151@mail.com', pubkey, privkey }
 devcreds = { developer: {email: 'js-test-1415052740151@mail.com', pubkey, privkey } }
 
 
 
 # Tests Authenticate method.
 # Returns a developer-authorized client object
-Round.authenticate devcreds, (err, client) ->  
+Round.authenticate devcreds, (err, client) ->
+  console.log err if err
+
   client.resources.developers.get (err, dev) ->
     console.log "!!!!! Round.authenticate works !!!!!"
     console.log err#, dev
 
 
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  
+  console.log err if err 
   # Tests if context.authorize works for a developer
-  client.patchboard.context.authorize 'Gem-Developer', devcreds
+  client.patchboard.context.authorize 'Gem-Developer', dcreds
   client.resources.developers.get (err, dev) ->
     console.log "!!!!! client.patchboard.context.authorize works !!!!!"
     console.log err#, dev
+
+  client.developer().applications (error, apps) ->
+    console.log "!!!!! client.applications works for when @_developer does NOT exist on the client !!!!!"
+    console.log err#, apps
   
   # Tests if developer has been created AND authorized
   # using the 'create' convenience method
-  client.developers().create creds, (error, developer) ->
+  client.developers().create creds, (err, developer) ->
+    console.log err if err 
+    
     developer.applications.list (err, apps) ->
       console.log "!!!!! client.developer.create works !!!!!"
       console.log err#, apps
@@ -91,8 +102,9 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
         console.log "!!!!! resources.developers.get works after dev has been created !!!!!"
         console.log err#, dev 
 
+      client.developer().applications (error, apps) ->
+        console.log "!!!!! client.applications works when @_developer exists on the client !!!!!"
+        console.log err#, apps
+        # console.log client._applications
 
 
-
-
-# # content = { email, wallet: data.wallet }
