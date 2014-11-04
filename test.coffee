@@ -8,6 +8,8 @@ Round = require "./src"
 
 
 email = () -> "js-test-#{Date.now()}@mail.com"
+email2 = () -> "js-test1-#{Date.now()}@mail.com"
+email3 = () -> "js-test2-#{Date.now()}@mail.com"
 pubkey =  """-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJyfSUKm9Xd48yfImxDX
 DoBqh7O6PacgDfmXBEztFFA3A4ReoEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrh
@@ -56,55 +58,91 @@ module.exports = {
   privkey: privkey
   email: email
   creds: {email: email(), pubkey, privkey }
-  dcreds: {email: 'js-test-1415052740151@mail.com', pubkey, privkey }
+  dcreds: {email: 'js-test-1415137697385@mail.com', pubkey, privkey }
 }
 # creds = {email: 'js-test-1415065780010@mail.com', pubkey: t.pubkey, privkey: t.privkey }
 
 
 creds = {email: email(), pubkey, privkey }
-dcreds = {email: 'js-test-1415052740151@mail.com', pubkey, privkey }
-devcreds = { developer: {email: 'js-test-1415052740151@mail.com', pubkey, privkey } }
+# prevents conflicts when all test are being run at once
+creds2 = {email: email2(), pubkey, privkey }
+creds3 = {email: email3(), pubkey, privkey }
+dcreds = {email: 'js-test-1415137697385@mail.com', pubkey, privkey }
+devcreds = { developer: {email: 'js-test-1415137697385@mail.com', pubkey, privkey } }
 
 
 
-# # Tests Authenticate method.
-# # Returns a developer-authorized client object
-# Round.authenticate devcreds, (err, client) ->
-#   console.log err if err
 
-#   client.resources.developers.get (err, dev) ->
-#     console.log "!!!!! Round.authenticate works !!!!!"
-#     console.log err#, dev
 
-# Round.client 'http://localhost:8999','testnet3', (err, client) ->
-#   console.log err if err 
-#   # Tests if context.authorize works for a developer
-#   client.patchboard.context.authorize 'Gem-Developer', dcreds
-#   client.resources.developers.get (err, dev) ->
-#     console.log "!!!!! client.patchboard.context.authorize works !!!!!"
-#     console.log err#, dev
+# Tests Authenticate method.
+# Returns a developer-authorized client object
+Round.authenticate devcreds, (err, client) ->
+  console.log(err, "A") if err
 
-#   client.developer().applications (error, apps) ->
-#     console.log "!!!!! client.applications works for when @_developer does NOT exist on the client !!!!!"
-#     console.log err#, apps
+  client.resources.developers.get (err, dev) ->
+    console.log "!!!!! Round.authenticate works !!!!! 1"
+    console.log err#, dev
+
+# Test if context.authorize works for a developer
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "B") if err
+
+  client.patchboard.context.authorize 'Gem-Developer', dcreds
+  client.resources.developers.get (err, dev) ->
+    console.log "!!!!! client.patchboard.context.authorize works !!!!! 2"
+    console.log err#, dev
+
+  client.developer().applications (err, apps) ->
+    console.log "!!!!! client.applications works for when @_developer does NOT exist on the client !!!!! 3"
+    console.log err#, apps
   
-#   # Tests if developer has been created AND authorized
-#   # using the 'create' convenience method
-#   client.developers().create creds, (err, developer) ->
-#     console.log err if err 
+
+# Tests if developer has been created AND authorized
+# using the 'create' convenience method
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "C") if err
+
+  client.developers().create creds, (err, developer) ->
+    console.log(err, "D") if err
     
-#     developer.applications.list (err, apps) ->
-#       console.log "!!!!! client.developer.create works !!!!!"
-#       console.log err#, apps
+    developer.applications.list (err, apps) ->
+      console.log "!!!!! client.developer.create works !!!!! 4"
+      console.log err#, apps
       
-#       # tests that the developer can be accessed from the client
-#       client.patchboard.resources.developers.get (err, dev) ->
-#         console.log "!!!!! resources.developers.get works after dev has been created !!!!!"
-#         console.log err#, dev 
+      # tests that the developer can be accessed from the client
+    client.patchboard.resources.developers.get (err, dev) ->
+      console.log "!!!!! resources.developers.get works after dev has been created !!!!! 5"
+      console.log err#, dev 
 
-#       client.developer().applications (error, apps) ->
-#         console.log "!!!!! client.applications works when @_developer exists on the client !!!!!"
-#         console.log err#, apps
-#         # console.log client._applications
+    client.developer().applications (err, apps) ->
+      console.log "!!!!! client.applications works when @_developer exists on the client !!!!! 6"
+      console.log err#, apps
+      # console.log client._applications
 
 
+# Tests developer.update method to see if it both updates and 
+# and reauthenticates a developer with new credentials
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "E") if err
+  
+  client.developers().create creds2, (err, developer) ->
+    console.log(err, "F") if err
+
+    client.developer().update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
+      console.log "!!!!! client.developer.update updates developer and returns a new developer !!!!! 7"
+      console.log err#, developer
+      
+      client.resources.developers.get (err, dev) ->
+        console.log "!!!!! client.developer.update re-authorizes with new credentials !!!!! 8"
+        console.log err#, dev
+
+
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "G") if err
+
+  client.developers().create creds3, (err, developer) ->
+    console.log err if err
+
+    client.developer().update {email: "newemail1#{Date.now()}@mail.com", privkey}, (err, developer) ->
+      console.log "!!!!! client.developer.update updates developer and returns a new developer even if @_developer wasn't memoized !!!!! 9"
+      console.log err#, developer
