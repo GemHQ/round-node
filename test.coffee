@@ -88,7 +88,10 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
   
   client.developers.create creds7, (err, developer) ->
     developer.applications (err, apps) -> 
-      console.log err, apps.default
+      console.log err, apps
+    # client.applications.create {name: 'new app'}, (err, app) ->
+      # console.log app
+
 
 # # Tests if client.applications.create works when
 # # applications haven't been memoized

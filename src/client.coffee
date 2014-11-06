@@ -1,6 +1,6 @@
 
 Developer = require './resources/developer'
-
+Applications = require './resources/applications'
 
 module.exports = class Client
 
@@ -8,28 +8,9 @@ module.exports = class Client
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
     
-    @applications = {
-
-      create: (attributes, callback) => 
-          if @_developer?
-            developerResource = @_developer.resource()
-            developerResource.applications.create attributes, (error, app) =>
-              return callback(error) if error
-
-              # Updates @_applications with new app.
-              # If @_applications hasn't been memoized then
-              # it makes a call to the server
-              if @_applications
-                callback null, app
-              else
-                developerResource.applications.list (error, apps) =>
-                  return callback(error) if error
-                  
-                  @_applications = apps
-                  callback null, app
-          else
-            throw 'You must authenticate as a developer before creating and application'
-    }
+    # !!!! Shoudl we be passing something other than null????
+    # is there a way to pass the default apps w/o making a call
+    @applications = new Applications @, null
 
     @developers = {
         # 'credentials' requires email and pubkey
