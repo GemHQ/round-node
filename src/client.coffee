@@ -4,14 +4,15 @@ Developer = require './resources/developer'
 
 module.exports = class Client
 
-  constructor: (@patchboard) ->
-    @resources = @patchboard.resources
+  constructor: (patchboard) ->
+    @patchboard = -> patchboard
+    @resources = -> patchboard.resources
     
     @applications = {
 
       create: (attributes, callback) => 
           if @_developer?
-            developerResource = @_developer.resource
+            developerResource = @_developer.resource()
             developerResource.applications.create attributes, (error, app) =>
               return callback(error) if error
 
@@ -30,39 +31,37 @@ module.exports = class Client
             throw 'You must authenticate as a developer before creating and application'
     }
 
-  developers: -> {
-      # 'credentials' requires email and pubkey
-      # credentials can also take a privkey to authorize the client as a developer
-      create: (credentials, callback) =>
+    @developers = {
+        # 'credentials' requires email and pubkey
+        # credentials can also take a privkey to authorize the client as a developer
+        create: (credentials, callback) =>
 
-        @resources.developers.create credentials, (error, developerResource) =>
-            return callback(error) if error
+          @resources().developers.create credentials, (error, developerResource) =>
+              return callback(error) if error
 
-            @_developer = new Developer(@, developerResource)
+              @_developer = new Developer(@, developerResource)
 
-            if credentials.privkey
-              @patchboard.context.authorize 'Gem-Developer', credentials
-            
-            callback null, @_developer
-  }
+              if credentials.privkey
+                @patchboard().context.authorize 'Gem-Developer', credentials
+              
+              callback null, @_developer
+    }
 
-  developer: -> 
-    return @_developer if @_developer
+    @developer = -> 
+      return @_developer if @_developer
 
-    throw 'You have not yet authenticated as a developer'
+      throw 'You have not yet authenticated as a developer'
 
 
-  # applications: ((client)-> new Applications client)(@)
+    @authenticate = (scheme, credentials, callback) ->
+      @patchboard().context.authorize scheme, credentials
 
-  authenticate: (scheme, credentials, callback) ->
-    @patchboard.context.authorize scheme, credentials
+      if scheme is 'Gem-Developer'
+        @resources().developers.get (error, developerResource) =>
+          return callback(error) if error
 
-    if scheme is 'Gem-Developer'
-      @resources.developers.get (error, developerResource) =>
-        return callback(error) if error
-
-        @_developer = new Developer(@, developerResource)
-        callback null, @_developer
+          @_developer = new Developer(@, developerResource)
+          callback null, @_developer
 
 
 

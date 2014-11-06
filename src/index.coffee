@@ -43,7 +43,7 @@ module.exports = {
       # create a new client object
       @client url, network, (error, client) ->
         # authorize the client with developer permissions
-        client.patchboard.context.authorize 'Gem-Developer', developerCreds
+        client.patchboard().context.authorize 'Gem-Developer', developerCreds
         
         return callback error if error
         callback null, client

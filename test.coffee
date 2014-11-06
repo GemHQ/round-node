@@ -13,6 +13,8 @@ email3 = () -> "js-test2-#{Date.now()}@mail.com"
 email4 = () -> "js-test3-#{Date.now()}@mail.com"
 email5 = () -> "js-test4-#{Date.now()}@mail.com"
 email6 = () -> "js-test5-#{Date.now()}@mail.com"
+email7 = () -> "js-test6-#{Date.now()}@mail.com"
+
 pubkey =  """-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJyfSUKm9Xd48yfImxDX
 DoBqh7O6PacgDfmXBEztFFA3A4ReoEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrh
@@ -73,130 +75,139 @@ creds3 = {email: email3(), pubkey, privkey }
 creds4 = {email: email4(), pubkey, privkey }
 creds5 = {email: email5(), pubkey, privkey }
 creds6 = {email: email6(), pubkey, privkey }
+creds7 = {email: email7(), pubkey, privkey }
 dcreds = {email: 'js-test-1415158094484@mail.com', pubkey, privkey }
 devcreds = { developer: {email: 'js-test-1415158094484@mail.com', pubkey, privkey } }
 
 
 
-
 # Tests if client.applications.create works when
 # applications haven't been memoized
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers().create creds6, (err, developer) ->
-    client.applications.create {name: 'new app'}, (err, apps) ->
-      console.log err#, apps
+  client.developers.create creds7, (err, developer) ->
+    developer.applications (err, apps) -> 
+      console.log err, apps.default
 
-# Tests if client.applications.create works when
-# applications haven't been memoized
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "E") if err
+# # Tests if client.applications.create works when
+# # applications haven't been memoized
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "E") if err
   
-  client.developers().create creds5, (err, developer) ->
-    developer.applications (error, apps) ->
-      console.log error if error
+#   client.developers.create creds6, (err, developer) ->
+#     client.applications.create {name: 'new app'}, (err, apps) ->
+#       console.log err#, apps
+
+# # Tests if client.applications.create works when
+# # applications haven't been memoized
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "E") if err
+  
+#   client.developers.create creds5, (err, developer) ->
+#     developer.applications (error, apps) ->
+#       console.log error if error
       
-      client.applications.create {name: 'new app'}, (error, apps) ->
-        console.log error#, apps
+#       client.applications.create {name: 'new app'}, (error, apps) ->
+#         console.log error#, apps
 
   
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  client.patchboard.context.authorize 'Gem-Developer', dcreds
-  client.resources.developers.get (err, dev) ->
-    console.log err#, dev
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   client.patchboard().context.authorize 'Gem-Developer', dcreds
+#   client.resources().developers.get (err, dev) ->
+#     console.log err#, dev
 
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "E") if err
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "E") if err
   
-  client.developers().create creds4, (err, developer) ->
-    developer.applications (err, apps) ->
-      console.log err#, apps
+#   client.developers.create creds4, (err, developer) ->
+#     developer.applications (err, apps) ->
+#       console.log err#, apps
     
-    console.log(err, "F") if err
+#     console.log(err, "F") if err
 
-    developer.update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
-      console.log "!!!!! client.developer.update updates developer and returns a new developer !!!!! 7"
-      console.log err#, developer
+#     developer.update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
+#       console.log "!!!!! client.developer.update updates developer and returns a new developer !!!!! 7"
+#       console.log err#, developer
 
 
 
-# Tests if client.authenticate creates authenticates a developer
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
+# # Tests if client.authenticate creates authenticates a developer
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
 
-  client.authenticate 'Gem-Developer', dcreds, (err, developer) ->
-    console.log err#, developer
+#   client.authenticate 'Gem-Developer', dcreds, (err, developer) ->
+#     console.log err#, developer
 
-# Tests Authenticate method.
-# Returns a developer-authorized client object
-Round.authenticate devcreds, (err, client) ->
-  console.log(err, "A") if err
+# # Tests Authenticate method.
+# # Returns a developer-authorized client object
+# Round.authenticate devcreds, (err, client) ->
+#   console.log(err, "A") if err
 
-  client.resources.developers.get (err, dev) ->
-    console.log "!!!!! Round.authenticate works !!!!! 1"
-    console.log err#, dev
+#   client.resources().developers.get (err, dev) ->
+#     console.log "!!!!! Round.authenticate works !!!!! 1"
+#     console.log err#, dev
 
-# Test if context.authenticate works for a developer
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "B") if err
+# # Test if context.authenticate works for a developer
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "B") if err
 
-  client.authenticate 'Gem-Developer', dcreds, (err, developer) -> 
-    client.resources.developers.get (err, dev) ->
-      console.log "!!!!! client.patchboard.context.authorize works !!!!! 2"
-      console.log err#, dev
+#   client.authenticate 'Gem-Developer', dcreds, (err, developer) -> 
+#     client.resources().developers.get (err, dev) ->
+#       console.log "!!!!! client.patchboard.context.authorize works !!!!! 2"
+#       console.log err#, dev
 
-    client.developer().applications (err, apps) ->
-      console.log "!!!!! client.developer().applications works for after client.autheticate !!!!! 3"
-      console.log err#, apps
+#     client.developer().applications (err, apps) ->
+#       console.log "!!!!! client.developer().applications works for after client.autheticate !!!!! 3"
+#       console.log err#, apps
   
 
-# Tests if developer has been created AND authorized
-# using the 'create' convenience method
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "C") if err
+# # Tests if developer has been created AND authorized
+# # using the 'create' convenience method
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "C") if err
 
-  client.developers().create creds, (err, developer) ->
-    console.log(err, "D") if err
+#   client.developers.create creds, (err, developer) ->
+#     console.log(err, "D") if err
     
-    developer.applications (err, apps) ->
-      console.log "!!!!! client.developer.create works !!!!! 4"
-      console.log err#, apps
+#     developer.applications (err, apps) ->
+#       console.log "!!!!! client.developer.create works !!!!! 4"
+#       console.log err#, apps
       
-    # tests that the developer can be accessed from the client
-    client.patchboard.resources.developers.get (err, dev) ->
-      console.log "!!!!! resources.developers.get works after dev has been created !!!!! 5"
-      console.log err#, dev 
+#     # tests that the developer can be accessed from the client
+#     client.patchboard().resources.developers.get (err, dev) ->
+#       console.log "!!!!! resources.developers.get works after dev has been created !!!!! 5"
+#       console.log err#, dev 
 
-    client.developer().applications (err, apps) ->
-      console.log "!!!!! client.applications works when @_developer exists on the client !!!!! 6"
-      console.log err#, apps
-      # console.log client._applications
+#     client.developer().applications (err, apps) ->
+#       console.log "!!!!! client.applications works when @_developer exists on the client !!!!! 6"
+#       console.log err#, apps
+#       # console.log client._applications
 
 
-# Tests developer.update method to see if it both updates and 
-# and reauthenticates a developer with new credentials
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "E") if err
+# # Tests developer.update method to see if it both updates and 
+# # and reauthenticates a developer with new credentials
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "E") if err
   
-  client.developers().create creds2, (err, developer) ->
-    console.log(err, "F") if err
+#   client.developers.create creds2, (err, developer) ->
+#     console.log(err, "F") if err
 
-    client.developer().update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
-      console.log "!!!!! client.developer.update updates developer and returns a new developer !!!!! 7"
-      console.log err#, developer
+#     client.developer().update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
+#       console.log "!!!!! client.developer.update updates developer and returns a new developer !!!!! 7"
+#       console.log err#, developer
       
-      client.resources.developers.get (err, dev) ->
-        console.log "!!!!! client.developer.update re-authorizes with new credentials !!!!! 8"
-        console.log err#, dev
+#       client.resources().developers.get (err, dev) ->
+#         console.log "!!!!! client.developer.update re-authorizes with new credentials !!!!! 8"
+#         console.log err#, dev
 
 
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "G") if err
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "G") if err
 
-  client.developers().create creds3, (err, developer) ->
-    console.log err if err
+#   client.developers.create creds3, (err, developer) ->
+#     console.log err if err
 
-    client.developer().update {email: "newemail1#{Date.now()}@mail.com", privkey}, (err, developer) ->
-      console.log "!!!!! client.developer.update updates developer and returns a new developer even if @_developer wasn't memoized !!!!! 9"
-      console.log err#, developer
+#     client.developer().update {email: "newemail1#{Date.now()}@mail.com", privkey}, (err, developer) ->
+#       console.log "!!!!! client.developer.update updates developer and returns a new developer even if @_developer wasn't memoized !!!!! 9"
+#       console.log err#, developer
 
