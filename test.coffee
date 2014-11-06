@@ -84,7 +84,7 @@ devcreds = { developer: {email: 'js-test-1415158094484@mail.com', pubkey, privke
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers.create creds6, (err, developer) ->
+  client.developers().create creds6, (err, developer) ->
     client.applications.create {name: 'new app'}, (err, apps) ->
       console.log err#, apps
 
@@ -93,7 +93,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers.create creds5, (err, developer) ->
+  client.developers().create creds5, (err, developer) ->
     developer.applications (error, apps) ->
       console.log error if error
       
@@ -109,7 +109,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers.create creds4, (err, developer) ->
+  client.developers().create creds4, (err, developer) ->
     developer.applications (err, apps) ->
       console.log err#, apps
     
@@ -155,7 +155,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "C") if err
 
-  client.developers.create creds, (err, developer) ->
+  client.developers().create creds, (err, developer) ->
     console.log(err, "D") if err
     
     developer.applications (err, apps) ->
@@ -178,7 +178,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers.create creds2, (err, developer) ->
+  client.developers().create creds2, (err, developer) ->
     console.log(err, "F") if err
 
     client.developer().update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
@@ -193,7 +193,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "G") if err
 
-  client.developers.create creds3, (err, developer) ->
+  client.developers().create creds3, (err, developer) ->
     console.log err if err
 
     client.developer().update {email: "newemail1#{Date.now()}@mail.com", privkey}, (err, developer) ->
