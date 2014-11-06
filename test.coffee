@@ -10,6 +10,9 @@ Round = require "./src"
 email = () -> "js-test-#{Date.now()}@mail.com"
 email2 = () -> "js-test1-#{Date.now()}@mail.com"
 email3 = () -> "js-test2-#{Date.now()}@mail.com"
+email4 = () -> "js-test3-#{Date.now()}@mail.com"
+email5 = () -> "js-test4-#{Date.now()}@mail.com"
+email6 = () -> "js-test5-#{Date.now()}@mail.com"
 pubkey =  """-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJyfSUKm9Xd48yfImxDX
 DoBqh7O6PacgDfmXBEztFFA3A4ReoEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrh
@@ -53,12 +56,12 @@ nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
 # content = { email, wallet: data.wallet }
 
 module.exports = {
-  client: () -> Round.client 'http://localhost:8999', 'testnet3', (err, cli) -> cli,
+  client: (callback) -> Round.client 'http://localhost:8999', 'testnet3', callback
   pubkey: pubkey
   privkey: privkey
   email: email
   creds: {email: email(), pubkey, privkey }
-  dcreds: {email: 'js-test-1415137697385@mail.com', pubkey, privkey }
+  dcreds: {email: 'js-test-1415158094484@mail.com', pubkey, privkey }
 }
 # creds = {email: 'js-test-1415065780010@mail.com', pubkey: t.pubkey, privkey: t.privkey }
 
@@ -67,12 +70,62 @@ creds = {email: email(), pubkey, privkey }
 # prevents conflicts when all test are being run at once
 creds2 = {email: email2(), pubkey, privkey }
 creds3 = {email: email3(), pubkey, privkey }
-dcreds = {email: 'js-test-1415137697385@mail.com', pubkey, privkey }
-devcreds = { developer: {email: 'js-test-1415137697385@mail.com', pubkey, privkey } }
+creds4 = {email: email4(), pubkey, privkey }
+creds5 = {email: email5(), pubkey, privkey }
+creds6 = {email: email6(), pubkey, privkey }
+dcreds = {email: 'js-test-1415158094484@mail.com', pubkey, privkey }
+devcreds = { developer: {email: 'js-test-1415158094484@mail.com', pubkey, privkey } }
 
 
 
 
+# Tests if client.applications.create works when
+# applications haven't been memoized
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "E") if err
+  
+  client.developers.create creds6, (err, developer) ->
+    client.applications.create {name: 'new app'}, (err, apps) ->
+      console.log err#, apps
+
+# Tests if client.applications.create works when
+# applications haven't been memoized
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "E") if err
+  
+  client.developers.create creds5, (err, developer) ->
+    developer.applications (error, apps) ->
+      console.log error if error
+      
+      client.applications.create {name: 'new app'}, (error, apps) ->
+        console.log error#, apps
+
+  
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  client.patchboard.context.authorize 'Gem-Developer', dcreds
+  client.resources.developers.get (err, dev) ->
+    console.log err#, dev
+
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+  console.log(err, "E") if err
+  
+  client.developers.create creds4, (err, developer) ->
+    developer.applications (err, apps) ->
+      console.log err#, apps
+    
+    console.log(err, "F") if err
+
+    developer.update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
+      console.log "!!!!! client.developer.update updates developer and returns a new developer !!!!! 7"
+      console.log err#, developer
+
+
+
+# Tests if client.authenticate creates authenticates a developer
+Round.client 'http://localhost:8999','testnet3', (err, client) ->
+
+  client.authenticate 'Gem-Developer', dcreds, (err, developer) ->
+    console.log err#, developer
 
 # Tests Authenticate method.
 # Returns a developer-authorized client object
@@ -83,18 +136,18 @@ Round.authenticate devcreds, (err, client) ->
     console.log "!!!!! Round.authenticate works !!!!! 1"
     console.log err#, dev
 
-# Test if context.authorize works for a developer
+# Test if context.authenticate works for a developer
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "B") if err
 
-  client.patchboard.context.authorize 'Gem-Developer', dcreds
-  client.resources.developers.get (err, dev) ->
-    console.log "!!!!! client.patchboard.context.authorize works !!!!! 2"
-    console.log err#, dev
+  client.authenticate 'Gem-Developer', dcreds, (err, developer) -> 
+    client.resources.developers.get (err, dev) ->
+      console.log "!!!!! client.patchboard.context.authorize works !!!!! 2"
+      console.log err#, dev
 
-  client.developer().applications (err, apps) ->
-    console.log "!!!!! client.applications works for when @_developer does NOT exist on the client !!!!! 3"
-    console.log err#, apps
+    client.developer().applications (err, apps) ->
+      console.log "!!!!! client.developer().applications works for after client.autheticate !!!!! 3"
+      console.log err#, apps
   
 
 # Tests if developer has been created AND authorized
@@ -102,14 +155,14 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "C") if err
 
-  client.developers().create creds, (err, developer) ->
+  client.developers.create creds, (err, developer) ->
     console.log(err, "D") if err
     
-    developer.applications.list (err, apps) ->
+    developer.applications (err, apps) ->
       console.log "!!!!! client.developer.create works !!!!! 4"
       console.log err#, apps
       
-      # tests that the developer can be accessed from the client
+    # tests that the developer can be accessed from the client
     client.patchboard.resources.developers.get (err, dev) ->
       console.log "!!!!! resources.developers.get works after dev has been created !!!!! 5"
       console.log err#, dev 
@@ -125,7 +178,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers().create creds2, (err, developer) ->
+  client.developers.create creds2, (err, developer) ->
     console.log(err, "F") if err
 
     client.developer().update {email: "newemail#{Date.now()}@mail.com", privkey}, (err, developer) ->
@@ -140,9 +193,10 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "G") if err
 
-  client.developers().create creds3, (err, developer) ->
+  client.developers.create creds3, (err, developer) ->
     console.log err if err
 
     client.developer().update {email: "newemail1#{Date.now()}@mail.com", privkey}, (err, developer) ->
       console.log "!!!!! client.developer.update updates developer and returns a new developer even if @_developer wasn't memoized !!!!! 9"
       console.log err#, developer
+

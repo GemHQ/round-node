@@ -16,13 +16,13 @@ module.exports = class Context
         params: ['email', 'privkey']
       'Gem-Application':
         usage: null
-        params: ['app_url', 'api_token, instance_id']
+        params: ['app_url', 'api_token', 'instance_id']
       'Gem-Device':
         usage: null
-        params: ['app_url', 'api_token, user_url', 'user_token', 'device_id']
+        params: ['app_url', 'api_token', 'user_url', 'user_token', 'device_id']
       'Gem-User':
         usage: null
-        params: ['app_url', 'api_token, instance_id']
+        params: ['app_.url', 'api_token', 'instance_id']
       'Gem-OOB-OTP':
         usage: null
         params: ['key', 'secret', 'api_token']
@@ -49,7 +49,7 @@ module.exports = class Context
     body =  if 'body' of request then request['body'] else '{}'
 
     return {scheme: '', credential: ''} if arguments.length < 4
-
+    
     for scheme in schemes
       if scheme of @schemes and 'credentials' of @schemes[scheme]
         if scheme is 'Gem-Developer'

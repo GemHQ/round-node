@@ -13,9 +13,10 @@ module.exports = {
   url: defaultUrl
 
   # default values are only used if the user
-  # explicitely eneters 'null' or 'undefined' for those values
+  # explicitely enters 'null' or 'undefined' for those values
   client: (url=defaultUrl, network=defaultNetwork, callback) ->
     if @patchboard?
+      # !!!!! add spawn() method to @patchboard
       callback null, new Client(@patchboard)
     else
       Patchboard.discover url, {context: Context}, (error, @patchboard) =>
@@ -37,14 +38,14 @@ module.exports = {
                   Supported authentication schemes are #{schemes.join(', ')}"""
 
 
-  authenticateDeveloper: (url, developer, network, callback) ->
-    if 'email' of developer and 'privkey' of developer
+  authenticateDeveloper: (url, developerCreds, network, callback) ->
+    if 'email' of developerCreds and 'privkey' of developerCreds
       # create a new client object
       @client url, network, (error, client) ->
         # authorize the client with developer permissions
-        client.patchboard.context.authorize 'Gem-Developer', developer
+        client.patchboard.context.authorize 'Gem-Developer', developerCreds
         
-        callback error if error
+        return callback error if error
         callback null, client
     else
       throw "Must provide email and privkey"
