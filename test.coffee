@@ -14,6 +14,7 @@ email4 = () -> "js-test3-#{Date.now()}@mail.com"
 email5 = () -> "js-test4-#{Date.now()}@mail.com"
 email6 = () -> "js-test5-#{Date.now()}@mail.com"
 email7 = () -> "js-test6-#{Date.now()}@mail.com"
+email8 = () -> "js-test7-#{Date.now()}@mail.com"
 
 pubkey =  """-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJyfSUKm9Xd48yfImxDX
@@ -76,23 +77,32 @@ creds4 = {email: email4(), pubkey, privkey }
 creds5 = {email: email5(), pubkey, privkey }
 creds6 = {email: email6(), pubkey, privkey }
 creds7 = {email: email7(), pubkey, privkey }
+creds8 = {email: email8(), pubkey, privkey }
 dcreds = {email: 'js-test-1415158094484@mail.com', pubkey, privkey }
 devcreds = { developer: {email: 'js-test-1415158094484@mail.com', pubkey, privkey } }
 
 
 
-# Tests if client.applications.create works when
-# applications haven't been memoized
+# Tests if application.users works
 Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
-  client.developers.create creds7, (err, developer) ->
-    developer.applications (err, apps) -> 
-      console.log err, apps
-    # client.applications.create {name: 'new app'}, (err, app) ->
-      # console.log app
+  client.developers.create creds8, (err, developer) ->
+    client.applications.create {name: 'new app'}, (err, app) ->
+      app.users (err, users) ->
+        console.log err, users
 
-
+# # Tests if client.applications.create works when
+# # applications haven't been memoized
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "E") if err
+  
+#   client.developers.create creds7, (err, developer) ->
+#     client.applications.create {name: 'new app'}, (err, app) ->
+#       console.log err, app
+#       developer.applications (err, apps) -> 
+#         console.log err, apps
+    
 # # Tests if client.applications.create works when
 # # applications haven't been memoized
 # Round.client 'http://localhost:8999','testnet3', (err, client) ->

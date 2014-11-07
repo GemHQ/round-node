@@ -13,7 +13,7 @@ module.exports = class Developer
     
     @resource().applications.list (error, applications) =>
       return callback(error) if error
-      # !!!!! SHOULD BE SET TO AN INSTANCE OF THE APPLICATIONS CLASS !!!!!
+
       @client()._applications = new Applications @client(), applications
       callback null, @client()._applications
     
