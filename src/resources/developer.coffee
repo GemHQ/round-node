@@ -11,10 +11,10 @@ module.exports = class Developer
   applications: (callback) ->
     return callback(null, @client()._applications) if @client()._applications
     
-    @resource().applications.list (error, applications) =>
+    @resource().applications.list (error, applicationsResource) =>
       return callback(error) if error
 
-      @client()._applications = new Applications @client(), applications
+      @client()._applications = new Applications @client(), applicationsResource
       callback null, @client()._applications
     
   # Updates authenticated developer's credentials

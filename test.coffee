@@ -3,8 +3,8 @@
 fs = require "fs"
 yaml = require "js-yaml"
 Round = require "./src"
-# string = fs.readFileSync "../data/wallet.yaml"
-# data = yaml.safeLoad(string)
+string = fs.readFileSync "./test/data/wallet.yaml"
+data = yaml.safeLoad(string)
 
 
 email = () -> "js-test-#{Date.now()}@mail.com"
@@ -80,6 +80,7 @@ creds7 = {email: email7(), pubkey, privkey }
 creds8 = {email: email8(), pubkey, privkey }
 dcreds = {email: 'js-test-1415158094484@mail.com', pubkey, privkey }
 devcreds = { developer: {email: 'js-test-1415158094484@mail.com', pubkey, privkey } }
+usercontent = {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
 
 
 
@@ -88,9 +89,23 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
   console.log(err, "E") if err
   
   client.developers.create creds8, (err, developer) ->
-    client.applications.create {name: 'new app'}, (err, app) ->
-      app.users (err, users) ->
-        console.log err, users
+    developer.applications (err, apps) ->
+      apps.default.users (err, users) ->
+        users.resource().create usercontent, (err, user) ->
+          console.log err, user
+        # client.resources().users.create usercontent, (err, user) ->
+          # console.log err, user
+        # users.create usercontent, (err, user) ->
+          # console.log err, user
+
+    # client.applications.create {name: 'new app'}, (err, app) ->
+    #   app.users (err, users) ->
+    #     users.resource().list (err, users) -> 
+    #       console.log err, users
+
+    # Tests if users.create works
+  # client.users.create usercontent, (err, user) ->
+    # console.log err, user
 
 # # Tests if client.applications.create works when
 # # applications haven't been memoized
@@ -99,9 +114,9 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
   
 #   client.developers.create creds7, (err, developer) ->
 #     client.applications.create {name: 'new app'}, (err, app) ->
-#       console.log err, app
-#       developer.applications (err, apps) -> 
-#         console.log err, apps
+#       console.log err, app.gosh
+      # developer.applications (err, apps) -> 
+      #   console.log err, apps
     
 # # Tests if client.applications.create works when
 # # applications haven't been memoized

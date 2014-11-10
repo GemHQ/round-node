@@ -12,6 +12,9 @@ module.exports = class Applications
 
     @create = (attributes, callback) -> 
       if client._developer?
+        # ????? IS IT OK THAT I'M USING DEVELOPER RESOURCE?
+        # IN THE CASE THAT A USER AUTHORIZES THE CLIENT AS A DEVELOPER THEN RUNS
+        # CLIENT.APPLICATIONS.CREATE, THIS METHOD STILL WORKS, EVEN THOUGH THE APPLICATIONS HAVE NOT BEEN PULLED DOWN.
         developerResource = client._developer.resource()
         developerResource.applications.create attributes, (error, appResource) =>
           return callback(error) if error
@@ -20,7 +23,7 @@ module.exports = class Applications
           # If @_applications hasn't been memoized then
           # it makes a call to the server
           if client._applications
-            # ????????? is this how we want to add apps?
+            # ????? IS THIS HOW WE WAN TO ADD APPS ?????
             client._applications[appResource.name] = new Application client, appResource
             callback null, client._applications[appResource.name]
           else

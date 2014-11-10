@@ -2,6 +2,7 @@
 Developers = require './resources/developers'
 Developer = require './resources/developer'
 Applications = require './resources/applications'
+Users = require './resources/users'
 
 module.exports = class Client
 
@@ -13,6 +14,8 @@ module.exports = class Client
     # !!!! Should we be passing something other than null????
     # !!!! Should we fetch the applications resource here? 
     # is there a way to pass the default apps w/o making a call
+    # if a user authorizes as a developer but does not run developer.applications
+    # then the client is not able to access the appplications without making a call
     @applications = @_applications || new Applications @, null
 
 
@@ -23,6 +26,8 @@ module.exports = class Client
 
       throw 'You have not yet authenticated as a developer'
 
+
+    @users = new Users(@)
 
     @authenticate = (scheme, credentials, callback) ->
       @patchboard().context.authorize scheme, credentials
