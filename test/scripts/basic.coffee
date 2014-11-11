@@ -1,43 +1,43 @@
-fs = require "fs"
+# fs = require "fs"
 
-yaml = require "js-yaml"
+# yaml = require "js-yaml"
 
-Round = require "../../src"
+# Round = require "../../src"
 
-string = fs.readFileSync "../data/wallet.yaml"
-data = yaml.safeLoad(string)
-
-
-
-Round.client "http://localhost:8999/", (error, client) ->
-  throw error if error
-  {patchboard} = client
-  {resources} = patchboard
+# string = fs.readFileSync "../data/wallet.yaml"
+# data = yaml.safeLoad(string)
 
 
-  email = "js-test-#{Date.now()}@mail.com"
-  password = "insecure"
 
-  content = {
-    email,
-    wallet: data.wallet
-  }
-
-  resources.users.create content, (error, user) ->
-    throw error if error
-    #console.log user
-    patchboard.context.authorize "Gem-User", {user_token: user.auth_token}
-    console.log patchboard.context
+# Round.client "http://localhost:8999/", (error, client) ->
+#   throw error if error
+#   {patchboard} = client
+#   {resources} = patchboard
 
 
-  resources.developers.create {email, password}, (error, developer) ->
-    throw error if error
+#   email = "js-test-#{Date.now()}@mail.com"
+#   password = "insecure"
 
-    patchboard.context.authorize "Basic", {login: email, password}
+#   content = {
+#     email,
+#     wallet: data.wallet
+#   }
 
-    developer.get (error, result) ->
-      throw error if error
-      #console.log result
+#   resources.users.create content, (error, user) ->
+#     throw error if error
+#     #console.log user
+#     patchboard.context.authorize "Gem-User", {user_token: user.auth_token}
+#     console.log patchboard.context
+
+
+#   resources.developers.create {email, password}, (error, developer) ->
+#     throw error if error
+
+#     patchboard.context.authorize "Basic", {login: email, password}
+
+#     developer.get (error, result) ->
+#       throw error if error
+#       #console.log result
 
 
 

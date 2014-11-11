@@ -78,21 +78,21 @@ creds5 = {email: email5(), pubkey, privkey }
 creds6 = {email: email6(), pubkey, privkey }
 creds7 = {email: email7(), pubkey, privkey }
 creds8 = {email: email8(), pubkey, privkey }
-dcreds = {email: 'js-test-1415158094484@mail.com', pubkey, privkey }
-devcreds = { developer: {email: 'js-test-1415158094484@mail.com', pubkey, privkey } }
+dcreds = {email: 'js-test5-1415598573573@mail.com', pubkey, privkey }
+devcreds = { developer: {email: 'js-test5-1415598573573@mail.com', pubkey, privkey } }
 usercontent = {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
 
 
 
 # Tests if application.users works
-Round.client 'http://localhost:8999','testnet3', (err, client) ->
-  console.log(err, "E") if err
+# Round.client 'http://localhost:8999','testnet3', (err, client) ->
+#   console.log(err, "E") if err
   
-  client.developers.create creds8, (err, developer) ->
-    developer.applications (err, apps) ->
-      apps.default.users (err, users) ->
-        users.resource().create usercontent, (err, user) ->
-          console.log err, user
+#   client.developers.create creds8, (err, developer) ->
+#     developer.applications (err, apps) ->
+#       apps.default.users (err, users) ->
+#         users.resource().create usercontent, (err, user) ->
+#           console.log err, user
         # client.resources().users.create usercontent, (err, user) ->
           # console.log err, user
         # users.create usercontent, (err, user) ->
@@ -118,12 +118,13 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
       # developer.applications (err, apps) -> 
       #   console.log err, apps
     
-# # Tests if client.applications.create works when
+# # # Tests if client.applications.create works when
 # # applications haven't been memoized
 # Round.client 'http://localhost:8999','testnet3', (err, client) ->
 #   console.log(err, "E") if err
   
 #   client.developers.create creds6, (err, developer) ->
+#     console.log developer.resource()
 #     client.applications.create {name: 'new app'}, (err, apps) ->
 #       console.log err#, apps
 
@@ -160,7 +161,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 
 
 
-# # Tests if client.authenticate creates authenticates a developer
+# Tests if client.authenticate authenticates a developer
 # Round.client 'http://localhost:8999','testnet3', (err, client) ->
 
 #   client.authenticate 'Gem-Developer', dcreds, (err, developer) ->
@@ -175,7 +176,7 @@ Round.client 'http://localhost:8999','testnet3', (err, client) ->
 #     console.log "!!!!! Round.authenticate works !!!!! 1"
 #     console.log err#, dev
 
-# # Test if context.authenticate works for a developer
+# Test if context.authenticate works for a developer
 # Round.client 'http://localhost:8999','testnet3', (err, client) ->
 #   console.log(err, "B") if err
 

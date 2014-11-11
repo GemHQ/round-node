@@ -10,7 +10,7 @@ module.exports = class Applications
         @[app.name] = new Application client, app
 
 
-    @create = (attributes, callback) -> 
+    @create = (attributes, callback) ->
       if client._developer?
         # ????? IS IT OK THAT I'M USING DEVELOPER RESOURCE?
         # IN THE CASE THAT A USER AUTHORIZES THE CLIENT AS A DEVELOPER THEN RUNS
