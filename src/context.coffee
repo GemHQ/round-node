@@ -49,7 +49,7 @@ module.exports = class Context
     body =  if 'body' of request then request['body'] else '{}'
 
     return {scheme: '', credential: ''} if arguments.length < 4
-
+    
     for scheme in schemes
       if scheme of @schemes and 'credentials' of @schemes[scheme]
         if scheme is 'Gem-Developer'

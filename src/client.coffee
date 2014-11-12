@@ -22,7 +22,7 @@ module.exports = class Client
 
     @developers = new Developers(@)
 
-    @developer = -> 
+    @developer = ->
       return @_developer if @_developer
 
       throw 'You have not yet authenticated as a developer'
@@ -43,7 +43,7 @@ module.exports = class Client
 
     @authenticate = (scheme, credentials, callback) ->
       @patchboard().context.authorize scheme, credentials
-
+      
       if scheme is 'Gem-Developer'
         @resources().developers.get (error, developerResource) =>
           return callback(error) if error
@@ -51,8 +51,23 @@ module.exports = class Client
           @_developer = new Developer(@, developerResource)
           callback null, @_developer
 
-    # credentials requires: apiToken, userUrl, userToken, deviceId
-    # optional params are: app_url, override, fetch
+    @authenticateDeveloper = (credentials, callback) ->
+      requiredCredentials = ['email', 'pubkey', 'privkey']
+      # return error if missing a required credential
+      for credential in requiredCredentials
+        if credential not of credentials
+          return callback "You must provide #{credential} in order to authenticate a device"
+
+      @patchboard().context.authorize 'Gem-Developer', credentials
+
+      @resources().developers.get (error, developerResource) =>
+          return callback(error) if error
+
+          @_developer = new Developer(@, developerResource)
+          callback null, @_developer
+
+
+    # optional credentials are: app_url, override, fetch
     @authenticateDevice = (credentials, callback) ->
       requiredCredentials = ['api_token', 'user_url', 'user_token', 'device_id']
       credentials.override = credentials.override || false
@@ -67,6 +82,7 @@ module.exports = class Client
 
       @patchboard().context.authorize 'Gem-Device', credentials
 
+      # ????? SHOULD I MEMOIZE THE USER ?????
       if credentials.fetch
         @user (error, user) ->
           return callback error if error
