@@ -21,17 +21,14 @@ newUserContent = -> {email: "js-test-#{Date.now()}@mail.com", wallet: data.walle
 
 describe 'Round.client', ->
   it 'should create a new client with a property of patchboard', (done) ->
-    
     Round.client 'http://localhost:8999','testnet3', (error, client) ->
       client.developers.create newDevCreds(), (error, developer) ->
-        console.log error, developer.resource()
-        done()
+        done(error)
 
 describe 'Client Methods', ->
   
   describe 'Round.client', ->
     it 'should create a new client with a property of patchboard', (done) ->
-      
       Round.client 'http://localhost:8999','testnet3', (error, client) ->
         expect(client).to.have.property 'patchboard'
         expect(client.patchboard()).to.have.property 'resources'
@@ -41,10 +38,11 @@ describe 'Client Methods', ->
     it 'should authenticate a client as a Gem-Developer & memoize _developer on the client ', (done) ->  
       Round.client 'http://localhost:8999','testnet3', (error, client) ->
         client.authenticateDeveloper existingDevCreds, (error, developer) ->
+          console.log error
           expect(client).to.have.property('_developer')
           done(error)
 
-  describe.only 'client.authenticateDevice()', ->
+  describe.skip 'client.authenticateDevice()', ->
     it 'should autheticate client as a device and return a user', (done) ->
       Round.client 'http://localhost:8999','testnet3', (error, client) ->
         client.authenticateDeveloper existingDevCreds, (error, developer) ->

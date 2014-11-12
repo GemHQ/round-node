@@ -15,14 +15,14 @@ module.exports = {
   # default values are only used if the user
   # explicitely enters 'null' or 'undefined' for those values
   client: (url=defaultUrl, network=defaultNetwork, callback) ->
-    # if @patchboard?
-    #   callback null, new Client(@patchboard.spawn())
-    # else
-    Patchboard.discover url, {context: Context}, (error, @patchboard) =>
-      if error
-        callback error if callback
-      else
-        callback(null, new Client(@patchboard)) if callback
+    if @patchboard?
+      callback null, new Client(@patchboard.spawn())
+    else
+      Patchboard.discover url, {context: Context}, (error, @patchboard) =>
+        if error
+          callback error if callback
+        else
+          callback(null, new Client(@patchboard)) if callback
 
 
   # args is an object
