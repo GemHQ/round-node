@@ -11,14 +11,13 @@ module.exports = class Application
 
   users: (callback) ->
     return callback(null, @_users) if @_users
-    # !!!! NEEDS TO BE WRAPPED
     # ?????  shouldn't we be making a call to .list here? Needs to go to server to fetch latest users ????
     callback null, new Users @client(), @resource().users 
 
 
   rules: (callback) ->
     return callback(null, @_rules) if @_rules
-
+    
     callback null, @resource().rules
 
 

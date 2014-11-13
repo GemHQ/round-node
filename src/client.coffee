@@ -32,7 +32,6 @@ module.exports = class Client
 
     @user = (callback) ->
       return callback(null, @_user) if @_user
-
       @resources().user(@patchboard().context.user_url).get (error, userResource) =>
         # !!!!! THROW MORE DESCRIPTIVE ERROR RATHER THAN PATCBOARD ERROR
         return callback(error) if error
@@ -56,7 +55,7 @@ module.exports = class Client
       # return error if missing a required credential
       for credential in requiredCredentials
         if credential not of credentials
-          return callback "You must provide #{credential} in order to authenticate a device"
+          return callback "You must provide #{credential} in order to authenticate a developer"
 
       @patchboard().context.authorize 'Gem-Developer', credentials
 
@@ -65,6 +64,23 @@ module.exports = class Client
 
           @_developer = new Developer(@, developerResource)
           callback null, @_developer
+
+    # takes 'override', as an optional property
+    @authenticateOTP = (credentials) ->
+      requiredCredentials = ['api_token', 'key', 'secret']
+      credentials.override = credentials.override || true
+
+      for credential in requiredCredentials
+        if credential not of credentials
+          throw "You must provide #{credential} in order to authenticate"
+
+      if 'credential' of @patchboard().context.schemes['Gem-OOB-OTP']
+        if credentials.override is false
+          # !!!!! IS THIS THE RIGHT ERROR TO THROW !!!!!
+          throw "This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True."
+      
+      @patchboard().context.authorize 'Gem-OOB-OTP', credentials
+      return true 
 
 
     # optional credentials are: app_url, override, fetch
@@ -81,7 +97,6 @@ module.exports = class Client
           return callback "You must provide #{credential} in order to authenticate a device"
 
       @patchboard().context.authorize 'Gem-Device', credentials
-
       # ????? SHOULD I MEMOIZE THE USER ?????
       if credentials.fetch
         @user (error, user) ->

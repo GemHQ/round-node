@@ -17,6 +17,7 @@ existingDevCreds = {email: 'js-test-1415675506694@mail.com', pubkey, privkey }
 existingDevApiToken = 'HTqU6tkpygsTWITOEyfwsEMFXX8PjgKDt7kL1gZVW4g'
 newDevCreds = -> {email: email(), pubkey, privkey }
 newUserContent = -> {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
+newBezContent = {email: "bez@gem.co", wallet: data.wallet }
 
 
 describe 'Round.client', ->
@@ -38,7 +39,6 @@ describe 'Client Methods', ->
     it 'should authenticate a client as a Gem-Developer & memoize _developer on the client ', (done) ->  
       Round.client 'http://localhost:8999','testnet3', (error, client) ->
         client.authenticateDeveloper existingDevCreds, (error, developer) ->
-          console.log error
           expect(client).to.have.property('_developer')
           done(error)
 
@@ -109,16 +109,12 @@ describe 'Client Methods', ->
 
 
 describe 'Developer Resource', ->
-  client = ''
-  developer = ''
+  client = developer = ''
   
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
-      client = cli
-      client.developers.create newDevCreds(), (error, dev) ->
-        developer = dev
-        done(error)
-
+      cli.developers.create newDevCreds(), (error, dev) ->
+        client = cli; developer = dev; done(error)
 
   describe 'client.developers.create', ->
     it 'should return a developer object (and authorize if privkey is provided)', (done) ->
@@ -146,11 +142,51 @@ describe 'Developer Resource', ->
 
 
 
-# describe 'User Resource', ->
-#   describe 'client.users.create', ->
-#     it 'should create a user object', (done) ->
-#       Round.client 'http://localhost:8999','testnet3', (error, client) ->
-#         client.authenticate 'Gem-Developer', existingDevCreds, (error, developer) ->
-#           client.users.create newUserContent(), (error, user) ->
-#             expect(user).to.have.a.property('email')
-#             done()
+describe.only 'User Resource', ->
+  client = developer = user = applications =''
+
+  before (done) ->
+    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+      cli.authenticateDeveloper existingDevCreds, (error, dev) ->
+        cli.users.create newUserContent(), (error, usr) ->
+          dev.applications (error, apps) ->
+            client = cli; developer = dev; user = usr; applications = apps; done(error)
+
+  describe 'client.users.create', ->
+    it 'should create a user object', (done) ->
+      expect(user.resource()).to.have.a.property('email') 
+      done()
+
+  describe 'user.beginDeviceAuthorization', ->
+    it 'should do stuff I dont know yet', (done) ->
+      client.patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
+
+      # # FIRST
+      # u = client.resources().user_query {email: 'bez@gem.co'}
+      # device_id =  "newdeviceid#{Date.now()}"
+      # console.log 'device_id ------------------------------'
+      # console.log device_id
+      # u.authorize_device {name: 'newapp', device_id}, (error, data) ->
+      #   regx = /"(.*)"/
+      #   response = error.response.headers['www-authenticate']
+      #   matches = regx.exec response
+      #   key = matches[1]
+      #   console.log key
+      #   done()
+
+      # # SECOND
+      # api_token = applications.default.api_token
+      # app_url = applications.default.url
+      # key = 'otp.rQQNCg3KqGaEP9FiiPMPKw'
+      # secret = '_2JGgbc__BX6OogedvvWLw'
+      # device_id = 'newdeviceid1415848739326'
+      # user_token = 'iTm14NBmJkvUnLkR0v-GktkDH1gFqOwMfdyHFTwzPjE'
+      # name = 'newapp'
+      # client.authenticateOTP {api_token, key, secret}
+      # u = client.resources().user_query {email: 'bez@gem.co'}
+      # u.authorize_device {name, device_id}, (error, data) ->
+      #   console.log error, data
+      #   console.log "AUTHENTICATING THE DEVICE ----------------------"
+      #   client.authenticateDevice {app_url, api_token, user_url: data.url, user_token, device_id}, (error, user) ->
+      #     console.log error,user
+      #     done(error)
