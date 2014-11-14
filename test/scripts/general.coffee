@@ -5,6 +5,7 @@ Applications = require '../../src/resources/applications'
 Users = require '../../src/resources/users'
 User = require '../../src/resources/user'
 Wallets = require '../../src/resources/wallets'
+Wallet = require '../../src/resources/wallet'
 expect = require('chai').expect
 fs = require "fs"
 yaml = require "js-yaml"
@@ -154,12 +155,16 @@ describe 'User Resource', ->
         expect(user.currentDeviceId).to.equal(device_id)
         done()
 
-
-  describe 'client.authenticateDevice', ->
-    it 'return return an authenticated user', (done) ->
-      client.authenticateDevice authenticateDeviceCreds, (error, user) ->
-        expect(user).to.be.an.instanceof(User)
+  describe "Authenticated User", ->
+    user = ''
+    before (done) ->
+      client.authenticateDevice authenticateDeviceCreds, (error, usr) ->
+        user = usr
         done()
+
+    describe 'client.authenticateDevice', ->
+      it 'return an authenticated user', ->
+        expect(user).to.be.an.instanceof(User)
       # Note: Proceeding lines are commented for automation purposes.
       # Note: To test fully, you must run the test in 2 steps
         # # FIRST
@@ -185,10 +190,23 @@ describe 'User Resource', ->
           #   expect(user).to.be.an.instanceof(User)
           #   done(error)
 
-  describe.only 'user.wallets', ->
-    it 'should memoize and return a wrapped Wallet', (done) ->
-      client.authenticateDevice authenticateDeviceCreds, (error, user) ->
-        expect(user.wallets()).to.be.an.instanceof(Wallets)
-        done()
+    describe 'user.wallets', ->
+      it 'should memoize and return a wrapped Wallet object', ->
+        userWallets = user.wallets()
+        expect(userWallets).to.be.an.instanceof(Wallets)
+        expect(user._wallets).to.deep.equal(userWallets)
 
+    describe.skip 'user.update', ->
+      # Fix: requires user auth which hasn't been build yet
+      it 'should memoize and return an updated User object', (done) ->
+        user.update
+
+    describe 'wallets.create', ->
+      it 'should create and return a Wallet', (done) ->
+        wallet = data.wallet
+        wallet.name = "newwallet#{Date.now()}"
+        userWallets = user.wallets()
+        userWallets.create wallet, (error, wallet) ->
+          expect(wallet).to.be.an.instanceof(Wallet)
+          done(error)
 

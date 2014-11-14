@@ -14,7 +14,13 @@ module.exports = class User
     walletsResource = @resource().wallets
     @_wallets = new Wallets @client(), walletsResource
 
-  
+  # Note: requires user auth
+  update: (properties, callback) ->
+    @resource().update properties, (error, userResource) =>
+      return callback(error) if error
+
+      @_user = new User @client(), userResource
+      callback null, @_user
 
   beginDeviceAuthorization: (credentials, callback) ->
     requiredCredentials = ['name', 'device_id']

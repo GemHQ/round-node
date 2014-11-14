@@ -1,9 +1,10 @@
 ---
 backup_private_seed: tprv8ZgxMBicQKsPctV8gbDVfktNu7D7ziLGskKbFi5Xk2MktubH3QaRTs5tzJda33WHrq1oUDQeDhfdviwLaKDHjkFLnwTpWmkBr911y3GdgSV
 passphrase: foo bar baz
+
 wallet:
   name: default
-  network: testnet3
+  network: bitcoin_testnet
   backup_public_seed: tpubD6NzVbkrYhZ4WMWvaEt65AYVU8j4A3XBT3vNYE7qAJA9jPr3foQ1eMhmATpwaCP3Ct7RrKSxttFBTTBiEx55zbQKLuaCmiNNdBRY3byAuhY
   primary_public_seed: tpubD6NzVbkrYhZ4YCp4gdA49BbcoxkfM4fYMAGLNAvFvL768dQYHGFGjKJjHH9J3EmcarZPFLSNi7ZdcDWxYmfHDaQK8otciB7pmTtcSMGqLu8
   primary_private_seed:
@@ -12,3 +13,15 @@ wallet:
     nonce: c4706ce182cf1e65f6e7557aaf87fb1b2ccb5380b831375b
     ciphertext: caca3456a969955dcc2d0d175adacb476ff0b5a659e981d352083edc13fcc8c1e1939f321c1a836b58ee39bc512c0d401b7934eceb14612576aaa415fc5fad32586f2ebbd8a0caf0dc6efddcff57d7feed4e621525249b98e68509e9fa10e8605949a5c5f7e35b3ce3eadef41fa7cae514265af89d6de67a6cbe68c7454ce8
 
+
+passphrase: bez
+wallet1:
+  name: wallet1
+  network: bitcoin_testnet
+  backup_public_seed: tpubD6NzVbkrYhZ4XSMbLF2Au4CXgUQNXvKsyCg6CgUKK6wMBQ7SiYc1qX5BPoPYqu5azJKCa6W6rJ7Xh3qJKB5ai7zS3q39iqafbpK1PZWJB6n
+  primary_public_seed: tpubD6NzVbkrYhZ4Yp4wYNpsK5MhpmxG3gFZsxPYjsLhYYrdcaQC4vFdD3ri7bvfzSKP3hKpMT75A57gvS4FXZutm3UxjSqYG3Y63WbJv6GV9Us
+  primary_private_seed:
+    ciphertext: bbf0e0e6004bcacb690bac46cfc74a472e807e6b84bde85bd53e829d918bba16c70b38b4313796e8a4859ade11f4638e929b6a23e168b48d77af3910daecbf1b4fcb41fa9b2470b0d33076309418585b761e4c147acf7a3cc36eceac781fb113931fd70dcd7744155e61038e355badc95a46d695e7a24f6f2598402c7b50c5
+    iterations: 10000
+    nonce: b0812602ac2ee2411537389c77f91eb95cd410343c62068c
+    salt: 47a9d52026cae9a3c109d5c0da57fa59
