@@ -4,6 +4,8 @@ Developer = require './resources/developer'
 Applications = require './resources/applications'
 Users = require './resources/users'
 User = require './resources/user'
+Account = require './resources/account'
+Wallet = require './resources/wallet'
 
 module.exports = class Client
 
@@ -18,7 +20,6 @@ module.exports = class Client
     # if a user authorizes as a developer but does not run developer.applications
     # then the client is not able to access the appplications without making a call
     @applications = @_applications || new Applications @, null
-
 
     @developers = new Developers(@)
 
@@ -39,6 +40,16 @@ module.exports = class Client
         @_user = new User(@, userResource)
         callback null, @_user
 
+    @account = (url) ->
+      accountResource = @.resources().accounts(url)
+      new Account(@, accountResource)
+
+    @wallet = (url, callback) ->
+      @resources().wallet(url).get (error, walletResource) ->
+        return callback(error) if error
+        
+        wallet = new Wallet @, walletResource
+        callback null, wallet
 
     @authenticate = (scheme, credentials, callback) ->
       @patchboard().context.authorize scheme, credentials
@@ -77,7 +88,7 @@ module.exports = class Client
       if 'credential' of @patchboard().context.schemes['Gem-OOB-OTP']
         if credentials.override is false
           # !!!!! IS THIS THE RIGHT ERROR TO THROW !!!!!
-          throw "This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True."
+          throw "This object already has Gem-Device authentication. To overwrite it call authenticate_device with override: true."
       
       @patchboard().context.authorize 'Gem-OOB-OTP', credentials
       return true 
@@ -89,8 +100,8 @@ module.exports = class Client
       credentials.override = credentials.override || false
       credentials.fetch = credentials.fetch || true
 
-      if 'credentials' of patchboard.context.schemes['Gem-Device'] and !credentials.override
-        return callback 'This object already has Gem-Device authentication. To overwrite it call authenticateDevice with override=true.'
+      if 'credentials' of @patchboard().context.schemes['Gem-Device'] and !credentials.override
+        return callback 'This object already has Gem-Device authentication. To overwrite it call authenticateDevice with override: true.'
       
       for credential in requiredCredentials
         if credential not of credentials
@@ -106,9 +117,19 @@ module.exports = class Client
         callback null, true
 
 
+    @authenticateApplication = (credentials, callback) ->
+      requiredCredentials = ['app_url', 'api_token', 'instance_id']
+      credentials.override = credentials.override || false
+      credentials.fetch = credentials.fetch || true
 
+      if 'credential' of @patchboard().context.schemes['Gem-Application'] and !credentials.override
+        return callback 'This object already has Gem-Application authentication. To overwrite it call authenticateApplication with override: true.'
 
+      for credential in requiredCredentials
+        if credential not of credentials
+          return callback "You must provide #{credential} in order to authenticate as application"
 
+      @patchboard.context.authorize 'Gem-Application', credentials
 
 
 

@@ -6,6 +6,8 @@ Users = require '../../src/resources/users'
 User = require '../../src/resources/user'
 Wallets = require '../../src/resources/wallets'
 Wallet = require '../../src/resources/wallet'
+Rules = require '../../src/resources/rules'
+Account = require '../../src/resources/account'
 expect = require('chai').expect
 fs = require "fs"
 yaml = require "js-yaml"
@@ -82,6 +84,12 @@ describe 'Client Methods', ->
   # Note:
   # describe.skip 'client.user(callback)', ->
     # This is tested implicitely through client.authenticateDevice test
+
+    # describe 'client.account', ->
+      # This is tested in User tests because device auth is required
+
+    # describe 'client.wallet', ->
+      # This is tested in User tests because device auth is required
 
 
 describe 'Developer Resource', ->
@@ -209,4 +217,38 @@ describe 'User Resource', ->
         userWallets.create wallet, (error, wallet) ->
           expect(wallet).to.be.an.instanceof(Wallet)
           done(error)
+
+    describe 'wallet.rules', ->
+      it 'should return a Rules object', (done) ->
+        wallet = data.wallet
+        wallet.name = "newwallet#{Date.now()}"
+        userWallets = user.wallets()
+        userWallets.create wallet, (error, wallet) ->
+          accountUrl = wallet.resource().accounts.url
+          expect(wallet.rules()).to.be.an.instanceof(Rules)
+          done(error)
+
+    describe 'client.account', ->
+      it 'should return an Account object', (done) ->
+        wallet = data.wallet
+        wallet.name = "newwallet#{Date.now()}"
+        userWallets = user.wallets()
+        userWallets.create wallet, (error, wallet) ->
+          accountUrl = wallet.resource().accounts.url
+          account = client.account accountUrl
+          expect(account).to.be.an.instanceof(Account)
+          done(error)
+
+    describe 'client.wallet', ->
+      it 'should return a Wallet object', (done) ->
+        wallet = data.wallet
+        wallet.name = "newwallet#{Date.now()}"
+        userWallets = user.wallets()
+        userWallets.create wallet, (error, wallet) ->
+          walletUrl = wallet.resource().url
+          client.wallet walletUrl, (error, wallet) ->
+            expect(wallet).to.be.an.instanceof(Wallet)
+            expect(wallet.resource().url).to.equal(walletUrl)
+            done(error)
+
 

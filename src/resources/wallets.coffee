@@ -13,7 +13,7 @@ module.exports = class Wallets
 
       wallet = new Wallet @client(), walletResource
       walletName = walletResource.name 
-      @walletName = wallet
+      @[walletName] = wallet
       
       callback(null, wallet)
 
