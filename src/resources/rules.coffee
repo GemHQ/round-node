@@ -5,4 +5,4 @@ module.exports = class Rules
     @client = -> client
     @resource = -> rulesResource
 
-  
+    

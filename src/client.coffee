@@ -15,13 +15,13 @@ module.exports = class Client
     @resources = -> patchboard.resources
     
     # !!!! Should we be passing something other than null????
-    # !!!! Should we fetch the applications resource here? 
+    # !!!! Should we fetch the applications resource here?
     # is there a way to pass the default apps w/o making a call
     # if a user authorizes as a developer but does not run developer.applications
     # then the client is not able to access the appplications without making a call
-    @applications = @_applications || new Applications @, null
+    @applications = @_applications || new Applications @, @resources().application, null
 
-    @developers = new Developers(@)
+    @developers = new Developers(@, @resources().developers)
 
     @developer = ->
       return @_developer if @_developer
@@ -29,7 +29,7 @@ module.exports = class Client
       throw 'You have not yet authenticated as a developer'
 
 
-    @users = new Users(@)
+    @users = new Users(@, @resources().users)
 
     @user = (callback) ->
       return callback(null, @_user) if @_user
@@ -66,15 +66,16 @@ module.exports = class Client
       # return error if missing a required credential
       for credential in requiredCredentials
         if credential not of credentials
-          return callback "You must provide #{credential} in order to authenticate a developer"
+          return callback "You must provide #{credential} in order
+                          to authenticate a developer"
 
       @patchboard().context.authorize 'Gem-Developer', credentials
 
       @resources().developers.get (error, developerResource) =>
-          return callback(error) if error
+        return callback(error) if error
 
-          @_developer = new Developer(@, developerResource)
-          callback null, @_developer
+        @_developer = new Developer(@, developerResource)
+        callback null, @_developer
 
     # takes 'override', as an optional property
     @authenticateOTP = (credentials) ->
@@ -88,7 +89,8 @@ module.exports = class Client
       if 'credential' of @patchboard().context.schemes['Gem-OOB-OTP']
         if credentials.override is false
           # !!!!! IS THIS THE RIGHT ERROR TO THROW !!!!!
-          throw "This object already has Gem-Device authentication. To overwrite it call authenticate_device with override: true."
+          throw "This object already has Gem-Device authentication.
+                To overwrite it call authenticate_device with override: true."
       
       @patchboard().context.authorize 'Gem-OOB-OTP', credentials
       return true 
@@ -100,12 +102,16 @@ module.exports = class Client
       credentials.override = credentials.override || false
       credentials.fetch = credentials.fetch || true
 
-      if 'credentials' of @patchboard().context.schemes['Gem-Device'] and !credentials.override
-        return callback 'This object already has Gem-Device authentication. To overwrite it call authenticateDevice with override: true.'
+      deviceScheme = @patchboard().context.schemes['Gem-Device']
+      if 'credentials' of deviceScheme and !credentials.override
+        return callback "This object already has Gem-Device authentication.
+                        To overwrite it call authenticateDevice with
+                        override: true."
       
       for credential in requiredCredentials
         if credential not of credentials
-          return callback "You must provide #{credential} in order to authenticate a device"
+          return callback "You must provide #{credential} in order to
+                          authenticate a device"
 
       @patchboard().context.authorize 'Gem-Device', credentials
       # ????? SHOULD I MEMOIZE THE USER ?????
@@ -122,15 +128,16 @@ module.exports = class Client
       credentials.override = credentials.override || false
       credentials.fetch = credentials.fetch || true
 
-      if 'credential' of @patchboard().context.schemes['Gem-Application'] and !credentials.override
-        return callback 'This object already has Gem-Application authentication. To overwrite it call authenticateApplication with override: true.'
+      applicationScheme = @patchboard().context.schemes['Gem-Application']
+      if 'credential' of applicationScheme and !credentials.override
+        return callback "This object already has Gem-Application authentication.
+                        To overwrite it call authenticateApplication with
+                        override: true."
 
       for credential in requiredCredentials
         if credential not of credentials
-          return callback "You must provide #{credential} in order to authenticate as application"
+          return callback "You must provide #{credential} in order to
+                          authenticate as application"
 
       @patchboard.context.authorize 'Gem-Application', credentials
-
-
-
 

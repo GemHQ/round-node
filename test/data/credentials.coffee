@@ -1,6 +1,11 @@
+fs = require "fs"
+yaml = require "js-yaml"
+string = fs.readFileSync "./test/data/wallet.yaml"
+data = yaml.safeLoad(string)
 
-module.exports = {
-  pubkey: """-----BEGIN PUBLIC KEY-----
+email = () -> "js-test-#{Date.now()}@mail.com"
+
+pubkey = """-----BEGIN PUBLIC KEY-----
   MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJyfSUKm9Xd48yfImxDX
   DoBqh7O6PacgDfmXBEztFFA3A4ReoEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrh
   skXrWMtnt+HUzwEwdN0At3V0e3XdGwtndl9TJ94L7smltmSDHIxRl25Dj7sgmwmo
@@ -11,7 +16,7 @@ module.exports = {
   -----END PUBLIC KEY-----
   """
 
-  privkey: """-----BEGIN RSA PRIVATE KEY-----
+privkey = """-----BEGIN RSA PRIVATE KEY-----
   MIIEowIBAAKCAQEAwJyfSUKm9Xd48yfImxDXDoBqh7O6PacgDfmXBEztFFA3A4Re
   oEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrhskXrWMtnt+HUzwEwdN0At3V0e3Xd
   Gwtndl9TJ94L7smltmSDHIxRl25Dj7sgmwmoHt59UDik/Y8a/8/Fr500VF6mNV8+
@@ -39,4 +44,15 @@ module.exports = {
   nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
   -----END RSA PRIVATE KEY-----
   """
+
+
+module.exports = {
+  pubkey: pubkey
+
+  privkey: privkey
+  
+  newDevCreds: -> {email: email(), pubkey, privkey }
+
+  newUserContent: -> {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
+
 }

@@ -15,6 +15,7 @@ module.exports = class User
     @_wallets = new Wallets @client(), walletsResource
 
   # Note: requires user auth
+  #       Should we remove this entirely?
   update: (properties, callback) ->
     @resource().update properties, (error, userResource) =>
       return callback(error) if error
