@@ -1,21 +1,30 @@
 
 Developer = require './developer'
+# helpers = require('../helpers')
+MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class Developers
 
-  constructor: (client) ->
-    # !!!!! Does the user need access to the client????
+  constructor: (resource, client) ->
     @client = -> client
+    @resource = -> resource
     
-    # 'credentials' requires email and pubkey
-    # credentials can also take a privkey to authorize the client as a developer
-    @create = (credentials, callback) ->
-      client.resources().developers.create credentials, (error, developerResource) =>
-          return callback(error) if error
+  # credentials can also take a privkey to authorize the client as a developer
+  create: (credentials, callback) ->
+    requiredCredentials = ['email', 'pubkey']
+    
+    for credential in requiredCredentials
+      if credential not of credentials
+        return callback MissingCredentialError credential
 
-          client._developer = new Developer(client, developerResource)
+    # helpers.checkCredentials(credentials, requiredCredentials, callback)
 
-          if credentials.privkey
-            client.patchboard().context.authorize 'Gem-Developer', credentials
-          
-          callback null, client._developer
+    @resource().create credentials, (error, developerResource) =>
+      return callback(error) if error
+
+      @client()._developer = new Developer(developerResource, @client())
+
+      if credentials.privkey
+        @client().patchboard().context.authorize 'Gem-Developer', credentials
+      
+      callback null, @client()._developer

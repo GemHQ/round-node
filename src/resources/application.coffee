@@ -1,23 +1,26 @@
 Users = require './users'
+MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class Application
 
-  constructor: (client, resource) ->
+  constructor: (resource, client) ->
     # !!!!! WHICH PROPERTIES SHOULD WE MAKE DIRECTLY ACCESSIBLE ?????
-    # NAME, API_TOKEN, URL, KEY? 
+    # NAME, API_TOKEN, URL, KEY?
     {@name, @api_token, @url, @key} = resource
     @resource = -> resource
     @client = -> client
 
+  # ALERT: THIS SHOULD BE AYNC, MAKING A CALL TO .LIST
   users: () ->
     unless @_users
-      @_users = new Users @client(), @resource().users
+      @_users = new Users @resource().users, @client()
     
     @_users
 
+  # ALERT: THIS SHOULD BE AYNC, MAKING A CALL TO .LIST
   rules: () ->
     unless @_rules
-      @_rules  = new Rules @client(), @resource().rules
+      @_rules  = new Rules @resource().rules, @client()
     
     @_rules
 
@@ -26,8 +29,8 @@ module.exports = class Application
     requiredCredentials = ['name', 'api_token']
 
     for credential in requiredCredentials
-        if credential not of credentials
-          throw "You must provide #{credential} in order to begin authorizing as an application instance"
+      if credential not of credentials
+        return callback(MissingCredentialError(credential))
 
     @resource().authorize_instance credentials, (error, applicationInstance) ->
       return callback(error) if error
@@ -40,8 +43,8 @@ module.exports = class Application
     requiredCredentials = ['instance_id', 'api_token']
 
     for credential in requiredCredentials
-        if credential not of credentials
-          throw "You must provide #{credential} in order to begin authorizing as an application instance"
+      if credential not of credentials
+        return callback(MissingCredentialError(credential))
 
     @client().patchboard().context.authorize 'Gem-Application', credentials
     return @

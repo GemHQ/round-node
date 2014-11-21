@@ -32,8 +32,8 @@ describe 'User Resource', ->
             # NOTE: USER_TOKEN AND USER_URL NEED BE TAKEN FROM A 
             # NEW USER, WITH EMAIL: 'bez@gem.co'
             authenticateDeviceCreds = {
-              api_token: applications.default.api_token,
-              app_url: applications.default.url,
+              api_token: applications.collection.default.api_token,
+              app_url: applications.collection.default.url,
               key: 'otp.qtC227V9269iaDN-rmBsdw',
               secret: 'LNXb4PF9y8RryZeDfs1ABw',
               device_id: 'newdeviceid1415910373357',
@@ -93,50 +93,4 @@ describe 'User Resource', ->
           #   expect(user).to.be.an.instanceof(User)
           #   done(error)
 
-    describe 'user.wallets', ->
-      it 'should memoize and return a wrapped Wallet object', ->
-        userWallets = user.wallets()
-        expect(userWallets).to.be.an.instanceof(Wallets)
-        expect(user._wallets).to.deep.equal(userWallets)
-
-    describe 'wallets.create', ->
-      it 'should create and return a Wallet', (done) ->
-        wallet = data.wallet
-        wallet.name = "newwallet#{Date.now()}"
-        userWallets = user.wallets()
-        userWallets.create wallet, (error, wallet) ->
-          expect(wallet).to.be.an.instanceof(Wallet)
-          done(error)
-
-    describe 'wallet.rules', ->
-      it 'should return a Rules object', (done) ->
-        wallet = data.wallet
-        wallet.name = "newwallet#{Date.now()}"
-        userWallets = user.wallets()
-        userWallets.create wallet, (error, wallet) ->
-          accountUrl = wallet.resource().accounts.url
-          expect(wallet.rules()).to.be.an.instanceof(Rules)
-          done(error)
-
-    describe 'client.account', ->
-      it 'should return an Account object', (done) ->
-        wallet = data.wallet
-        wallet.name = "newwallet#{Date.now()}"
-        userWallets = user.wallets()
-        userWallets.create wallet, (error, wallet) ->
-          accountUrl = wallet.resource().accounts.url
-          account = client.account accountUrl
-          expect(account).to.be.an.instanceof(Account)
-          done(error)
-
-    describe 'client.wallet', ->
-      it 'should return a Wallet object', (done) ->
-        wallet = data.wallet
-        wallet.name = "newwallet#{Date.now()}"
-        userWallets = user.wallets()
-        userWallets.create wallet, (error, wallet) ->
-          walletUrl = wallet.resource().url
-          client.wallet walletUrl, (error, wallet) ->
-            expect(wallet).to.be.an.instanceof(Wallet)
-            expect(wallet.resource().url).to.equal(walletUrl)
-            done(error)
+    

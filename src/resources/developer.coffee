@@ -3,29 +3,31 @@ Applications = require './applications'
 
 module.exports = class Developer
 
-  constructor: (client, resource) ->
+  constructor: (resource, client) ->
     @client = -> client
     @resource = -> resource
     
-
+  
   applications: (callback) ->
-    return callback(null, @client()._applications) if @client()._applications
-    
+    return callback(null, @_applications) if @_applications
+
     applicationsResource = @resource().applications
-    @resource().applications.list (error, applicationsArray) =>
+
+    new Applications applicationsResource, @client(), (error, applications) =>
       return callback(error) if error
 
-      @client()._applications = new Applications @client(), applicationsResource, applicationsArray
-      callback null, @client()._applications
-    
+      @_applications = applications
+      callback null, @_applications
+
+
   # Updates authenticated developer's credentials
   # with the provided credentials. Then autheticates
-  # with the new credentials and returns a developer object
+  # with the new credentials and returns the developer object
   update: (credentials, callback) ->
     @resource().update credentials, (error, developerResource) =>
       return callback(error) if error
       
-      @client()._developer = new Developer(@client(), developerResource)
+      @resource = -> developerResource
       @client().patchboard().context.authorize 'Gem-Developer', credentials
 
-      callback null, @client()._developer
+      callback null, @

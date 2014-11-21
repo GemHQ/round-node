@@ -1,9 +1,10 @@
 
 Wallets = require './wallets'
+MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class User
 
-  constructor: (client, userResource) ->
+  constructor: (userResource, client) ->
     @client = -> client
     @resource = -> userResource
 
@@ -12,7 +13,7 @@ module.exports = class User
     return @_wallets if @_wallets
 
     walletsResource = @resource().wallets
-    @_wallets = new Wallets @client(), walletsResource
+    @_wallets = new Wallets walletsResource, @client()
 
   # Note: requires user auth
   #       Should we remove this entirely?
@@ -20,15 +21,15 @@ module.exports = class User
     @resource().update properties, (error, userResource) =>
       return callback(error) if error
 
-      @_user = new User @client(), userResource
+      @_user = new User userResource, @client()
       callback null, @_user
 
   beginDeviceAuthorization: (credentials, callback) ->
     requiredCredentials = ['name', 'device_id']
 
     for credential in requiredCredentials
-        if credential not of credentials
-          throw "You must provide #{credential} in order to authenticate"
+      if credential not of credentials
+        return callback MissingCredentialError credential
 
     {name, device_id} = credentials
     @client().patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
@@ -50,8 +51,8 @@ module.exports = class User
     requiredCredentials = ['app_url', 'api_token', 'key', 'secret']
 
     for credential in requiredCredentials
-        if credential not of credentials
-          throw "You must provide #{credential} in order to authenticate"
+      if credential not of credentials
+        return callback MissingCredentialError credential
     
     @client().authenticateOTP credentials
 
@@ -67,4 +68,4 @@ module.exports = class User
         }, (error, user) ->
           return callback(error) if error
 
-          callback null, new User @client(), user
+          callback null, new User user, @client()

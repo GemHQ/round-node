@@ -1,8 +1,8 @@
 
 module.exports = class Account
 
-  constructor: (client, accountResource) ->
+  constructor: (accountResource, client) ->
+    
     @client = -> client
     @resource = -> accountResource
 
-  

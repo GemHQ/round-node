@@ -1,4 +1,5 @@
 Round = require '../../src'
+Application = require '../../src/resources/application'
 
 expect = require('chai').expect
 fs = require "fs"
@@ -10,7 +11,7 @@ credentials = require '../data/credentials'
 bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
 
 
-describe 'Applications Resource', ->
+describe.skip 'Applications Resource', ->
   client = ''
   beforeEach (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
@@ -18,11 +19,11 @@ describe 'Applications Resource', ->
       done(error)
 
   describe 'application.authorizeInstance', ->
-    # Note: dependds on their already existing a developer account for bez@gem.co
-    it 'should create a new client with a property of patchboard', (done) ->
+    # Note: depends on their already existing a developer account for bez@gem.co
+    it 'should authorize client as an application instance', (done) ->
       client.authenticateDeveloper bezDevCreds, (error, developer) ->
         developer.applications (error, applications) ->
-          defaultApp = applications.default
+          defaultApp = applications.collection.default
           {api_token} = defaultApp
           
           # # STEP 1
@@ -38,10 +39,36 @@ describe 'Applications Resource', ->
           defaultApp.users().resource().list (error, applications) ->
             done(error)
 
+
+describe.only 'Applications', ->
+  client = developer = applications = ''
+  
+  before (done) ->
+    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+      cli.developers.create newDevCreds(), (error, dev) ->
+        dev.applications (error, apps) ->
+          console.log apps
+          client = cli; developer = dev; applications = apps
+          done(error)
+
+  it 'should memoize applications on the developer', ->
+    expect(developer).to.have.a.property('_applications')
+
+
   describe 'applications.create', ->
-    it 'should create a new Application', (done) ->
-      client.developers.create newDevCreds(), (error, developer) ->
-        developer.applications (error, applications) ->
-          name = "newApp#{Date.now()}"
-          applications.create {name}, (error, application) ->
-            done(error)
+    it 'should create a new Application Object', (done) ->
+      name = "newApp"
+      applications.create {name}, (error, application) ->
+        expect(application).to.be.an.instanceof(Application)
+        done(error)
+
+    it 'should add new application to developer._applications.collection', ->
+      expect(developer._applications.collection).to.have.property('newApp')
+
+  describe 'applications.refresh', ->
+    it 'should return applications object with new application', (done) ->
+      applications.refresh (error, applications) ->
+        expect(applications.collection).to.have.property('newApp')
+        done(error)
+
+

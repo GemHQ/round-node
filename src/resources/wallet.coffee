@@ -1,9 +1,10 @@
 
 Rules = require './rules'
+Accounts = require './accounts'
 
 module.exports = class Wallet
 
-  constructor: (client, walletResource) ->
+  constructor: (walletResource, client) ->
     @client = -> client
     @resource = -> walletResource
 
@@ -11,8 +12,11 @@ module.exports = class Wallet
   rules: () ->
     unless @_rules
       rulesResource = @resource().rules
-      @_rules = new Rules @client(), rulesResource
+      @_rules = new Rules rulesResource, @client()
 
     @_rules
 
+
+  accounts: (callback) ->
+    @_accounts || @_accounts = new Accounts @resource().accounts, @client(), callback
 

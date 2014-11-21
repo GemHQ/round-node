@@ -20,9 +20,12 @@ describe 'Developer Resource', ->
       cli.developers.create newDevCreds(), (error, dev) ->
         client = cli; developer = dev; done(error)
 
+
   describe 'developers.create', ->
-    it 'should return a developer object (and authorize if privkey is provided)', (done) ->
+    it 'should return a developer object', ->
       expect(developer).to.be.an.instanceof(Developer)
+
+    it 'should authorize if privkey is provided', (done) ->
       developerScheme = client.patchboard().context.schemes['Gem-Developer']
       expect(developerScheme).to.have.a.property('credentials')
       # proves that client is authorized as a developer
@@ -33,6 +36,7 @@ describe 'Developer Resource', ->
 
   describe 'developer.applications(callback)', ->
     applications = ''
+    
     before (done) ->
       developer.applications (error, apps) ->
         applications = apps
@@ -41,14 +45,16 @@ describe 'Developer Resource', ->
     it 'should return an Applications object', ->
       expect(applications).to.be.an.instanceof(Applications)
 
-    it "Applications object should have a 'default' Application object", ->
-      expect(applications).to.have.a.property('default')
-      expect(applications.default).to.be.an.instanceof(Application)
+    it "Applications.collection should have a 'default' Application object", ->
+      expect(applications.collection).to.have.a.property('default')
+      expect(applications.collection.default).to.be.an.instanceof(Application)
 
 
   describe 'developer.update', ->
+
     updatedDeveloper = ''
     newEmail = "thenewemail#{Date.now()}@mail.com"
+
     before (done) ->
       developer.update {email: newEmail, privkey}, (error, updatedDev) ->
         updatedDeveloper = updatedDev
@@ -67,3 +73,16 @@ describe 'Developer Resource', ->
       client.resources().developers.get (error, developerResource) ->
         expect(developerResource).to.deep.equal(updatedDeveloper.resource())
         done(error)
+
+describe 'Developer Errors', ->
+  it "should throw 'Missing Credential Error'", (done) ->
+    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+      cli.developers.create {}, (error, dev) ->
+        expect(error.type).to.equal('Missing Credential Error')
+        done()
+
+
+
+
+
+

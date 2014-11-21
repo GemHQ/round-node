@@ -2,7 +2,7 @@
 Round = require '../../src'
 Developers = require '../../src/resources/developers'
 Developer = require '../../src/resources/developer'
-Applications = require '../../src/resources/applications'
+# Applications = require '../../src/resources/applications'
 Users = require '../../src/resources/users'
 
 expect = require('chai').expect
@@ -58,12 +58,6 @@ describe 'Client Methods', ->
         expect(client.developers).to.be.an.instanceof(Developers)
         done(error)
 
-  describe 'client.applications', ->
-    it 'should return an instance of Applications', (done) ->
-      Round.client 'http://localhost:8999','testnet3', (error, client) ->
-        expect(client.applications).to.be.an.instanceof(Applications)
-        done(error)
-
   describe 'client.users', ->
     it 'should return an instance of users', (done) ->
       Round.client 'http://localhost:8999','testnet3', (error, client) ->
@@ -75,10 +69,10 @@ describe 'Client Methods', ->
       # This is tested implicitely through client.authenticateDevice test
 
     # describe 'client.account', ->
-      # This is tested in User tests because device auth is required
+      # This is tested in Account tests because device auth is required
 
     # describe 'client.wallet', ->
-      # This is tested in User tests because device auth is required
+      # This is tested in Wallet tests because device auth is required
 
     # describe.skip 'client.authenticateDevice()', ->
       # this test can be found in the User tests

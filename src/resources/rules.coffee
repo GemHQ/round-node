@@ -1,7 +1,7 @@
 
 module.exports = class Rules
 
-  constructor: (client, rulesResource) ->
+  constructor: (rulesResource, client) ->
     @client = -> client
     @resource = -> rulesResource
 

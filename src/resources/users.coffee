@@ -2,9 +2,10 @@
 User = require './user'
 module.exports = class Users
 
-  constructor: (client, resource) ->
+  constructor: (resource, client) ->
     @client = -> client
     @resource = -> resource
+    @collection = {}
   
   # requires email and wallet
   create: (content, callback) ->
@@ -12,6 +13,6 @@ module.exports = class Users
       return callback(error) if error
       # !!!!! ADD NEW USER TO USERS LIST
       # ????? MEMOIZE USER ??????
-      user = new User @client(), userResource
+      user = new User(userResource, @client())
       callback null, user
 
