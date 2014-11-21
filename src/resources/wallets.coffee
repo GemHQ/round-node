@@ -1,10 +1,12 @@
 Wallet = require './wallet'
+Collection = require './collection'
 
-module.exports = class Wallets
+module.exports = class Wallets extends Collection
 
-  constructor: (walletsResource, client) ->
-    @client = -> client
-    @resource = -> walletsResource
+  type: Wallet
+  # constructor: (walletsResource, client) ->
+  #   @client = -> client
+  #   @resource = -> walletsResource
 
   # Note: network can be either 'bitcoin_testnet', or 'bitcoin'
   create: (wallet, callback) ->

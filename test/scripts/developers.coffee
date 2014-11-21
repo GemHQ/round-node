@@ -76,8 +76,8 @@ describe 'Developer Resource', ->
 
 describe 'Developer Errors', ->
   it "should throw 'Missing Credential Error'", (done) ->
-    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
-      cli.developers.create {}, (error, dev) ->
+    Round.client 'http://localhost:8999','testnet3', (error, client) ->
+      client.developers.create {}, (error, dev) ->
         expect(error.type).to.equal('Missing Credential Error')
         done()
 

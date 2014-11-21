@@ -15,7 +15,7 @@ module.exports = class Developers
     
     for credential in requiredCredentials
       if credential not of credentials
-        return callback MissingCredentialError credential
+        return callback(MissingCredentialError(credential), credential)
 
     # helpers.checkCredentials(credentials, requiredCredentials, callback)
 

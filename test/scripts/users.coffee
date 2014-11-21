@@ -12,14 +12,11 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent} = credentials
-
-# NOTE: EMAIL MUST BE RESET WHEN DATABASE RESETS
-existingDevCreds = {email: 'js-test-1415675506694@mail.com', pubkey, privkey }
+{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
 
 describe 'User Resource', ->
-  client = developer = user = applications = authenticateDeviceCreds = ''
+  client = developer = user = applications = ''
 
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
@@ -27,20 +24,6 @@ describe 'User Resource', ->
         cli.users.create newUserContent(), (error, usr) ->
           dev.applications (error, apps) ->
             client = cli; developer = dev; user = usr; applications = apps
-
-            # NOTE: ALL PROPERTIES NEED TO BE RESET WHEN DB IS RESET
-            # NOTE: USER_TOKEN AND USER_URL NEED BE TAKEN FROM A 
-            # NEW USER, WITH EMAIL: 'bez@gem.co'
-            authenticateDeviceCreds = {
-              api_token: applications.collection.default.api_token,
-              app_url: applications.collection.default.url,
-              key: 'otp.qtC227V9269iaDN-rmBsdw',
-              secret: 'LNXb4PF9y8RryZeDfs1ABw',
-              device_id: 'newdeviceid1415910373357',
-              user_token: 'iTm14NBmJkvUnLkR0v-GktkDH1gFqOwMfdyHFTwzPjE',
-              user_url: 'http://localhost:8999/users/1Z70SwJud0nraR6EkNiS8g',
-              name: 'newapp'
-            }
             done(error)
 
   describe 'client.users.create', ->
@@ -61,7 +44,7 @@ describe 'User Resource', ->
   describe "Authenticated User", ->
     user = ''
     before (done) ->
-      client.authenticateDevice authenticateDeviceCreds, (error, usr) ->
+      client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
         user = usr
         done(error)
 
@@ -93,4 +76,11 @@ describe 'User Resource', ->
           #   expect(user).to.be.an.instanceof(User)
           #   done(error)
 
-    
+  # Skipping because it takes to long to load
+  # Must clear out bez@gem.co wallets
+  describe.skip 'user.wallets', ->
+    it 'should memoize and return a wrapped Wallet object', (done) ->
+      user.wallets (error, wallets) ->
+        expect(wallets).to.be.an.instanceof(Wallets)
+        expect(user._wallets).to.deep.equal(wallets)
+        done(error)

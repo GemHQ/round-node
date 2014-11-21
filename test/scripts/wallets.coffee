@@ -1,6 +1,7 @@
 Round = require '../../src'
 Wallet = require '../../src/resources/wallet'
 Wallets = require '../../src/resources/wallets'
+Accounts = require '../../src/resources/accounts'
 Rules = require '../../src/resources/rules'
 
 expect = require('chai').expect
@@ -9,67 +10,75 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent} = credentials
-existingDevCreds = {email: 'js-test-1415675506694@mail.com', pubkey, privkey }
+{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
-describe 'Wallet Resource', ->
-  client = developer = user = applications = authenticateDeviceCreds = ''
+
+describe 'Wallets Resource', ->
+  client = developer = user = applications = ''
 
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         dev.applications (error, apps) ->
-          client = cli; developer = dev; applications = apps;
-          # NOTE: ALL PROPERTIES NEED TO BE RESET WHEN DB IS RESET
-          # NOTE: USER_TOKEN AND USER_URL NEED BE TAKEN FROM A
-          # NEW USER, WITH EMAIL: 'bez@gem.co'
-          authenticateDeviceCreds = {
-            api_token: applications.collection.default.api_token,
-            app_url: applications.collection.default.url,
-            key: 'otp.qtC227V9269iaDN-rmBsdw',
-            secret: 'LNXb4PF9y8RryZeDfs1ABw',
-            device_id: 'newdeviceid1415910373357',
-            user_token: 'iTm14NBmJkvUnLkR0v-GktkDH1gFqOwMfdyHFTwzPjE',
-            user_url: 'http://localhost:8999/users/1Z70SwJud0nraR6EkNiS8g',
-            name: 'newapp'
-          }
-          client.authenticateDevice authenticateDeviceCreds, (error, usr) ->
+          client = cli; developer = dev; applications = apps
+          client.authenticateDevice authenticateDeviceCreds(apps), (error, usr) ->
             user = usr
             done(error)
 
-  describe 'user.wallets', ->
-    it 'should memoize and return a wrapped Wallet object', ->
-      userWallets = user.wallets()
-      expect(userWallets).to.be.an.instanceof(Wallets)
-      expect(user._wallets).to.deep.equal(userWallets)
 
-  describe 'wallets.create', ->
-    it 'should create and return a Wallet', (done) ->
+  describe 'Wallet Resource', ->
+    wallet = wallets = ''
+    # ALERT: MOVE TO PARENT BEFORE BLOCK
+    before (done) ->
       wallet = data.wallet
       wallet.name = "newwallet#{Date.now()}"
-      userWallets = user.wallets()
-      userWallets.create wallet, (error, wallet) ->
+      user.wallets (error, walts) ->
+        wallets = walts
+        walts.create wallet, (error, walt) ->
+          wallet = walt
+          done(error)
+
+    describe 'wallets.create', ->
+      it 'should create and return a Wallet', ->
         expect(wallet).to.be.an.instanceof(Wallet)
-        done(error)
 
-  describe 'wallet.rules', ->
-    it 'should return a Rules object', (done) ->
-      wallet = data.wallet
-      wallet.name = "newwallet#{Date.now()}"
-      userWallets = user.wallets()
-      userWallets.create wallet, (error, wallet) ->
-        accountUrl = wallet.resource().accounts.url
-        expect(wallet.rules()).to.be.an.instanceof(Rules)
-        done(error)
+    # Skipping because it takes to long to load
+    # Must clear out bez@gem.co wallets
+    describe.skip 'wallets.refresh', ->
+      it 'should refresh wallets.coolection with a new collection', (done) ->
+        wallets.refresh (error, wallets) ->
+          done(error)
 
-  describe 'client.wallet', ->
-    it 'should return a Wallet object', (done) ->
-      wallet = data.wallet
-      wallet.name = "newwallet#{Date.now()}"
-      userWallets = user.wallets()
-      userWallets.create wallet, (error, wallet) ->
+
+    describe 'wallet.accounts', ->
+      accounts = ''
+
+      before (done) ->
+        wallet.accounts (error, accnts) ->
+          accounts = accnts
+          done(error)
+
+      it 'should return an accounts abject', ->
+        expect(accounts).to.be.an.instanceof(Accounts)
+
+      it 'should load accounts.collection with accounts', ->
+        expect(accounts.collection).to.have.a.property('default')
+
+      it 'should memoize the accounts object on the wallet', ->
+        expect(wallet._accounts).to.deep.equal(accounts)
+
+
+    describe.skip 'wallet.rules', ->
+      it 'should return a rules object', ->
+        # Note: Does not have .list
+        wallet.resource().rules.list (error, rules) ->
+
+
+    describe 'client.wallet', ->
+      it 'should return a Wallet object', ->
         walletUrl = wallet.resource().url
         client.wallet walletUrl, (error, wallet) ->
           expect(wallet).to.be.an.instanceof(Wallet)
           expect(wallet.resource().url).to.equal(walletUrl)
-          done(error)
+
+    

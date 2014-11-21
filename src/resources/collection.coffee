@@ -1,13 +1,9 @@
 Application = require './application'
 
+
 module.exports = class Collection
 
-  constructor: (applicationsResource, client, callback) ->
-    # @type = Application
-    @client = -> client
-    @resource = -> applicationsResource
-    @collection = {}
-    
+  getData = (callback) ->
     @resource().list (error, items) =>
       return callback(error) if error
 
@@ -17,12 +13,14 @@ module.exports = class Collection
       callback null, @
 
 
+  constructor: (applicationsResource, client, callback) ->
+    @client = -> client
+    @resource = -> applicationsResource
+    @collection = {}
+    
+    getData.call(@, callback)
+
+
   refresh: (callback) ->
     @collection = {}
-    @resource().list (error, applications) =>
-      return callback(error) if error
-
-      for app in applications
-        @collection[app.name] = new Application app, @client()
-
-      callback null, @
+    getData.call(@, callback)

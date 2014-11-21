@@ -18,5 +18,12 @@ module.exports = class Wallet
 
 
   accounts: (callback) ->
-    @_accounts || @_accounts = new Accounts @resource().accounts, @client(), callback
+    return callback(null, @_accounts) if @_accounts
+
+    accountsResource = @resource().accounts
+    new Accounts accountsResource, @client(), (error, accounts) =>
+      return callback(error) if error
+
+      @_accounts = accounts
+      callback null, @_accounts
 

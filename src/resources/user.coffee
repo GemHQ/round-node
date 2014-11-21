@@ -9,11 +9,15 @@ module.exports = class User
     @resource = -> userResource
 
 
-  wallets: () ->
-    return @_wallets if @_wallets
+  wallets: (callback) ->
+    return callback(null, @_wallets) if @_wallets
 
     walletsResource = @resource().wallets
-    @_wallets = new Wallets walletsResource, @client()
+    new Wallets walletsResource, @client(), (error, wallets) =>
+      return callback(error) if error
+
+      @_wallets = wallets
+      callback null, @_wallets
 
   # Note: requires user auth
   #       Should we remove this entirely?

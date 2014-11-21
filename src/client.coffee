@@ -95,7 +95,7 @@ module.exports = class Client
           throw errors.ExistingAuthenticationError
       
       @patchboard().context.authorize 'Gem-OOB-OTP', credentials
-      return true 
+      return true
 
 
     # optional credentials are: app_url, override, fetch

@@ -1,11 +1,11 @@
 
 Account = require './account'
+Collection = require './collection'
 
-module.exports = class Accounts
 
-  constructor: (accountsResource, client, callback) ->
-    @client = -> client
-    @resource = -> accountsResource
+module.exports = class Accounts extends Collection
+
+  type: Account
 
   # content must contain email
   create: (content, callback) ->
@@ -15,4 +15,3 @@ module.exports = class Accounts
       account = new Account accountResource, @client()
       @[content.name] = account
       callback null, account
-

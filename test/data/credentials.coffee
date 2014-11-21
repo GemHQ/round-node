@@ -44,6 +44,19 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
   nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
   -----END RSA PRIVATE KEY-----
   """
+# NOTE: ALL PROPERTIES NEED TO BE RESET WHEN DB IS RESET
+# NOTE: USER_TOKEN AND USER_URL NEED BE TAKEN FROM A
+# NEW USER, WITH EMAIL: 'bez@gem.co'
+authenticateDeviceCreds = (applications) -> {
+  api_token: applications.collection.default.api_token,
+  app_url: applications.collection.default.url,
+  key: 'otp.qtC227V9269iaDN-rmBsdw',
+  secret: 'LNXb4PF9y8RryZeDfs1ABw',
+  device_id: 'newdeviceid1415910373357',
+  user_token: 'iTm14NBmJkvUnLkR0v-GktkDH1gFqOwMfdyHFTwzPjE',
+  user_url: 'http://localhost:8999/users/1Z70SwJud0nraR6EkNiS8g',
+  name: 'newapp'
+}
 
 
 module.exports = {
@@ -54,5 +67,11 @@ module.exports = {
   newDevCreds: -> {email: email(), pubkey, privkey }
 
   newUserContent: -> {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
+
+  # NOTE: EMAIL MUST BE RESET WHEN DATABASE RESETS
+  existingDevCreds: {email: 'js-test-1415675506694@mail.com', pubkey, privkey }
+
+  authenticateDeviceCreds: authenticateDeviceCreds
+
 
 }

@@ -11,7 +11,7 @@ credentials = require '../data/credentials'
 bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
 
 
-describe.skip 'Applications Resource', ->
+describe 'Applications Resource', ->
   client = ''
   beforeEach (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
@@ -40,14 +40,13 @@ describe.skip 'Applications Resource', ->
             done(error)
 
 
-describe.only 'Applications', ->
+describe 'Applications', ->
   client = developer = applications = ''
   
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.developers.create newDevCreds(), (error, dev) ->
         dev.applications (error, apps) ->
-          console.log apps
           client = cli; developer = dev; applications = apps
           done(error)
 
@@ -70,5 +69,4 @@ describe.only 'Applications', ->
       applications.refresh (error, applications) ->
         expect(applications.collection).to.have.property('newApp')
         done(error)
-
-
+  
