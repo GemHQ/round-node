@@ -28,7 +28,9 @@ module.exports = class Applications extends Collection
       return callback(error) if error
 
       application = new Application appResource, @client()
-      @collection[appResource.name] = application
+      # the key is a reference to the resource's name
+      # therefor it will update when the resource updates. 
+      @collection[application.resource().name] = application
       
       callback null, application
 

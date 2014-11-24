@@ -13,5 +13,5 @@ module.exports = class Accounts extends Collection
       return callback(error) if error
 
       account = new Account accountResource, @client()
-      @[content.name] = account
+      @collection[account.resource().name] = account
       callback null, account

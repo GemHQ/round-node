@@ -17,8 +17,6 @@ module.exports = class Developers
       if credential not of credentials
         return callback(MissingCredentialError(credential), credential)
 
-    # helpers.checkCredentials(credentials, requiredCredentials, callback)
-
     @resource().create credentials, (error, developerResource) =>
       return callback(error) if error
 

@@ -47,9 +47,9 @@ describe 'Account Resource', ->
     it 'should create a new Account object', () ->
       expect(newAccount).to.be.an.instanceof(Account)
 
-    it.skip 'should memoize the new account', () ->
-      # currently doesn't add account to a collections obj
-      console.log wallet.accounts()
+    it 'should memoize the new account', () ->
+      wallet.accounts (error, accounts) ->
+        expect(wallet._accounts.collection).to.have.a.property('newAccount')
      
 
 
