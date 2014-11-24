@@ -15,7 +15,7 @@ credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
 
-describe 'User Resource', ->
+describe.only 'User Resource', ->
   client = developer = user = applications = ''
 
   before (done) ->

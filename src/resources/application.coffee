@@ -1,3 +1,4 @@
+
 Users = require './users'
 MissingCredentialError = require('../errors').MissingCredentialError
 
@@ -10,12 +11,23 @@ module.exports = class Application
     @resource = -> resource
     @client = -> client
 
+  
+  users: (callback) ->
+    return callback(null, @_users) if @_users
+
+    usersResource = @resource().users
+    new Users usersResource, @client(), (error, users) ->
+      return callback(error) if error
+
+      @_users = users
+      callback null, @_users
+  
   # ALERT: THIS SHOULD BE AYNC, MAKING A CALL TO .LIST
-  users: () ->
-    unless @_users
-      @_users = new Users @resource().users, @client()
+  # users: () ->
+  #   unless @_users
+  #     @_users = new Users @resource().users, @client()
     
-    @_users
+  #   @_users
 
   # ALERT: THIS SHOULD BE AYNC, MAKING A CALL TO .LIST
   rules: () ->

@@ -1,18 +1,25 @@
 
 User = require './user'
-module.exports = class Users
+Collection = require './collection'
 
-  constructor: (resource, client) ->
-    @client = -> client
-    @resource = -> resource
-    @collection = {}
+
+module.exports = class Users extends Collection
+
+  type: User
+
+  # constructor: (resource, client) ->
+  #   @client = -> client
+  #   @resource = -> resource
+  #   @collection = {}
   
   # requires email and wallet
   create: (content, callback) ->
-    @client().resources().users.create content, (error, userResource) =>
+    @resource().create content, (error, userResource) =>
       return callback(error) if error
-      # !!!!! ADD NEW USER TO USERS LIST
-      # ????? MEMOIZE USER ??????
+
       user = new User(userResource, @client())
+      # the key is a reference to the resource's name
+      # therefor it will update when the resource updates.
+      @collection[user.resource().name] = user
       callback null, user
 

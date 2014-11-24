@@ -22,7 +22,7 @@ module.exports = class Collection
     @resource = -> applicationsResource
     @collection = {}
     
-    getData.call(@, callback)
+    getData.call(@, callback) if callback
 
 
   refresh: (callback) ->

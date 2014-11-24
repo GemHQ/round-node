@@ -14,19 +14,20 @@ module.exports = class Client
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
     
-
+    # FIX: should be async
     @developers = new Developers(@resources().developers, @)
 
-
+    # Fix: through a real error
     @developer = ->
       return @_developer if @_developer
 
       throw 'You have not yet authenticated as a developer'
 
 
-    @users = @_users || new Users(@resources().users, @)
+    @users = new Users(@resources().users, @)
 
-
+    # FIX: should recieve a url. Use python and ruby are very
+    # different in their implentation of this
     @user = (callback) ->
       return callback(null, @_user) if @_user
       
@@ -37,7 +38,7 @@ module.exports = class Client
         @_user = new User(userResource, @)
         callback null, @_user
 
-    # Alert: Why doesnt this need to make a call to the database?
+    # QUESTION: Why doesnt this need to make a call to the database?
     @account = (url) ->
       if url
         accountResource = @resources().accounts(url)
