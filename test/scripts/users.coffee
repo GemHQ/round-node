@@ -21,6 +21,7 @@ describe 'User Resource', ->
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
+        console.log error, dev
         cli.users.create newUserContent(), (error, usr) ->
           dev.applications (error, apps) ->
             client = cli; developer = dev; user = usr; applications = apps

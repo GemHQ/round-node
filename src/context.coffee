@@ -46,25 +46,26 @@ module.exports = class Context
 
   # Called by Patchboard on every request
   authorizer: (schemes, resource, action, request) ->
-    body =  if 'body' of request then request['body'] else '{}'
-
     return {scheme: '', credential: ''} if arguments.length < 4
     
     for scheme in schemes
       if scheme of @schemes and 'credentials' of @schemes[scheme]
         if scheme is 'Gem-Developer'
+          body = if 'body' of request then request['body'] else '{}'
+          timestamp = Math.round(Date.now() / 1000)
           return {
             scheme,
-            credential: "#{@schemes[scheme]['credentials']},signature=\"#{@devSignature(body)}\""
+            credential: "#{@schemes[scheme]['credentials']},
+                        signature=\"#{@devSignature(body, timestamp)}\",
+                        timestamp=\"#{timestamp}\"",
           }
         else
           return { scheme, credential: @schemes[scheme]['credentials'] }
 
 
-  devSignature: (requestBody) ->
+  devSignature: (requestBody, timestamp) ->
     signer = crypto.createSign 'RSA-SHA256'
-    date = new Date()
-    content =  "#{requestBody}-#{date.getUTCFullYear()}/#{formatDate(date.getUTCMonth() + 1)}/#{formatDate(date.getUTCDate())}"
+    content = "#{requestBody}-#{timestamp}"
     signer.update content
     signature = signer.sign @privkey
     base64url.encode signature
