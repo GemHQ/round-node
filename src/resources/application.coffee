@@ -1,5 +1,6 @@
 
 Users = require './users'
+Rules = require './rules'
 MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class Application
@@ -22,19 +23,10 @@ module.exports = class Application
       @_users = users
       callback null, @_users
   
-  # ALERT: THIS SHOULD BE AYNC, MAKING A CALL TO .LIST
-  # users: () ->
-  #   unless @_users
-  #     @_users = new Users @resource().users, @client()
-    
-  #   @_users
 
-  # ALERT: THIS SHOULD BE AYNC, MAKING A CALL TO .LIST
-  rules: () ->
-    unless @_rules
-      @_rules  = new Rules @resource().rules, @client()
+  rules: ->
+    @_rules || new Rules @resource().rules, @client()
     
-    @_rules
 
   # Note: credentials requires an api_token and a name
   beginInstanceAuthorization: (credentials, callback) ->

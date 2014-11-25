@@ -4,9 +4,6 @@ Collection = require './collection'
 module.exports = class Wallets extends Collection
 
   type: Wallet
-  # constructor: (walletsResource, client) ->
-  #   @client = -> client
-  #   @resource = -> walletsResource
 
   # Note: network can be either 'bitcoin_testnet', or 'bitcoin'
   create: (wallet, callback) ->
@@ -14,8 +11,8 @@ module.exports = class Wallets extends Collection
       return callback(error) if error
 
       wallet = new Wallet walletResource, @client()
-      walletName = walletResource.name
-      @[walletName] = wallet
+      walletName = wallet.resource().name
+      @collection[walletName] = wallet
       
       callback(null, wallet)
 

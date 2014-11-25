@@ -1,10 +1,11 @@
 
 Developer = require './developer'
-# helpers = require('../helpers')
 MissingCredentialError = require('../errors').MissingCredentialError
 
+# Developers does not inherit from Coolection
+# because the developer resource does not have .list method
 module.exports = class Developers
-
+  
   constructor: (resource, client) ->
     @client = -> client
     @resource = -> resource

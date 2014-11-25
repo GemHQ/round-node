@@ -50,11 +50,11 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
 authenticateDeviceCreds = (applications) -> {
   api_token: applications.collection.default.api_token,
   app_url: applications.collection.default.url,
-  key: 'otp.qtC227V9269iaDN-rmBsdw',
-  secret: 'LNXb4PF9y8RryZeDfs1ABw',
-  device_id: 'newdeviceid1415910373357',
-  user_token: 'iTm14NBmJkvUnLkR0v-GktkDH1gFqOwMfdyHFTwzPjE',
-  user_url: 'http://localhost:8999/users/1Z70SwJud0nraR6EkNiS8g',
+  key: 'otp.5acRRKvtln8PSfRgXzs1TQ',
+  secret: 'Gh2HQXP8wEDYF61A_nFlAA',
+  device_id: 'newdeviceid1416886146623',
+  user_token: '77AgbYAtEx-pzCTsM3qdqjngzYuSQlL6cSyENbZCWTs',
+  user_url: 'http://localhost:8999/users/zMKpGQeN9x5OslX0R_xnwQ',
   name: 'newapp'
 }
 
@@ -69,9 +69,28 @@ module.exports = {
   newUserContent: -> {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
 
   # NOTE: EMAIL MUST BE RESET WHEN DATABASE RESETS
-  existingDevCreds: {email: 'js-test-1415675506694@mail.com', pubkey, privkey }
+  existingDevCreds: {email: 'js-test-1416883330485@mail.com', pubkey, privkey }
 
   authenticateDeviceCreds: authenticateDeviceCreds
 
-
 }
+
+
+
+
+# # STARTUP SCRIPT
+# describe 'setup', ->
+#   it 'should create a developer and user for you', (done) ->
+#     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+#       email = email()
+#       cli.developers.create {email, pubkey, privkey}, (error, dev) ->
+#         console.log error, "Developer email #{dev.resource().email} "
+#         bezUserCreds = {email: 'bez@gem.co', wallet: data.wallet}
+#         cli.users.create bezUserCreds, (error, usr) ->
+#           console.log error, "bez user created"
+#           done(error)
+
+#   it 'should create a bez developer', (done) ->
+#     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+#       cli.developers.create {email:'bez@gem.co', pubkey, privkey}, (error, developer) ->
+#         console.log error, "bez developer created"

@@ -6,11 +6,6 @@ Collection = require './collection'
 module.exports = class Users extends Collection
 
   type: User
-
-  # constructor: (resource, client) ->
-  #   @client = -> client
-  #   @resource = -> resource
-  #   @collection = {}
   
   # requires email and wallet
   create: (content, callback) ->

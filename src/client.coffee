@@ -17,7 +17,7 @@ module.exports = class Client
     # FIX: should be async
     @developers = new Developers(@resources().developers, @)
 
-    # Fix: through a real error
+    # Fix: throw a real error and change relevant tests
     @developer = ->
       return @_developer if @_developer
 
@@ -27,7 +27,7 @@ module.exports = class Client
     @users = new Users(@resources().users, @)
 
     # FIX: should recieve a url. Use python and ruby are very
-    # different in their implentation of this
+    # different in their implentations of this
     @user = (callback) ->
       return callback(null, @_user) if @_user
       
@@ -38,7 +38,9 @@ module.exports = class Client
         @_user = new User(userResource, @)
         callback null, @_user
 
-    # QUESTION: Why doesnt this need to make a call to the database?
+    # QUESTION: Why doesn't this need to make a call to the database?
+    # QUESTION: shouldn't this method solely live on the wallet? 
+    #   What's the benefit of having it on the client
     @account = (url) ->
       if url
         accountResource = @resources().accounts(url)

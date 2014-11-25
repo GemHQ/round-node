@@ -14,4 +14,5 @@ module.exports = class Accounts extends Collection
 
       account = new Account accountResource, @client()
       @collection[account.resource().name] = account
+      
       callback null, account

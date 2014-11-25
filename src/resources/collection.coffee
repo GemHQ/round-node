@@ -22,6 +22,8 @@ module.exports = class Collection
     @resource = -> applicationsResource
     @collection = {}
     
+    # calls like client.users do not need to fetch data
+    # therefor they don't pass a callback
     getData.call(@, callback) if callback
 
 

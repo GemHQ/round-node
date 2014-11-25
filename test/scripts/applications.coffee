@@ -1,5 +1,7 @@
 Round = require '../../src'
 Application = require '../../src/resources/application'
+Users = require '../../src/resources/users'
+Rules = require '../../src/resources/rules'
 
 expect = require('chai').expect
 fs = require "fs"
@@ -24,12 +26,12 @@ describe 'Applications Resource', ->
           
           # # STEP 1
           # name = "newAppInstance#{Date.now()}"
-          # defaultApp.beginInstanceAuthorization {name, api_token}, (error, applicationInstance) ->
+          # defltApp.beginInstanceAuthorization {name, api_token}, (error, applicationInstance) ->
           #   done(error)
 
           # STEP 2
           # instance_id comes from an email
-          instance_id = 'u-mwQs2uNR9oksuOhZ9ahTHveAoOTxNNW18nQtgpa8o'
+          instance_id = 'EZlh5eVFwEus3iN7EfxRZPQaL3m9GgfM0PKkYeAr9mY'
           defltApp.finishInstanceAuthorization {api_token, instance_id}
           defaultApp = defltApp; applications = apps
           done(error)
@@ -45,8 +47,15 @@ describe 'Applications Resource', ->
   describe 'application.users', ->
     it 'should return a users object with a collection property', (done) ->
       defaultApp.users (error, users) ->
+        expect(users).to.be.an.instanceof(Users)
         expect(users).to.have.property('collection')
         done(error)
+
+  describe 'application.rules', ->
+    # rules does not have a .list method
+    it 'should return a rules object', ->
+      rules = defaultApp.rules()
+      expect(rules).to.be.an.instanceof(Rules)
       
 
 describe 'Applications', ->

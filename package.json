@@ -14,9 +14,10 @@
     "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer"
   },
   "devDependencies": {
+    "chai": "^1.9.2",
     "js-yaml": "^3.2.2",
-    "testify": "^0.2.10",
     "mocha": "^2.0.1",
-    "chai": "^1.9.2"
+    "node-inspector": "^0.7.4",
+    "testify": "^0.2.10"
   }
 }

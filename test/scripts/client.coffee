@@ -64,6 +64,7 @@ describe 'Client Methods', ->
         expect(client.users).to.be.an.instanceof(Users)
         done(error)
 
+
   # Notes:
     # describe.skip 'client.user(callback)', ->
       # This is tested implicitely through client.authenticateDevice test
