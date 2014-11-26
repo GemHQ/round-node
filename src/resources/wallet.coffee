@@ -27,3 +27,8 @@ module.exports = class Wallet
       @_accounts = accounts
       callback null, @_accounts
 
+  # TODO
+  # unlock: ->
+
+  
+

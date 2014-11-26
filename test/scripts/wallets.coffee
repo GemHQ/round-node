@@ -34,13 +34,17 @@ describe 'Wallets Resource', ->
       wallet.name = "newwallet#{Date.now()}"
       user.wallets (error, walts) ->
         wallets = walts
-        walts.create wallet, (error, walt) ->
-          wallet = walt
-          done(error)
+        wallet = walts.collection.default
+        done(error)
 
-    describe 'wallets.create', ->
-      it 'should create and return a Wallet', ->
-        expect(wallet).to.be.an.instanceof(Wallet)
+    # skipping because it creates a wallet
+    describe.skip 'wallets.create', ->
+      it 'should create and return a Wallet', (done) ->
+        wallet = data.wallet
+        wallet.name = "newwallet#{Date.now()}"
+        wallets.create wallet, (error, wallet) ->
+          expect(wallet).to.be.an.instanceof(Wallet)
+          done()
 
     # Skipping because it takes to long to load
     # Must clear out bez@gem.co wallets
@@ -72,6 +76,9 @@ describe 'Wallets Resource', ->
       it 'should return a rules object', ->
         # Note: Does not have .list
         wallet.resource().rules.list (error, rules) ->
+
+    describe.skip 'wallet.unlock', ->
+      it 'should unlock the wallet', ->
 
 
     describe 'client.wallet', ->

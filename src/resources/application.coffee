@@ -17,7 +17,7 @@ module.exports = class Application
     return callback(null, @_users) if @_users
 
     usersResource = @resource().users
-    new Users usersResource, @client(), (error, users) ->
+    new Users usersResource, @client(), (error, users) =>
       return callback(error) if error
 
       @_users = users

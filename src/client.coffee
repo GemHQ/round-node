@@ -23,7 +23,6 @@ module.exports = class Client
 
       throw 'You have not yet authenticated as a developer'
 
-
     @users = new Users(@resources().users, @)
 
     # FIX: should recieve a url. Use python and ruby are very
