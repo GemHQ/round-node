@@ -7,7 +7,7 @@ module.exports = class Users extends Collection
 
   type: User
   
-  # requires email and wallet
+  # content requires email and wallet
   create: (content, callback) ->
     @resource().create content, (error, userResource) =>
       return callback(error) if error

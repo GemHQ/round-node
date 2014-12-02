@@ -19,6 +19,7 @@ describe 'Wallets Resource', ->
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
+        console.log error, dev
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps
           client.authenticateDevice authenticateDeviceCreds(apps), (error, usr) ->
@@ -28,7 +29,7 @@ describe 'Wallets Resource', ->
 
   describe 'Wallet Resource', ->
     wallet = wallets = ''
-    # ALERT: MOVE TO PARENT BEFORE BLOCK
+    # ALERT: MOVE TO PARENT 'BEFORE' BLOCK
     before (done) ->
       wallet = data.wallet
       wallet.name = "newwallet#{Date.now()}"
@@ -36,6 +37,11 @@ describe 'Wallets Resource', ->
         wallets = walts
         wallet = walts.collection.default
         done(error)
+
+    describe.only "seeds", ->
+      it 'should return seeds', ->
+        console.log wallet.resource()
+
 
     # skipping because it creates a wallet
     describe.skip 'wallets.create', ->
