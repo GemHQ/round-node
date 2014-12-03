@@ -24,7 +24,7 @@ describe 'User Resource', ->
         # cli.users.create newUserContent(), (error, usr) ->
         email = "js-test-#{Date.now()}@mail.com"
         passphrase = 'passphrase'
-        cli.users.create email, passphrase, (error, user_and_multiwallet) ->
+        cli.users.create {email, passphrase}, (error, user_and_multiwallet) ->
           dev.applications (error, apps) ->
             client = cli; developer = dev; applications = apps
             user = user_and_multiwallet.user
@@ -32,7 +32,6 @@ describe 'User Resource', ->
 
   describe.only 'client.users.create', ->
     it 'should create a user object', (done) ->
-      console.log user
       expect(user.resource()).to.have.a.property('email')
       done()
 
