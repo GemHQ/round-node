@@ -24,6 +24,7 @@ describe 'Wallets Resource', ->
           client.authenticateDevice authenticateDeviceCreds(apps), (error, usr) ->
             user = usr
             done(error)
+            "test"
 
 
   describe 'Wallet Resource', ->
