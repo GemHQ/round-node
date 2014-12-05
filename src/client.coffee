@@ -14,14 +14,13 @@ module.exports = class Client
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
     
-    # FIX: should be async
     @developers = new Developers(@resources().developers, @)
 
     # Fix: throw a real error and change relevant tests
     @developer = ->
       return @_developer if @_developer
 
-      throw 'You have not yet authenticated as a developer'
+      throw Error 'You have not yet authenticated as a developer'
 
     @users = new Users(@resources().users, @)
 

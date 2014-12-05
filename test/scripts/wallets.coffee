@@ -3,6 +3,9 @@ Wallet = require '../../src/resources/wallet'
 Wallets = require '../../src/resources/wallets'
 Accounts = require '../../src/resources/accounts'
 Rules = require '../../src/resources/rules'
+CoinOP = require 'coinop'
+PassphraseBox = CoinOP.crypto.PassphraseBox
+MultiWallet = CoinOP.bit.MultiWallet
 
 expect = require('chai').expect
 fs = require "fs"
@@ -19,7 +22,6 @@ describe 'Wallets Resource', ->
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
-        console.log error, dev
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps
           client.authenticateDevice authenticateDeviceCreds(apps), (error, usr) ->
@@ -38,10 +40,10 @@ describe 'Wallets Resource', ->
         wallet = walts.collection.default
         done(error)
 
-    describe.only "seeds", ->
-      it 'should return seeds', ->
-        console.log wallet.resource()
-
+    describe.only "wallet unlock", ->
+      it "return a MultiWallet instance", ->
+        multiwallet = wallet.unlock("foo bar baz")
+        expect(multiwallet).to.be.an.instanceof(MultiWallet)
 
     # skipping because it creates a wallet
     describe.skip 'wallets.create', ->

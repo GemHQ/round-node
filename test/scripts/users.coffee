@@ -21,14 +21,18 @@ describe 'User Resource', ->
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
-        cli.users.create newUserContent(), (error, usr) ->
+        # cli.users.create newUserContent(), (error, usr) ->
+        email = "js-test-#{Date.now()}@mail.com"
+        passphrase = 'passphrase'
+        cli.users.create {email, passphrase}, (error, user_and_multiwallet) ->
           dev.applications (error, apps) ->
-            client = cli; developer = dev; user = usr; applications = apps
+            client = cli; developer = dev; applications = apps
+            user = user_and_multiwallet.user
             done(error)
 
-  describe 'client.users.create', ->
+  describe.only 'client.users.create', ->
     it 'should create a user object', (done) ->
-      expect(user.resource()).to.have.a.property('email') 
+      expect(user.resource()).to.have.a.property('email')
       done()
 
   # being skipped because it sends an email

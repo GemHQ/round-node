@@ -11,7 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "base64-url": "1.0.0",
-    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer"
+    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer",
+    "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#feature/multiwallet"
   },
   "devDependencies": {
     "chai": "^1.9.2",
