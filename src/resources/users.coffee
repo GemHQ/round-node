@@ -1,8 +1,8 @@
 
 User = require './user'
-coinop = require('coinop')
-PassphraseBox = coinop.crypto.PassphraseBox
-MultiWallet = coinop.bit.MultiWallet
+CoinOp = require('coinop')
+PassphraseBox = CoinOp.crypto.PassphraseBox
+MultiWallet = CoinOp.bit.MultiWallet
 
 Collection = require './collection'
 
@@ -13,10 +13,10 @@ module.exports = class Users extends Collection
   
   # content requires email and wallet
   create: (content, callback) ->
-    {email, passphrase} = content
-    multiwallet = MultiWallet.generate(['primary', 'backup'])
     # ALERT: should the network be hardcoded to testnet?
-    network = 'bitcoin_testnet'
+    network = 'testnet'
+    {email, passphrase} = content
+    multiwallet = MultiWallet.generate(['primary', 'backup'], network)
     primarySeed = multiwallet.trees.primary.toBase58()
     encryptedSeed = PassphraseBox.encrypt(passphrase, primarySeed)
     wallet = {
