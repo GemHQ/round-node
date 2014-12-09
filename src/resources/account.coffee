@@ -1,5 +1,6 @@
 Addresses = require './addresses'
 Transactions = require './transactions'
+PaymentGenerator = require './payment_generator'
 
 module.exports = class Account
 
@@ -27,20 +28,19 @@ module.exports = class Account
       @_addresses = addresses
       callback null, @_addresses
 
+
+  # pay: (payees) ->
+  #   unless payees
+  #     throw Error('Payees must be specified')
+
+  #   unless @
+
   
-  # FIX: account.resource().transactions returns a funcrion
+  # FIX: account.resource().transactions returns a function
     #  not a resource. Could be a bug in Patchboard
   # transactions: ->
   #   transactionsResource = @resource().transactions
-  #   @_transactions ||= new Transactions(transactionsResource, @client())
-
-  
-  
+  #   @_transactions ?= new Transactions(transactionsResource, @client())
 
 
-
-
-
-
-
-
+  payments: -> @_payments ?= new PaymentGenerator(@resource().payments)

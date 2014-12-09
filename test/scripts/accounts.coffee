@@ -2,6 +2,7 @@ Round = require '../../src'
 Account = require '../../src/resources/account'
 Addresses = require '../../src/resources/addresses'
 Transactions = require '../../src/resources/transactions'
+PaymentGenerator = require '../../src/resources/payment_generator'
 
 expect = require('chai').expect
 fs = require "fs"
@@ -29,6 +30,20 @@ describe 'Accounts Resource', ->
                 accounts = accnts
                 account = accounts.collection.default
                 done(error)
+
+  describe 'account.payments', ->
+    payments = null
+    
+    before ->
+      payments = account.payments()
+
+    it 'should return an instance of PaymentGenerator ', ->
+      expect(payments).to.be.an.instanceof(PaymentGenerator)
+
+    it 'should memoize the instance on @_payments', ->
+      expect(account._payments).to.deep.equal(payments)
+
+
 
   # Note: We may be removing client.account
   describe 'client.account', ->
