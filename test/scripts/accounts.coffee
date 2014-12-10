@@ -31,6 +31,7 @@ describe 'Accounts Resource', ->
                 account = accounts.collection.default
                 done(error)
 
+
   describe 'account.payments', ->
     payments = null
     
@@ -44,6 +45,9 @@ describe 'Accounts Resource', ->
       expect(account._payments).to.deep.equal(payments)
 
 
+  describe.only 'account.wallet', ->
+    it 'should reference the wallet it belongs to', ->
+      console.log account.wallet
 
   # Note: We may be removing client.account
   describe 'client.account', ->

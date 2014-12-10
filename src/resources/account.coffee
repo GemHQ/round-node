@@ -4,7 +4,7 @@ PaymentGenerator = require './payment_generator'
 
 module.exports = class Account
 
-  constructor: (accountResource, client) ->
+  constructor: (accountResource, client, @wallet) ->
     @client = -> client
     @resource = -> accountResource
 

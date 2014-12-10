@@ -1,6 +1,5 @@
 Application = require './application'
 
-
 module.exports = class Collection
 
   # populates collection with wrapped resources
@@ -10,6 +9,12 @@ module.exports = class Collection
 
       for resource in resourceArray
         wrappedResource = new @type(resource, @client())
+
+        # FIXME: this is inefficient to check every 
+        # adds wallet object for every account
+        if @type.name == 'Account'
+          wrappedResource.wallet = @wallet
+
         # The key is a reference to the resource's name
         # therefor it will update when the resource updates. 
         @collection[wrappedResource.resource().name] = wrappedResource
@@ -21,7 +26,6 @@ module.exports = class Collection
     @client = -> client
     @resource = -> applicationsResource
     @collection = {}
-    
     # calls like client.users do not need to fetch data
     # therefor they don't pass a callback
     getData.call(@, callback) if callback

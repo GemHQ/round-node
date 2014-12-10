@@ -24,11 +24,11 @@ module.exports = class Wallet
     return callback(null, @_accounts) if @_accounts
 
     accountsResource = @resource().accounts
-    new Accounts accountsResource, @client(), (error, accounts) =>
+    new Accounts accountsResource, @client(), ((error, accounts) =>
       return callback(error) if error
 
       @_accounts = accounts
-      callback null, @_accounts
+      callback null, @_accounts), @ #accounts takes a wallet
 
   unlock: (passphrase) ->
     primary_seed = PassphraseBox.decrypt(passphrase, @resource().primary_private_seed)
