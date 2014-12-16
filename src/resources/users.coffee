@@ -34,6 +34,4 @@ module.exports = class Users extends Collection
       # the key is a reference to the resource's name
       # therefor it should update when the resource updates.
       @collection[user.resource().name] = user
-      # ALERT: do we want to return the multiwallet?
-      #        why not return just the user?
       callback(null, {multiwallet, user})

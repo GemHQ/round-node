@@ -29,12 +29,19 @@ module.exports = class Account
       callback null, @_addresses
 
 
-  # pay: (payees) ->
-  #   unless payees
-  #     throw Error('Payees must be specified')
+  pay: (payees, callback) ->
+    unless payees
+      throw Error('Payees must be specified')
 
-  #   unless @
+    multiwallet = @wallet._multiwallet
+    unless multiwallet
+      throw Error('You must unlock the wallet before attempting a transaction')
 
+    @payments().unsigned payees, (error, payment) ->
+      callback(error) if error
+      
+      signedPayment = payment.sign(multiwallet)
+      callback null, signedPayment
   
   # FIX: account.resource().transactions returns a function
     #  not a resource. Could be a bug in Patchboard
@@ -43,4 +50,4 @@ module.exports = class Account
   #   @_transactions ?= new Transactions(transactionsResource, @client())
 
 
-  payments: -> @_payments ?= new PaymentGenerator(@resource().payments)
+  payments: -> @_payments ?= new PaymentGenerator(@resource().payments, @client())

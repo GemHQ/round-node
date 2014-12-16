@@ -40,10 +40,13 @@ describe 'Wallets Resource', ->
         wallet = walts.collection.default
         done(error)
 
-    describe.only "wallet unlock", ->
+    describe "wallet unlock", ->
       it "return a MultiWallet instance", ->
         multiwallet = wallet.unlock("foo bar baz")
         expect(multiwallet).to.be.an.instanceof(MultiWallet)
+
+      it 'should memoize the multiwallet', ->
+        expect(wallet._multiwallet).to.be.an.instanceof(MultiWallet)
 
     # skipping because it creates a wallet
     describe.skip 'wallets.create', ->
