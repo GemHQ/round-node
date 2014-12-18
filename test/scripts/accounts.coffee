@@ -7,6 +7,8 @@ Payment = require '../../src/resources/payment'
 PaymentGenerator = require '../../src/resources/payment_generator'
 bitcoin = require 'bitcoinjs-lib'
 bs58check = require 'bs58check'
+bs58 = require 'bs58'
+
 
 expect = require('chai').expect
 fs = require "fs"
@@ -54,184 +56,110 @@ describe 'Accounts Resource', ->
       account.wallet.unlock("foo bar baz")
       payments = account.payments()
       account.addresses (error, addrs) ->
-        # console.log addrs
-        # console.log "Addresses----------------------------"
-        payments.unsigned payees, (error, payment) ->
-          expect(payment).to.be.an.instanceof(Payment)
-          # console.log payment.resource()
-          # console.log "Payment resource----------------------------"
-          # console.log payment.resource().inputs[0].output
-          # console.log "Input's Output----------------------------"
-          # console.log "wallet----------------------------"
-          # console.log payment.resource()
-          # console.log "payment resource----------------------------"
-          # console.log payment.resource().outputs[1].metadata.path
-          # console.log "path----------------------------"
-          # console.log account.wallet._multiwallet
-          # console.log "path----------------------------"
 
-
-          txb = new bitcoin.TransactionBuilder()
-          paymentResource = payment.resource()
-
-          # Add inputs to transaction
-          paymentResource.inputs.forEach (input) ->
-            prevTx = input.output.transaction_hash
-            index = input.output.index
-            txb.addInput(prevTx, index)
-
-          # Add outputs to transaction
-          paymentResource.outputs.forEach (output) ->
-            address = output.address
-            value = output.value
-            txb.addOutput(address, value)
-
-
-          # Generate a redeem script
-          # backup cosigner and primary is the oder of pubkeys
-          getPathForInput = (index) ->
-            path = paymentResource.inputs[index].output.metadata.wallet_path
-          
-
-          parsePath = (path) ->
-            parts = path.split('/')
-            indices = parts.filter (part) ->
-              part != 'm' and part != '0'
-
-
-          deriveNodeForIndices = (parent, indices) ->
-            node = parent
-
-            indices.forEach (index) ->
-              node = node.derive(index)
-
-            return node
-
-
-          getPubKeysForPath = (path) ->
-            indices = parsePath(path)
-            trees = account.wallet._multiwallet.trees
-            
-            masterNodes = ['cosigner', 'backup', 'primary'].map (nodeName) ->
-              masterNode = trees[nodeName]
-              deriveNodeForIndices(masterNode, indices)
-
-            pubKeys = masterNodes.map (node) ->
-              node.pubKey
-
-
-          getPrivKeysForPath = (path) ->
-            indices = parsePath(path)
-            privateTrees = account.wallet._multiwallet.privateTrees
-            privateTreeNames = Object.keys privateTrees
-
-            privKeys = privateTreeNames.map (name) ->
-              masterNode = privateTrees[name]
-              derivedNode = deriveNodeForIndices(masterNode, indices)
-              derivedNode.privKey
-
-
-          createRedeemScript = (pubKeys, numberOfSigs=2) ->
-            bitcoin.scripts.multisigOutput(numberOfSigs, pubKeys)
-
-
-          path = getPathForInput(0)
-          pubKeys = getPubKeysForPath(path)
-          privKeys = getPrivKeysForPath(path)
-          redeemScript = createRedeemScript(pubKeys)
-
-          txb.sign(0, privKeys[0], redeemScript)
-
-          sig = txb.signatures[0].signatures[0]
-          hashType = txb.signatures[0].hashType
-          encoded_sig = bs58check.encode sig.toScriptSignature(hashType)
-
-          transactionContent = {
-            transaction_hash: paymentResource.hash,
-            inputs: [{primary: encoded_sig}]
-          }
-
-          paymentResource.sign transactionContent, (error, data) ->
-            # console.log(error, data)
-          
-            done(error)
+        # payments.unsigned payees, (error, payment) ->
+        #   expect(payment).to.be.an.instanceof(Payment)
 
 
 
+        txb = new bitcoin.TransactionBuilder()
+        paymentResource = JSON.parse fs.readFileSync(__dirname + '/transaction.json').toString()
+        # paymentResource = payment.resource()
+
+        # Add inputs to transaction
+        paymentResource.inputs.forEach (input) ->
+          prevTx = input.output.transaction_hash
+          index = input.output.index
+          nativeAddress = bitcoin.Address.fromBase58Check input.output.address
+          prevOutScript = nativeAddress.toOutputScript()
+          txb.addInput(prevTx, index, undefined, prevOutScript)
+
+        # Add outputs to transaction
+        paymentResource.outputs.forEach (output) ->
+          address = output.address
+          value = output.value
+          # addOutput will convert address to scriptPubKey
+          txb.addOutput(address, value)
+
+        debugger
 
 
-
-
-
-
-
-
-
-
-
-
-          # privateTrees = account.wallet._multiwallet.privateTrees
-          # privateTreeNames = Object.keys privateTrees
-          # # Returns an array of objects
-          # # Each object contains the signatures for a input
-          # # The key of the object is the name of the privKey
-          # signatures = txb.tx.ins.map (input, index) ->
-          #   signaturesForInput = {}
-
-          #   # Signs input with every private key
-          #   privateTreeNames.forEach (name) ->
-          #     node = privateTrees[name]
-          #     txb.sign(index, node.privKey, redeemScript)
-          #     # txb.sign does not return the signature
-          #     # therefor I have to grab it from its signatures array
-          #     nativeSigsForInput = txb.signatures[index].signatures
-          #     nativeSig = nativeSigsForInput[nativeSigsForInput.length - 1]
-
-          #     signaturesForInput[name] = nativeSig
-
-          #   return signaturesForInput
-
-
-          # transactionContent = {
-          #   inputs: signatures
-          # }
-
-
-          # primary_priv_key = account.wallet._multiwallet.privateTrees.primary.privKey
-          # primary_pub_key = account.wallet._multiwallet.privateTrees.primary.pubKey
-          # txb.sign(0, primary_priv_key, redeemScript)
-          # nativeSig = txb.signatures[0].signatures[0]
-          # final_tx = txb.build()
-          # console.log final_tx
-          # console.log paymentResource.inputs[0].output.metadata.wallet_path
-
-          # tx_hash = final_tx.getHash()
-          # console.log primary_pub_key.verify(tx_hash, nativeSig)
-
-
-
-
-
-          # hashFromPayment = paymentResource.hash
-          # tx_hash = txb.build().getHash()
-          
-          # signature_for_api = signatures[0].primary 
-          # native_signature = txb.signatures[0].signatures[0]
-          # signature_for_api == native_signature
-
-          # pub_key_from_native = txb.signatures[0].pubKeys[0]
-          # primary_pubkey = privateTrees.primary.pubKey
-          # pub_key_from_native == primary_pubkey
-
-          # console.log txb.tx.ins
-          # console.log pub_key_from_native.verify(tx_hash, signature_for_api)
-          # console.log node.pubKey.verify(paymentResource.hash, nativeSig)
+        getPathForInput = (index) ->
+          path = paymentResource.inputs[index].output.metadata.wallet_path
         
-          debugger
-          # paymentResource.sign transactionContent, (error, data) ->
-          #   console.log(error, data)
+
+        parsePath = (path) ->
+          parts = path.split('/')
+          # removes "m" from parts
+          indices = parts.slice(1).map (index) ->
+            # converts index to a number
+            +index
+
+
+        deriveNodeForIndices = (parent, indices) ->
+          node = parent
+
+          indices.forEach (index) ->
+            node = node.derive(index)
+
+          return node
+
+
+        getPubKeysForPath = (path) ->
+          indices = parsePath(path)
+          trees = account.wallet._multiwallet.trees
           
-          # done(error)
+          masterNodes = ['backup', 'cosigner', 'primary'].map (nodeName) ->
+            masterNode = trees[nodeName]
+            deriveNodeForIndices(masterNode, indices)
+
+          pubKeys = masterNodes.map (node) ->
+            node.pubKey
+
+
+        getPrivKeysForPath = (path) ->
+          indices = parsePath(path)
+          privateTrees = account.wallet._multiwallet.privateTrees
+          privateTreeNames = Object.keys privateTrees
+
+          privKeys = privateTreeNames.map (name) ->
+            masterNode = privateTrees[name]
+            derivedNode = deriveNodeForIndices(masterNode, indices)
+            derivedNode.privKey
+
+
+        createRedeemScript = (pubKeys, numberOfSigs=2) ->
+          bitcoin.scripts.multisigOutput(numberOfSigs, pubKeys)
+
+
+        path = getPathForInput(0)
+        pubKeys = getPubKeysForPath(path)
+        privKeys = getPrivKeysForPath(path)
+        redeemScript = createRedeemScript(pubKeys)
+
+        
+        hash = txb.sign(0, privKeys[0], redeemScript)
+        # console.log hash
+        sig = txb.signatures[0].signatures[0]
+        # console.log pubKeys[2].verify(hash, sig)
+        encoded_sig = bs58.encode sig.toDER().toString('hex')
+        # hashType = txb.signatures[0].hashType
+        # encoded_sig = bs58.encode sig.toScriptSignature(hashType)
+
+
+        transactionContent = {
+          transaction_hash: txb.tx.getHash(),
+          inputs: [{primary: encoded_sig}]
+        }
+
+        # paymentResource.sign transactionContent, (error, data) ->
+          # console.log(error, data)
+        
+        done(error)
+
+
+
+
 
   describe 'account.wallet', ->
     it 'should reference the wallet it belongs to', ->
