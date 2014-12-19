@@ -53,7 +53,7 @@ describe 'Accounts Resource', ->
 
   describe.only 'account.pay', ->
     it 'should do stuff', (done) ->
-      payees = [{amount: 100, address: 'mrsjJDuBzhjPeHpdo6ivcbACCBQFcoWXmq'}]
+      payees = [{amount: 2000, address: 'mrsjJDuBzhjPeHpdo6ivcbACCBQFcoWXmq'}]
       account.wallet.unlock("foo bar baz")
       payments = account.payments()
       account.addresses (error, addrs) ->
@@ -64,99 +64,26 @@ describe 'Accounts Resource', ->
 
           txb = new bitcoin.TransactionBuilder()
           paymentResource = payment.resource()
+          {inputs, outputs} = paymentResource
+          multiwallet = account.wallet._multiwallet
 
-          # Add inputs to transaction
-          addInputs = (inputs, transactionBuilder) ->
-            inputs.forEach (input) ->
-              prevTx = input.output.transaction_hash
-              index = input.output.index
-              ASM = input.output.script.string
-              prevOutScript = bitcoin.Script.fromASM(ASM)
+          # add inputs and outputs
+          multiwallet.addInputs(inputs, txb)
+          multiwallet.addOutputs(outputs, txb)
 
-              transactionBuilder.addInput(prevTx, index, undefined, prevOutScript)
+          path = multiwallet.getPathForInput(paymentResource ,0)
+          pubKeys = multiwallet.getPubKeysForPath(path)
+          privKey = multiwallet.getPrivKeyForPath(path)
+          # utility
+          redeemScript = multiwallet.createRedeemScript(pubKeys)
 
-          addInputs(paymentResource.inputs, txb)
-          
-          # Add outputs to transaction
-          addOutputs = (outputs, transactionBuilder) ->
-            outputs.forEach (output) ->
-              ASM = output.script.string
-              scriptPubKey = bitcoin.Script.fromASM(ASM)
-              value = output.value
-
-              transactionBuilder.addOutput(scriptPubKey, value)
-
-          addOutputs(paymentResource.outputs, txb)
-
-
-          getPathForInput = (paymentResource, index) ->
-            path = paymentResource.inputs[index].output.metadata.wallet_path
-          
-
-          parsePath = (path) ->
-            parts = path.split('/')
-            # removes "m" from parts
-            indices = parts.slice(1).map (index) ->
-              # converts index to a number
-              +index
-
-
-          deriveNodeForIndices = (parent, indices) ->
-            node = parent
-
-            indices.forEach (index) ->
-              node = node.derive(index)
-
-            return node
-
-
-          getPubKeysForPath = (path) ->
-            indices = parsePath(path)
-            trees = account.wallet._multiwallet.trees
-            
-            masterNodes = ['backup', 'cosigner', 'primary'].map (nodeName) ->
-              masterNode = trees[nodeName]
-              deriveNodeForIndices(masterNode, indices)
-
-            pubKeys = masterNodes.map (node) ->
-              node.pubKey
-
-
-          getPrivKeyForPath = (path) ->
-            indices = parsePath(path)
-            primaryMasterNode = account.wallet._multiwallet.privateTrees.primary
-            primaryChildNode = deriveNodeForIndices(primaryMasterNode ,indices)
-            privKey = primaryChildNode.privKey
-
-
-          getPrivKeysForPath = (path) ->
-            indices = parsePath(path)
-            privateTrees = account.wallet._multiwallet.privateTrees
-            privateTreeNames = Object.keys privateTrees
-
-            privKeys = privateTreeNames.map (name) ->
-              masterNode = privateTrees[name]
-              derivedNode = deriveNodeForIndices(masterNode, indices)
-              derivedNode.privKey
-
-
-          createRedeemScript = (pubKeys, numberOfSigs=2) ->
-            bitcoin.scripts.multisigOutput(numberOfSigs, pubKeys)
-
-
-          path = getPathForInput(paymentResource ,0)
-          pubKeys = getPubKeysForPath(path)
-          privKey = getPrivKeyForPath(path)
-          redeemScript = createRedeemScript(pubKeys)
-
-          
           hash = txb.sign(0, privKey, redeemScript)
-          # console.log hash
           sig = txb.signatures[0].signatures[0]
-          # console.log pubKeys[2].verify(hash, sig)
-          encoded_sig = bs58.encode sig.toDER().toString('hex')
-          # hashType = txb.signatures[0].hashType
-          # encoded_sig = bs58.encode sig.toScriptSignature(hashType)
+
+          # encoded_sig = bs58.encode sig.toDER().toString('hex')
+          hashType = txb.signatures[0].hashType
+          encoded_sig = bs58.encode sig.toScriptSignature(hashType)
+
 
           transactionContent = {
             transaction_hash: txb.tx.getHash(),
