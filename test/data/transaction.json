@@ -1,0 +1,126 @@
+{
+  "base58_seeds": {
+    "backup": "tpubD6NzVbkrYhZ4WMWvaEt65AYVU8j4A3XBT3vNYE7qAJA9jPr3foQ1eMhmATpwaCP3Ct7RrKSxttFBTTBiEx55zbQKLuaCmiNNdBRY3byAuhY",
+    "cosigner": "tpubD6NzVbkrYhZ4YFcw3cmsKtpicuTZ5NtL7fGJE4pJRx8M8ENnbpu3jAp6FE7VDpEArMMd19BQCUm2sKbb4VevxYJrqTSCGsNebySnmbStBxF",
+    "primary": "tprv8ZgxMBicQKsPejnGnyVTjmwWEwEjBjUdmrfZ5esxW4JhJ99mesRgYpgs7BSvQ6R1DKRpbXurkEfMtL2TYcXAgUiotbRpXK7Q71QFgpyvS8W"
+  },
+  "payment": {
+    "context":{
+      "schemes":{
+        "Gem-Developer":{
+          "usage":null,
+          "params":[
+            "email",
+            "privkey"
+          ],
+          "credentials":"email=\"js-test-1416883330485@mail.com\""
+        },
+        "Gem-Application":{
+          "usage":null,
+          "params":[
+            "app_url",
+            "api_token",
+            "instance_id"
+          ]
+        },
+        "Gem-Device":{
+          "usage":null,
+          "params":[
+            "app_url",
+            "api_token",
+            "user_url",
+            "user_token",
+            "device_id"
+          ],
+          "credentials":"api_token=\"DfsG42nJsKbC4FAObhcWEffIajbxxZuXP63Pyj04oGI\", device_id=\"newdeviceid1416886146623\", user_token=\"77AgbYAtEx-pzCTsM3qdqjngzYuSQlL6cSyENbZCWTs\""
+        },
+        "Gem-User":{
+          "usage":null,
+          "params":[
+            "app_.url",
+            "api_token",
+            "instance_id"
+          ]
+        },
+        "Gem-OOB-OTP":{
+          "usage":null,
+          "params":[
+            "key",
+            "secret",
+            "api_token"
+          ]
+        }
+      },
+      "email":"js-test-1416883330485@mail.com",
+      "privkey":"-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAwJyfSUKm9Xd48yfImxDXDoBqh7O6PacgDfmXBEztFFA3A4Re\noEGxtNj+9PWnrWwgcWeGEL62d9UWdTbVtUrhskXrWMtnt+HUzwEwdN0At3V0e3Xd\nGwtndl9TJ94L7smltmSDHIxRl25Dj7sgmwmoHt59UDik/Y8a/8/Fr500VF6mNV8+\n1fsy3rLp/is840Uomd++V3iuFCjzVIsJPo1yJlY/qSrPr4z2y/sH8GbiiuI3vDM+\nOW3RFDReBx6c0m/3x7UaBW7++lWveuIWB4aTHY+dXai8khSDDFobckR6EjfrCvIJ\nlFAdi+frMZx7g31gxMaCXMbERDjQUS8vWvdGrQIDAQABAoIBAQCGgVliyZ7aMBJQ\ni2m1j+7+e4LpPQND5p+l4rQpFqdA1jt0w01pUDcO+bIh0iLEIowNZaPjsaquyCmk\ntSRMM/ykh9sv6OuHJ7d6z3PNSEAl3Wn4hXhgWHhp22uwnYlruXl1g39jwkGAJEod\n5yl/2yCCXhDYopXlU7ghCDEe0AMpHrGBtlVoAOgNyocv5BIIsMR3W9o7JyZO9WWh\nXgZhb5NP6oLRxx+iW5qz3iN+8l1AHfEkCGKt1LxUh2yv5iO1u2N747iwPQ53zMSj\n+rxZVYI4wnsIkvwEFz7d9vvO1fw2GRlL/oU3idbOr9nHw46xNNt+s7ihrnXDHXRg\njXOJDLIBAoGBAN+loj22wzMgezNMj0CN/KN8KBfGXzfDtKl2PCYbavDT8iesbHU+\nuMIXlV4vzFIob2mIh7PXKMiU8l/8rEk4BvOj9L1qVTn7AMugxXo0SnBB7/QLeW45\nddeRGN6z3sUv+EIGSu9Eq+JYCoc8CyMX7gR54flLXL0DqRyB9c/4ZspBAoGBANx5\np8aWfxggpt2Z3NyLrs+C3x80myBiOK3YbPAYX3A92h22rXPWwtZR6+GX8ETmnsl9\n+qRtQke7adt0DO06frZ7LHvz+W8kEzqjpOFA3yZB4h2KWzlonFOKy33jfuUFv/5f\nGnt2L+z6TV+H/c3cUdwZZ3+KLOo8DqXkcoz1nultAoGADOVdJJfcS59s2zln7T4C\nul6XZT+QEAQd78OclknwcbCW/winPF+AgdigSU0SSA6C1iAESy9175L/It/MA3DS\nncvvediez3gUxKkhmflX7X8v2e+rcdqoW+TG/Vh72Pz6ILyCJ6fbDXMsMD4bGkvv\n8pwglqJs141VfApWZUaajsECgYAPpz+HNPYvE1plj2AD9JLjvsnyoDyHTxHxHdWW\nMlTMVkffJjIocE4DA2v4512ytqD9c0lRVUSIbUD1yMaGLUoD0Lj2z/qcrnYDCs1R\nBNcTE0hnioQxjkDTGZ6bAITo48Ce4ceyjlCWxaqqprAZZpQVSWR0xK2tr7fmhVKw\nuVuf/QKBgHAp200rLep+QptWoPaWetvwiQkRoIZrHrTS2McBb2LVyCxp0+oGWOk5\ncY8ZVD2l4RqnCto6mgAsXxkVlbbM3u0vg2Cvfz97WuI/cYPofGD8K2IY4E4k1zWd\nnDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp\n-----END RSA PRIVATE KEY-----",
+      "api_token":"DfsG42nJsKbC4FAObhcWEffIajbxxZuXP63Pyj04oGI",
+      "app_url":"http://localhost:8999/apps/uyIHHFiTVxyZF1zQRtaluw",
+      "device_id":"newdeviceid1416886146623",
+      "user_token":"77AgbYAtEx-pzCTsM3qdqjngzYuSQlL6cSyENbZCWTs",
+      "user_url":"http://localhost:8999/users/zMKpGQeN9x5OslX0R_xnwQ"
+    },
+    "key":"bwgC2K7aLKoVeXaaDNHOXQ",
+    "type":"outgoing",
+    "status":"unsigned",
+    "value":-10100,
+    "fee":10000,
+    "created_at":"2014-12-18 01:50:21 +0000",
+    "version":1,
+    "lock_time":0,
+    "hash":"6b1ffcc10501d7f871e24f4f7c266ca6d4b3db2048a750d4b67318c5cdde0af9",
+    "inputs":[
+      {
+        "output":{
+          "transaction_hash":"e422acbc206d8da6ee3c5acfd33d4f258100ab677f80dab8a469678c92bad959",
+          "index":0,
+          "value":5900000,
+          "script":{
+            "type":"script_hash",
+            "string":"OP_HASH160 5b100319fc97514cd8cf1d5f546186e161572ceb OP_EQUAL"
+          },
+          "address":"2N1YifHJD3gqh6crUBv9qeiCqUKPeFNoZ6j",
+          "metadata":{
+            "confirmations":1171,
+            "wallet_path":"m/44/1/0/0/0"
+          }
+        },
+        "signatures":[
+
+        ],
+        "sig_hash":"6aaea963b47f57d24c82f643eb4b7a24bdf6801990ff491b03160916fab9e0e5",
+        "script_sig":""
+      }
+    ],
+    "outputs":[
+      {
+        "transaction_hash":"6b1ffcc10501d7f871e24f4f7c266ca6d4b3db2048a750d4b67318c5cdde0af9",
+        "index":0,
+        "value":100,
+        "script":{
+          "type":"pubkey_hash",
+          "string":"OP_DUP OP_HASH160 7c9744f7752e644f9e222ea60b8f5d53b2f733a3 OP_EQUALVERIFY OP_CHECKSIG"
+        },
+        "address":"2N4bzzTEgM37sA8fzsm31qFJ4h4JRyCAUGt",
+        "metadata":{
+          "confirmations":null
+        }
+      },
+      {
+        "transaction_hash":"6b1ffcc10501d7f871e24f4f7c266ca6d4b3db2048a750d4b67318c5cdde0af9",
+        "index":1,
+        "value":5889900,
+        "script":{
+          "type":"script_hash",
+          "string":"OP_HASH160 c56b09b16a53b4683413c212b5dd3f16f04c53ff OP_EQUAL"
+        },
+        "address":"2NBF5LCJWCuKTL7Ssqn2riQvxdc6PjvVQKp",
+        "metadata":{
+          "memo":"change",
+          "wallet_path":"m/44/1/0/1/290",
+          "confirmations":null
+        }
+      }
+    ],
+    "url":"http://localhost:8999/transactions/bwgC2K7aLKoVeXaaDNHOXQ"
+  }
+}

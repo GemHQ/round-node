@@ -5,6 +5,8 @@ Addresses = require '../../src/resources/addresses'
 Transactions = require '../../src/resources/transactions'
 PaymentGenerator = require '../../src/resources/payment_generator'
 
+paymentResource = require '../data/transaction.json'
+
 expect = require('chai').expect
 fs = require "fs"
 yaml = require "js-yaml"
@@ -14,7 +16,7 @@ credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
 
-describe 'Payments', ->
+describe.skip 'Payments', ->
   client = developer = user = applications = accounts = account = wallet = ''
 
   before (done) ->
