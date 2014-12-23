@@ -62,32 +62,36 @@ describe 'Accounts Resource', ->
           expect(payment).to.be.an.instanceof(Payment)
 
 
-          txb = new bitcoin.TransactionBuilder()
+          # txb = new bitcoin.TransactionBuilder()
+          # paymentResource = payment.resource()
+          # {inputs, outputs} = paymentResource
+          # multiwallet = account.wallet._multiwallet
+
+          # # add inputs and outputs
+          # multiwallet.addInputs(inputs, txb)
+          # multiwallet.addOutputs(outputs, txb)
+
+          # path = multiwallet.getPathForInput(paymentResource ,0)
+          # pubKeys = multiwallet.getPubKeysForPath(path)
+          # privKey = multiwallet.getPrivKeyForPath(path)
+          # # utility
+          # redeemScript = multiwallet.createRedeemScript(pubKeys)
+
+          # hash = txb.sign(0, privKey, redeemScript)
+          # sig = txb.signatures[0].signatures[0]
+
+          # # encoded_sig = bs58.encode sig.toDER().toString('hex')
+          # hashType = txb.signatures[0].hashType
+          # encoded_sig = bs58.encode sig.toScriptSignature(hashType)
+
           paymentResource = payment.resource()
-          {inputs, outputs} = paymentResource
           multiwallet = account.wallet._multiwallet
-
-          # add inputs and outputs
-          multiwallet.addInputs(inputs, txb)
-          multiwallet.addOutputs(outputs, txb)
-
-          path = multiwallet.getPathForInput(paymentResource ,0)
-          pubKeys = multiwallet.getPubKeysForPath(path)
-          privKey = multiwallet.getPrivKeyForPath(path)
-          # utility
-          redeemScript = multiwallet.createRedeemScript(pubKeys)
-
-          hash = txb.sign(0, privKey, redeemScript)
-          sig = txb.signatures[0].signatures[0]
-
-          # encoded_sig = bs58.encode sig.toDER().toString('hex')
-          hashType = txb.signatures[0].hashType
-          encoded_sig = bs58.encode sig.toScriptSignature(hashType)
-
+          {signatures, txHash} = multiwallet.prepareTransaction(paymentResource)
+          signature = signatures[0]
 
           transactionContent = {
-            transaction_hash: txb.tx.getHash(),
-            inputs: [{primary: encoded_sig}]
+            transaction_hash: txHash,
+            inputs: [{primary: signature}]
           }
 
           paymentResource.sign transactionContent, (error, data) ->
