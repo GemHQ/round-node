@@ -61,7 +61,6 @@ describe 'Accounts Resource', ->
         payments.unsigned payees, (error, payment) ->
           expect(payment).to.be.an.instanceof(Payment)
 
-
           txb = new bitcoin.TransactionBuilder()
           paymentResource = payment.resource()
           {inputs, outputs} = paymentResource
