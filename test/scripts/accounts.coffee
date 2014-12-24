@@ -6,8 +6,9 @@ Wallet = require '../../src/resources/wallet'
 Payment = require '../../src/resources/payment'
 PaymentGenerator = require '../../src/resources/payment_generator'
 bitcoin = require 'bitcoinjs-lib'
-bs58check = require 'bs58check'
 bs58 = require 'bs58'
+coinop = require 'coinop'
+txUtils = coinop.bit.transaction_utils
 
 paymentResource = require('../data/transaction.json').payment
 
@@ -52,56 +53,15 @@ describe 'Accounts Resource', ->
       expect(account._payments).to.deep.equal(payments)
 
   describe.only 'account.pay', ->
-    it 'should do stuff', (done) ->
-      payees = [{amount: 2000, address: 'mrsjJDuBzhjPeHpdo6ivcbACCBQFcoWXmq'}]
+    
+    it 'should not throw an error (i.e. make a successful tx)', (done) ->
       account.wallet.unlock("foo bar baz")
-      payments = account.payments()
-      account.addresses (error, addrs) ->
+      payees = [{amount: 1000, address: 'mrsjJDuBzhjPeHpdo6ivcbACCBQFcoWXmq'}]
 
-        payments.unsigned payees, (error, payment) ->
-          expect(payment).to.be.an.instanceof(Payment)
-
-
-          # txb = new bitcoin.TransactionBuilder()
-          # paymentResource = payment.resource()
-          # {inputs, outputs} = paymentResource
-          # multiwallet = account.wallet._multiwallet
-
-          # # add inputs and outputs
-          # multiwallet.addInputs(inputs, txb)
-          # multiwallet.addOutputs(outputs, txb)
-
-          # path = multiwallet.getPathForInput(paymentResource ,0)
-          # pubKeys = multiwallet.getPubKeysForPath(path)
-          # privKey = multiwallet.getPrivKeyForPath(path)
-          # # utility
-          # redeemScript = multiwallet.createRedeemScript(pubKeys)
-
-          # hash = txb.sign(0, privKey, redeemScript)
-          # sig = txb.signatures[0].signatures[0]
-
-          # # encoded_sig = bs58.encode sig.toDER().toString('hex')
-          # hashType = txb.signatures[0].hashType
-          # encoded_sig = bs58.encode sig.toScriptSignature(hashType)
-
-          paymentResource = payment.resource()
-          multiwallet = account.wallet._multiwallet
-          {signatures, txHash} = multiwallet.prepareTransaction(paymentResource)
-          signature = signatures[0]
-
-          transactionContent = {
-            transaction_hash: txHash,
-            inputs: [{primary: signature}]
-          }
-
-          paymentResource.sign transactionContent, (error, data) ->
-            console.log(error, data)
-          
-            done(error)
-
-
-
-
+      account.pay payees, (error, data) ->
+        expect(error).to.not.exist
+        done(error)
+        
 
   describe 'account.wallet', ->
     it 'should reference the wallet it belongs to', ->

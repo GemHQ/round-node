@@ -38,10 +38,10 @@ module.exports = class Account
       throw Error('You must unlock the wallet before attempting a transaction')
 
     @payments().unsigned payees, (error, payment) ->
-      callback(error) if error
+      return callback(error) if error
       
-      signedPayment = payment.sign(multiwallet)
-      callback null, signedPayment
+      payment.sign multiwallet, (error, data) ->
+        callback(error, data)
   
   # FIX: account.resource().transactions returns a function
     #  not a resource. Could be a bug in Patchboard
