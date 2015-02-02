@@ -12,7 +12,8 @@ module.exports = {
 
   url: defaultUrl
 
-  # default values are only used if the user
+  # FixMe: use an options object for the url and network
+  # default values are only used if the user  
   # explicitely enters 'null' or 'undefined' for those values
   client: (url=defaultUrl, network=defaultNetwork, callback) ->
     if @patchboard?

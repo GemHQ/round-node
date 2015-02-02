@@ -30,7 +30,7 @@ describe 'User Resource', ->
             user = user_and_multiwallet.user
             done(error)
 
-  describe.only 'client.users.create', ->
+  describe 'client.users.create', ->
     it 'should create a user object', (done) ->
       expect(user.resource()).to.have.a.property('email')
       done()
@@ -92,9 +92,10 @@ describe 'User Resource', ->
 
   # Skipping because it takes to long to load
   # Must clear out bez@gem.co wallets
-  describe.skip 'user.wallets', ->
+  describe 'user.wallets', ->
     it 'should memoize and return a wrapped Wallet object', (done) ->
       user.wallets (error, wallets) ->
         expect(wallets).to.be.an.instanceof(Wallets)
         expect(user._wallets).to.deep.equal(wallets)
+        console.log wallets
         done(error)
