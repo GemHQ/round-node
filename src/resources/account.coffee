@@ -29,6 +29,7 @@ module.exports = class Account
       callback null, @_addresses
 
 
+  # FixMe: should not throw errors. Should give the erros to the callback
   pay: (payees, callback) ->
     unless payees
       throw Error('Payees must be specified')
