@@ -51,17 +51,17 @@ describe 'User Resource', ->
 
 
   describe "Authenticated User", ->
-    # user = ''
-    # before (done) ->
-    #   client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
-    #     user = usr
-    #     done(error)
+    user = ''
+    before (done) ->
+      client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
+        user = usr
+        done(error)
 
 
     describe 'client.authenticateDevice', ->
-      it.only 'return an authenticated user', (done) ->
-        # expect(user).to.be.an.instanceof(User)
-        # done()
+      it 'return an authenticated user', (done) ->
+        expect(user).to.be.an.instanceof(User)
+        done()
       # # Note: Proceeding lines are commented for automation purposes.
       # # Note: To test fully, you must run the test in 2 steps
       #   # FIRST
@@ -76,43 +76,14 @@ describe 'User Resource', ->
         #   console.log key
         #   done(error)
 
-        # client.authenticateOTP({api_token})
-        # client.patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
-        # u = client.resources().user_query {email: 'bez@gem.co'}
-        # device_id =  "newdeviceid#{Date.now()}"
-        # console.log 'device_id ------------------------------'
-        # console.log device_id
-        # u.authorize_device {name: 'newapp', device_id}, (error) ->
-        #   responseHeader = error.response.headers['www-authenticate']
-        #   regx = /key="(.*)"/
-        #   debugger
-        #   matches = regx.exec responseHeader
-        #   key = matches[1]
-        #   console.log "key -------------------------------"
-        #   console.log key
-        #   done()
 
       # # Note: proceeding lines are commented inorder to automate tests.
       # # SECOND
-
-        {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
-        client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
-          console.log user.resource().url
-          console.log user.resource().user_token
-          done(error)
-
-      #   client.authenticateOTP {api_token, key, secret}
-      #   u = client.resources().user_query {email: 'bez@gem.co'}
-      #   u.authorize_device {name, device_id}, (error, user) ->
-      #     ADC = authenticateDeviceCreds(applications)
-      #     ADC.user_url = user.url
-      #     ADC.user_token = user.user_token
-      #     # you need these values when authenticating later
-      #     console.log ADC.user_url
-      #     console.log ADC.user_token
-      #     client.authenticateDevice ADC, (error, user) ->
-      #       expect(user).to.be.an.instanceof(User)
-      #       done(error)
+        # {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
+        # client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
+        #   console.log user.resource().url
+        #   console.log user.resource().user_token
+        #   done(error)
 
 
   # Skipping because it takes to long to load
