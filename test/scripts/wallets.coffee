@@ -49,11 +49,11 @@ describe 'Wallets Resource', ->
         expect(wallet._multiwallet).to.be.an.instanceof(MultiWallet)
 
     # skipping because it creates a wallet
-    describe.only 'wallets.create', ->
+    describe.skip 'wallets.create', ->
       it 'should create and return a Wallet', (done) ->
-        walletData = data.wallet
-        walletData.name = "new-wallet#{Date.now()}"
-        debugger
+        passphrase = 'passphrase'
+        name = "new-wallet#{Date.now()}"
+        walletData = {name, passphrase}
         wallets.create walletData, (error, wallet) ->
           expect(wallet).to.be.an.instanceof(Wallet)
           done()
