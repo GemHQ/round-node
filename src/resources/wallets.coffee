@@ -36,16 +36,3 @@ module.exports = class Wallets extends Collection
       @collection[name] = wallet
 
       callback(null, wallet)
-
-
-
-
-    # @resource().create wallet, (error, walletResource) =>
-    #   return callback(error) if error
-
-    #   wallet = new Wallet walletResource, @client()
-    #   walletName = wallet.resource().name
-    #   @collection[walletName] = wallet
-      
-    #   callback(null, wallet)
-
