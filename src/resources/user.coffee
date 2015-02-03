@@ -28,40 +28,37 @@ module.exports = class User
       @_user = new User userResource, @client()
       callback null, @_user
 
+
+  # FixMe: move to client
+  # Credentials requires name, device_id, email, api_token
   beginDeviceAuthorization: (credentials, callback) ->
-    requiredCredentials = ['name', 'device_id']
-
-    for credential in requiredCredentials
-      if credential not of credentials
-        return callback MissingCredentialError credential
-
-    {name, device_id} = credentials
-    @client().patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
-    # ????? WHEN DO WE USE: @currentDeviceName
+    {name, device_id, email, api_token} = credentials
+    @client().authenticateOTP({api_token})
+    # @client().patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
     @currentDeviceName = name
     @currentDeviceId = device_id
-    @resource().authorize_device {name, device_id}, (error) ->
+    
+    resource = @client().resources().user_query({email})
+    resource.authorize_device {name, device_id}, (error) ->
       responseHeader = error.response.headers['www-authenticate']
       regx = /key="(.*)"/
       matches = regx.exec responseHeader
+      # debugger
       if matches
         key = matches[1]
-        callback key
+        callback(null, key)
       else
-        throw error
+        callback(error)
 
+
+  # FixMe: move to client
   # credentials requires: app_url, api_token, key, secret
   completeDeviceAuthorization: (credentials, callback) ->
-    requiredCredentials = ['app_url', 'api_token', 'key', 'secret']
-
-    for credential in requiredCredentials
-      if credential not of credentials
-        return callback MissingCredentialError credential
-    
     @client().authenticateOTP credentials
 
     authorizeDeviceCreds = {name: @currentDeviceName, device_id: @currentDeviceId}
-    @resource().authorize_device authorizeDeviceCreds, (error, user) =>
+    resource = @client().resources().user_query({email})
+    resource.authorize_device authorizeDeviceCreds, (error, user) =>
 
       @client().authenticateDevice {
         app_url: credentials.app_url

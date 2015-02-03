@@ -6,8 +6,6 @@ MissingCredentialError = require('../errors').MissingCredentialError
 module.exports = class Application
 
   constructor: (resource, client) ->
-    # !!!!! WHICH PROPERTIES SHOULD WE MAKE DIRECTLY ACCESSIBLE ?????
-    # NAME, API_TOKEN, URL, KEY?
     {@name, @api_token, @url, @key} = resource
     @resource = -> resource
     @client = -> client
@@ -28,28 +26,17 @@ module.exports = class Application
     @_rules || new Rules @resource().rules, @client()
     
 
-  # Note: credentials requires an api_token and a name
+  # Credentials requires an api_token and a name
   beginInstanceAuthorization: (credentials, callback) ->
-    requiredCredentials = ['name', 'api_token']
-
-    for credential in requiredCredentials
-      if credential not of credentials
-        return callback(MissingCredentialError(credential))
-
     @resource().authorize_instance credentials, (error, applicationInstance) ->
       return callback(error) if error
 
       # applicationInstnace is a useless object - nothing can be done with it
       callback null, applicationInstance
 
-  # Note: credentials requires an api_token and an instance_id
+
+  # Credentials requires an api_token and an instance_id
   finishInstanceAuthorization: (credentials) ->
-    requiredCredentials = ['instance_id', 'api_token']
-
-    for credential in requiredCredentials
-      if credential not of credentials
-        return callback(MissingCredentialError(credential))
-
     @client().patchboard().context.authorize 'Gem-Application', credentials
     return @
 

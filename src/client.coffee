@@ -82,14 +82,10 @@ module.exports = class Client
         callback null, @_developer
 
 
-    # takes 'override', as an optional property
+    # Credentials requires api_token, key, secret
+    # Credentials takes 'override', as an optional property
     @authenticateOTP = (credentials) ->
-      requiredCredentials = ['api_token', 'key', 'secret']
       credentials.override = credentials.override || true
-
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
 
       if 'credential' of @patchboard().context.schemes['Gem-OOB-OTP']
         if credentials.override is false
@@ -99,32 +95,27 @@ module.exports = class Client
       return true
 
 
-    # optional credentials are: app_url, override, fetch
+    # Credentials requires api_tokne, user_url, user_token, device_id
+    # Optional credentials are: app_url, override, fetch
     @authenticateDevice = (credentials, callback) ->
-      requiredCredentials = ['api_token', 'user_url', 'user_token', 'device_id']
       credentials.override = credentials.override || false
       credentials.fetch = credentials.fetch || true
 
       deviceScheme = @patchboard().context.schemes['Gem-Device']
       if 'credentials' of deviceScheme and !credentials.override
-        return callback errors.ExistingAuthenticationError
-      
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
+        return callback new Error('This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=true.')
 
       @patchboard().context.authorize 'Gem-Device', credentials
       # ????? SHOULD I MEMOIZE THE USER ?????
       if credentials.fetch
         @user (error, user) ->
-          return callback error if error
-          callback null, user
+          callback(error, user)
       else
-        callback null, true
+        callback(null, true)
 
 
+    # Required credentials are app_url, api_token, instance_id
     @authenticateApplication = (credentials, callback) ->
-      requiredCredentials = ['app_url', 'api_token', 'instance_id']
       credentials.override = credentials.override || false
       credentials.fetch = credentials.fetch || true
 
@@ -132,9 +123,60 @@ module.exports = class Client
       if 'credential' of applicationScheme and !credentials.override
         return callback errors.ExistingAuthenticationError
 
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
-
       @patchboard.context.authorize 'Gem-Application', credentials
+
+
+    # Credentials requires name, device_id, email, api_token, name (device)
+    @beginDeviceAuthorization = (credentials, callback) ->
+      {name, device_id, email, api_token} = credentials
+      @authenticateOTP({api_token})
+      
+      resource = @resources().user_query({email})
+      resource.authorize_device {name, device_id}, (error) ->
+        responseHeader = error.response.headers['www-authenticate']
+        regx = /key="(.*)"/
+        matches = regx.exec responseHeader
+        # debugger
+        if matches
+          key = matches[1]
+          callback(null, key)
+        else
+          callback(error)
+
+
+    # credentials requires: app_url, api_token, key, secret, name (of device), device_id 
+    @completeDeviceAuthorization = (credentials, callback) ->
+      @authenticateOTP(credentials)
+
+      {name, device_id, email} = credentials
+      authorizeDeviceCreds = {name, device_id}
+      
+      resource = @resources().user_query({email})
+      resource.authorize_device authorizeDeviceCreds, (error, userResource) =>
+        return callback(error) if error
+
+        @authenticateDevice {
+          app_url: credentials.app_url
+          api_token: credentials.api_token
+          user_url: userResource.url
+          user_token: userResource.user_token
+          device_id: credentials.device_id
+          }, (error, user) ->
+            return callback(error) if error
+
+            callback null, user
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

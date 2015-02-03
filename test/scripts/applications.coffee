@@ -24,18 +24,18 @@ describe 'Applications Resource', ->
           defltApp = apps.collection.default
           {api_token} = defltApp
           
-          # # STEP 1
+          # STEP 1
           # name = "newAppInstance#{Date.now()}"
           # defltApp.beginInstanceAuthorization {name, api_token}, (error, applicationInstance) ->
           #   done(error)
 
           # STEP 2
           # instance_id comes from an email
-          instance_id = 'EZlh5eVFwEus3iN7EfxRZPQaL3m9GgfM0PKkYeAr9mY'
+          instance_id = 'iGgjgWpsUtg5LT1PmZd1Y7YR-pQ3WKn5VAQcYNC04PA'
           defltApp.finishInstanceAuthorization {api_token, instance_id}
           defaultApp = defltApp; applications = apps
           done(error)
-          
+  
 
   describe 'application.authorizeInstance', ->
     it 'should authorize client as an application instance', (done) ->

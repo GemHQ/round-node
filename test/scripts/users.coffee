@@ -21,67 +21,91 @@ describe 'User Resource', ->
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
-        # cli.users.create newUserContent(), (error, usr) ->
+        console.log error if error
         email = "js-test-#{Date.now()}@mail.com"
         passphrase = 'passphrase'
         cli.users.create {email, passphrase}, (error, user_and_multiwallet) ->
           dev.applications (error, apps) ->
+            console.log error if error
             client = cli; developer = dev; applications = apps
             user = user_and_multiwallet.user
             done(error)
+
 
   describe 'client.users.create', ->
     it 'should create a user object', (done) ->
       expect(user.resource()).to.have.a.property('email')
       done()
 
+
   # being skipped because it sends an email
-  describe.skip 'user.beginDeviceAuthorization', ->
-    it 'should memoize device_name and device_id', (done) ->
+  describe 'user.beginDeviceAuthorization', ->
+    it 'should recive a key', (done) ->
       device_id = "newdeviceid#{Date.now()}"
-      credentials = { name: 'thecooldevice', device_id }
-      user.beginDeviceAuthorization credentials, (key) ->
+      email = user.resource().email
+      api_token = applications.collection.default.api_token
+      credentials = { name: 'thecooldevice', device_id, email, api_token }
+      client.beginDeviceAuthorization credentials, (error, key) ->
         expect(key.substr(0,3)).to.equal('otp')
-        expect(user.currentDeviceName).to.equal('thecooldevice')
-        expect(user.currentDeviceId).to.equal(device_id)
         done()
+
 
   describe "Authenticated User", ->
-    user = ''
-    before (done) ->
-      client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
-        user = usr
-        done(error)
+    # user = ''
+    # before (done) ->
+    #   client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
+    #     user = usr
+    #     done(error)
+
 
     describe 'client.authenticateDevice', ->
-      it 'return an authenticated user', (done) ->
-        expect(user).to.be.an.instanceof(User)
-        done()
+      it.only 'return an authenticated user', (done) ->
+        # expect(user).to.be.an.instanceof(User)
+        # done()
       # # Note: Proceeding lines are commented for automation purposes.
       # # Note: To test fully, you must run the test in 2 steps
       #   # FIRST
-      #   client.patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
-      #   u = client.resources().user_query {email: 'bez@gem.co'}
-      #   device_id =  "newdeviceid#{Date.now()}"
-      #   console.log 'device_id ------------------------------'
-      #   console.log device_id
-      #   u.authorize_device {name: 'newapp', device_id}, (error, data) ->
-      #     regx = /"(.*)"/
-      #     response = error.response.headers['www-authenticate']
-      #     matches = regx.exec response
-      #     key = matches[1]
-      #     console.log "key -------------------------------"
-      #     console.log key
-      #     done()
+        # api_token = applications.collection.default.api_token
+        # name = "newapp"
+        # email = "bez@gem.co"
+        # device_id =  "newdeviceid#{Date.now()}"
+        # console.log 'device_id ------------------------------'
+        # console.log device_id
+        # client.beginDeviceAuthorization {api_token, email, device_id, name}, (error, key) ->
+        #   console.log "key -------------------------------"
+        #   console.log key
+        #   done(error)
+
+        # client.authenticateOTP({api_token})
+        # client.patchboard().context.schemes['Gem-OOB-OTP']['credentials'] = 'data="none"'
+        # u = client.resources().user_query {email: 'bez@gem.co'}
+        # device_id =  "newdeviceid#{Date.now()}"
+        # console.log 'device_id ------------------------------'
+        # console.log device_id
+        # u.authorize_device {name: 'newapp', device_id}, (error) ->
+        #   responseHeader = error.response.headers['www-authenticate']
+        #   regx = /key="(.*)"/
+        #   debugger
+        #   matches = regx.exec responseHeader
+        #   key = matches[1]
+        #   console.log "key -------------------------------"
+        #   console.log key
+        #   done()
 
       # # Note: proceeding lines are commented inorder to automate tests.
       # # SECOND
-      #   {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
+
+        {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
+        client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
+          console.log user.resource().url
+          console.log user.resource().user_token
+          done(error)
+
       #   client.authenticateOTP {api_token, key, secret}
       #   u = client.resources().user_query {email: 'bez@gem.co'}
       #   u.authorize_device {name, device_id}, (error, user) ->
       #     ADC = authenticateDeviceCreds(applications)
-      #     ADC.user_url =  user.url
+      #     ADC.user_url = user.url
       #     ADC.user_token = user.user_token
       #     # you need these values when authenticating later
       #     console.log ADC.user_url
@@ -89,6 +113,7 @@ describe 'User Resource', ->
       #     client.authenticateDevice ADC, (error, user) ->
       #       expect(user).to.be.an.instanceof(User)
       #       done(error)
+
 
   # Skipping because it takes to long to load
   # Must clear out bez@gem.co wallets
