@@ -5,10 +5,6 @@ Transactions = require '../../src/resources/transactions'
 Wallet = require '../../src/resources/wallet'
 Payment = require '../../src/resources/payment'
 PaymentGenerator = require '../../src/resources/payment_generator'
-bitcoin = require 'bitcoinjs-lib'
-bs58 = require 'bs58'
-coinop = require 'coinop'
-txUtils = coinop.bit.transaction_utils
 
 paymentResource = require('../data/transaction.json').payment
 
@@ -33,6 +29,7 @@ describe 'Accounts Resource', ->
           client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
             user = usr
             user.wallets (error, wallets) ->
+              debugger
               wallet = wallets.collection.default
               wallet.accounts (error, accnts) ->
                 accounts = accnts
@@ -52,11 +49,12 @@ describe 'Accounts Resource', ->
     it 'should memoize the instance on @_payments', ->
       expect(account._payments).to.deep.equal(payments)
 
+
   describe.only 'account.pay', ->
     
     it 'should not throw an error (i.e. make a successful tx)', (done) ->
-      account.wallet.unlock("foo bar baz")
-      payees = [{amount: 1000, address: 'mrsjJDuBzhjPeHpdo6ivcbACCBQFcoWXmq'}]
+      account.wallet.unlock("passphrase")
+      payees = [{amount: 1000, address: 'mrkGJWekqbpyrVdDbfwjzmizxA86cgP8T8'}]
 
       account.pay payees, (error, data) ->
         expect(error).to.not.exist
@@ -67,6 +65,7 @@ describe 'Accounts Resource', ->
     it 'should reference the wallet it belongs to', ->
       expect(account.wallet).to.be.instanceof(Wallet)
 
+
   # Note: We may be removing client.account
   describe 'client.account', ->
     `var account`
@@ -74,6 +73,7 @@ describe 'Accounts Resource', ->
       accountUrl = wallet.resource().accounts.url
       account = client.account accountUrl
       expect(account).to.be.an.instanceof(Account)
+
 
   # skipping because it creates a wallet for the same
   # user and therefor makes other calls really slow

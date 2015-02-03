@@ -42,18 +42,19 @@ describe 'Wallets Resource', ->
 
     describe "wallet unlock", ->
       it "return a MultiWallet instance", ->
-        multiwallet = wallet.unlock("foo bar baz")
+        multiwallet = wallet.unlock("passphrase")
         expect(multiwallet).to.be.an.instanceof(MultiWallet)
 
       it 'should memoize the multiwallet', ->
         expect(wallet._multiwallet).to.be.an.instanceof(MultiWallet)
 
     # skipping because it creates a wallet
-    describe.skip 'wallets.create', ->
+    describe.only 'wallets.create', ->
       it 'should create and return a Wallet', (done) ->
-        wallet = data.wallet
-        wallet.name = "newwallet#{Date.now()}"
-        wallets.create wallet, (error, wallet) ->
+        walletData = data.wallet
+        walletData.name = "new-wallet#{Date.now()}"
+        debugger
+        wallets.create walletData, (error, wallet) ->
           expect(wallet).to.be.an.instanceof(Wallet)
           done()
 

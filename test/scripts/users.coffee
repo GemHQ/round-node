@@ -39,7 +39,7 @@ describe 'User Resource', ->
 
 
   # being skipped because it sends an email
-  describe 'user.beginDeviceAuthorization', ->
+  describe.skip 'user.beginDeviceAuthorization', ->
     it 'should recive a key', (done) ->
       device_id = "newdeviceid#{Date.now()}"
       email = user.resource().email
@@ -88,10 +88,9 @@ describe 'User Resource', ->
 
   # Skipping because it takes to long to load
   # Must clear out bez@gem.co wallets
-  describe 'user.wallets', ->
+  describe.skip 'user.wallets', ->
     it 'should memoize and return a wrapped Wallet object', (done) ->
       user.wallets (error, wallets) ->
         expect(wallets).to.be.an.instanceof(Wallets)
         expect(user._wallets).to.deep.equal(wallets)
-        console.log wallets
         done(error)
