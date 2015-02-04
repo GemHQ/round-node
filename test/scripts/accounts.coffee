@@ -29,7 +29,6 @@ describe 'Accounts Resource', ->
           client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
             user = usr
             user.wallets (error, wallets) ->
-              debugger
               wallet = wallets.collection.default
               wallet.accounts (error, accnts) ->
                 accounts = accnts

@@ -36,7 +36,7 @@ module.exports = class Account
 
     multiwallet = @wallet._multiwallet
     unless multiwallet
-      throw Error('You must unlock the wallet before attempting a transaction')
+      throw new Error('You must unlock the wallet before attempting a transaction')
 
     @payments().unsigned payees, (error, payment) ->
       return callback(error) if error
@@ -51,4 +51,6 @@ module.exports = class Account
   #   @_transactions ?= new Transactions(transactionsResource, @client())
 
 
+  # FixMe: move this to the constructor
+  #        search and change anywhwere that was using payments() to now use payments
   payments: -> @_payments ?= new PaymentGenerator(@resource().payments, @client())
