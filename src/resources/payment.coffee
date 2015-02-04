@@ -1,7 +1,7 @@
 
 module.exports = class Payment
 
-  constructor: (resource, client) ->
+  constructor: (resource, client, options) ->
     @resource = -> resource
     @client = -> client
 

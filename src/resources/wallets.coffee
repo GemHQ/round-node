@@ -7,6 +7,7 @@ MultiWallet = CoinOp.bit.MultiWallet
 module.exports = class Wallets extends Collection
 
   type: Wallet
+  key: 'name'
 
   # Note: network can be either 'bitcoin_testnet', or 'bitcoin'
   # Content requires name and passphrase

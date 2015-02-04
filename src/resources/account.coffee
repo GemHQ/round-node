@@ -4,29 +4,24 @@ PaymentGenerator = require './payment_generator'
 
 module.exports = class Account
 
-  constructor: (accountResource, client, @wallet) ->
+  constructor: (accountResource, client, options) ->
     @client = -> client
     @resource = -> accountResource
-
-  # FIX: Currently receiving a 401
-  # update: (content, callback) ->
-  #   @resource().update content, (error, accountResource) ->
-  #     return callback(error) if error
-
-  #     @resource = -> accountResource
-
-  #     return @
+    @wallet = options.wallet
 
 
   addresses: (callback) ->
     return callback(null, @_addresses) if @_addresses
     
-    addressesResource = @resource().addresses
-    new Addresses addressesResource, @client(), (error, addresses) =>
+    resource = @resource().addresses
+
+    addresses = new Addresses(resource, @client())
+    
+    addresses.loadCollection (error, addresses) =>
       return callback(error) if error
 
       @_addresses = addresses
-      callback null, @_addresses
+      callback(null, @_addresses)
 
 
   pay: (payees, callback) ->
@@ -43,6 +38,7 @@ module.exports = class Account
       payment.sign multiwallet, (error, data) ->
         callback(error, data)
   
+
   # FIX: account.resource().transactions returns a function
     #  not a resource. Could be a bug in Patchboard
   # transactions: ->

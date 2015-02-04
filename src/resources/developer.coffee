@@ -3,7 +3,7 @@ Applications = require './applications'
 
 module.exports = class Developer
 
-  constructor: (resource, client) ->
+  constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
     
@@ -11,13 +11,15 @@ module.exports = class Developer
   applications: (callback) ->
     return callback(null, @_applications) if @_applications
 
-    applicationsResource = @resource().applications
+    resource = @resource().applications
 
-    new Applications applicationsResource, @client(), (error, applications) =>
+    applications = new Applications(resource, @client())
+    
+    applications.loadCollection (error, applications) =>
       return callback(error) if error
 
       @_applications = applications
-      callback null, @_applications
+      callback(null, @_applications)
 
 
   # Updates authenticated developer's credentials

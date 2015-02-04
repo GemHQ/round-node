@@ -25,7 +25,9 @@ describe 'User Resource', ->
         email = "js-test-#{Date.now()}@mail.com"
         passphrase = 'passphrase'
         cli.users.create {email, passphrase}, (error, user_and_multiwallet) ->
+          console.log error if error
           dev.applications (error, apps) ->
+            console.log error if error
             client = cli; developer = dev; applications = apps
             user = user_and_multiwallet.user
             done(error)
@@ -85,11 +87,14 @@ describe 'User Resource', ->
         #   done(error)
 
 
+  # Requires device auth
   # Skipping because it takes to long to load
   # Must clear out bez@gem.co wallets
-  describe.skip 'user.wallets', ->
+  describe 'user.wallets', ->
     it 'should memoize and return a wrapped Wallet object', (done) ->
       user.wallets (error, wallets) ->
+        console.log wallets
+        expect(error).to.not.exist
         expect(wallets).to.be.an.instanceof(Wallets)
         expect(user._wallets).to.deep.equal(wallets)
         done(error)

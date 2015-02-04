@@ -22,9 +22,12 @@ describe 'Wallets Resource', ->
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
+        console.log error if error
         dev.applications (error, apps) ->
+          console.log error if error
           client = cli; developer = dev; applications = apps
           client.authenticateDevice authenticateDeviceCreds(apps), (error, usr) ->
+            console.log error if error
             user = usr
             done(error)
 
@@ -39,6 +42,7 @@ describe 'Wallets Resource', ->
         wallets = walts
         wallet = walts.collection.default
         done(error)
+
 
     describe "wallet unlock", ->
       it "return a MultiWallet instance", ->
@@ -66,12 +70,13 @@ describe 'Wallets Resource', ->
           done(error)
 
 
-    describe 'wallet.accounts', ->
+    describe.only 'wallet.accounts', ->
       accounts = ''
 
       before (done) ->
         wallet.accounts (error, accnts) ->
           accounts = accnts
+          console.log accounts
           done(error)
 
       it 'should return an accounts abject', ->

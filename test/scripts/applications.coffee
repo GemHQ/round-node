@@ -73,8 +73,7 @@ describe 'Applications', ->
     expect(developer).to.have.a.property('_applications')
 
 
-  describe.only 'applications.create', ->
-
+  describe 'applications.create', ->
     it 'should create a new Application Object', (done) ->  
       applications.create {name}, (error, application) ->
         expect(application).to.be.an.instanceof(Application)
@@ -84,7 +83,7 @@ describe 'Applications', ->
       expect(developer._applications.collection).to.have.property(name)
 
   # skipping because it takes too long
-  describe.skip 'applications.refresh', ->
+  describe 'applications.refresh', ->
     it 'should return applications object with new application', (done) ->
       applications.refresh (error, applications) ->
         expect(applications.collection).to.have.property(name)

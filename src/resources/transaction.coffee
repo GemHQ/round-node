@@ -1,6 +1,6 @@
 
 module.exports = class Transaction
 
-  constructor: (txResource, client) ->
+  constructor: (resource, client, options) ->
     @client = -> client
-    @resource = -> txResource
+    @resource = -> resource

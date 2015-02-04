@@ -4,20 +4,23 @@ MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class User
 
-  constructor: (userResource, client) ->
+  constructor: (userResource, client, options) ->
     @client = -> client
     @resource = -> userResource
 
 
   wallets: (callback) ->
     return callback(null, @_wallets) if @_wallets
+    
+    resource = @resource().wallets
 
-    walletsResource = @resource().wallets
-    new Wallets walletsResource, @client(), (error, wallets) =>
+    wallets = new Wallets(resource, @client())
+    
+    wallets.loadCollection (error, wallets) =>
       return callback(error) if error
 
       @_wallets = wallets
-      callback null, @_wallets
+      callback(null, @_wallets)
 
   # Note: requires user auth
   #       Should we remove this entirely?

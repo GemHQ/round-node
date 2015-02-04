@@ -5,7 +5,7 @@ MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class Application
 
-  constructor: (resource, client) ->
+  constructor: (resource, client, options) ->
     {@name, @api_token, @url, @key} = resource
     @resource = -> resource
     @client = -> client

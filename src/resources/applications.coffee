@@ -5,8 +5,9 @@ errors = require '../errors'
 
 module.exports = class Applications extends Collection
 
-  # Note: type is used in Collection
+  # Note: type and name are used in Collection
   type: Application
+  key: 'name'
 
 
   # Content requires name

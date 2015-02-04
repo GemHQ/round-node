@@ -5,10 +5,13 @@ Collection = require './collection'
 
 module.exports = class Accounts extends Collection
 
-  constructor: (resource, client, callback, @wallet) ->
+  constructor: (resource, client, @wallet) ->
     super
 
+
   type: Account
+  key: 'name'
+
 
   # Content requires an name
   create: (content, callback) ->

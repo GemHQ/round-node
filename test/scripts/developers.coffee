@@ -17,75 +17,75 @@ describe 'Developer Resource', ->
   
   before (done) ->
     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
-      cli.developers.create bezDevCreds, (error, dev) ->
-        console.log error, dev
+      cli.developers.create newDevCreds(), (error, dev) ->
         client = cli; developer = dev; done(error)
 
-  describe 'dev', ->
-    it 'should return a dev', ->
-      console.log "--------------------------"
 
 
 
-#   describe 'developers.create', ->
-#     it 'should return a developer object', ->
-#       expect(developer).to.be.an.instanceof(Developer)
+  describe 'developers.create', ->
+    it 'should return a developer object', ->
+      expect(developer).to.be.an.instanceof(Developer)
 
-#     it 'should authorize if privkey is provided', (done) ->
-#       developerScheme = client.patchboard().context.schemes['Gem-Developer']
-#       expect(developerScheme).to.have.a.property('credentials')
-#       # proves that client is authorized as a developer
-#       client.resources().developers.get (error, developerResource) ->
-#         expect(developerResource).to.deep.equal(developer.resource())
-#         done(error)
+    it 'should authorize if privkey is provided', (done) ->
+      developerScheme = client.patchboard().context.schemes['Gem-Developer']
+      expect(developerScheme).to.have.a.property('credentials')
+      # proves that client is authorized as a developer
+      client.resources().developers.get (error, developerResource) ->
+        expect(developerResource).to.deep.equal(developer.resource())
+        done(error)
 
 
-#   describe 'developer.applications(callback)', ->
-#     applications = ''
+  describe.only 'developer.applications', ->
+    applications = ''
     
-#     before (done) ->
-#       developer.applications (error, apps) ->
-#         applications = apps
-#         done(error)
+    before (done) ->
+      developer.applications (error, apps) ->
+        applications = apps
+        done(error)
 
-#     it 'should return an Applications object', ->
-#       expect(applications).to.be.an.instanceof(Applications)
+    it 'should return an Applications object', ->
+      expect(applications).to.be.an.instanceof(Applications)
 
-#     it "Applications.collection should have a 'default' Application object", ->
-#       expect(applications.collection).to.have.a.property('default')
-#       expect(applications.collection.default).to.be.an.instanceof(Application)
+    it "Applications.collection should have a 'default' Application object", ->
+      expect(applications.collection).to.have.a.property('default')
+      expect(applications.collection.default).to.be.an.instanceof(Application)
+
+    it 'should cache the applications object on the developer', ->
+      expect(developer._applications).to.deep.equal(applications)
 
 
-#   describe 'developer.update', ->
+  describe 'developer.update', ->
 
-#     updatedDeveloper = ''
-#     newEmail = "thenewemail#{Date.now()}@mail.com"
+    updatedDeveloper = ''
+    newEmail = "thenewemail#{Date.now()}@mail.com"
 
-#     before (done) ->
-#       developer.update {email: newEmail, privkey}, (error, updatedDev) ->
-#         updatedDeveloper = updatedDev
-#         done(error)
+    before (done) ->
+      developer.update {email: newEmail, privkey}, (error, updatedDev) ->
+        updatedDeveloper = updatedDev
+        done(error)
 
-#     it 'should return a Developer object', ->
-#       expect(updatedDeveloper).to.be.an.instanceof(Developer)
+    it 'should return a Developer object', ->
+      expect(updatedDeveloper).to.be.an.instanceof(Developer)
 
-#     it 'should update the developer with the new content', ->
-#       expect(updatedDeveloper.resource().email).to.equal(newEmail)
+    it 'should update the developer with the new content', ->
+      expect(updatedDeveloper.resource().email).to.equal(newEmail)
 
-#     it 'should memoize the updated developer', ->
-#       expect(client.developer()).to.deep.equal(updatedDeveloper)
+    it 'should memoize the updated developer', ->
+      expect(client.developer()).to.deep.equal(updatedDeveloper)
 
-#     it 'should authorize the client with updated credentials', (done) ->
-#       client.resources().developers.get (error, developerResource) ->
-#         expect(developerResource).to.deep.equal(updatedDeveloper.resource())
-#         done(error)
+    it 'should authorize the client with updated credentials', (done) ->
+      client.resources().developers.get (error, developerResource) ->
+        expect(developerResource).to.deep.equal(updatedDeveloper.resource())
+        done(error)
 
-# describe 'Developer Errors', ->
-#   it "should throw 'Missing Credential Error'", (done) ->
-#     Round.client 'http://localhost:8999','testnet3', (error, client) ->
-#       client.developers.create {}, (error, dev) ->
-#         expect(error.type).to.equal('Missing Credential Error')
-#         done()
+
+describe 'Developer Errors', ->
+  it "should throw 'Missing Credential Error'", (done) ->
+    Round.client 'http://localhost:8999','testnet3', (error, client) ->
+      client.developers.create {}, (error, dev) ->
+        expect(error).to.exist
+        done()
 
 
 

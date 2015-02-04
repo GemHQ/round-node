@@ -36,6 +36,12 @@ describe 'Accounts Resource', ->
                 done(error)
 
 
+  describe.only 'accounts', ->
+    it 'should have a wallet property', ->
+      expect(accounts).to.have.a.property('wallet')
+      expect(accounts.wallet).to.be.an.instanceof(Wallet)
+
+
   describe 'account.payments', ->
     payments = null
     
@@ -110,13 +116,18 @@ describe 'Accounts Resource', ->
     before (done) ->
       account.addresses (error, addrs) ->
         addresses = addrs
+        console.log addresses
         done(error)
 
     it 'should return an Addresses object', ->
       expect(addresses).to.be.an.instanceof(Addresses)
 
-    it 'should have a collection property', ->
-      expect(addresses).to.have.a.property('collection')
+    it 'collection keys should not be undefined', ->
+      expect(addresses.collection).to.not.have.a.property('undefined')
+
+    it 'should cache the addresses object on the account', ->
+      expect(account._addresses).to.deep.equal(addresses)
+
 
 
   # account.resource().transactions returns a function

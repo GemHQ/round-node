@@ -30,6 +30,6 @@ module.exports = class Users extends Collection
     @resource().create params, (error, resource) =>
       return callback(error) if error
 
-      user = new User(userResource, @client())
+      user = new User(resource, @client())
 
       callback(null, {multiwallet, user})
