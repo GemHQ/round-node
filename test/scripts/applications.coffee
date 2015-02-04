@@ -73,7 +73,7 @@ describe 'Applications', ->
     expect(developer).to.have.a.property('_applications')
 
 
-  describe 'applications.create', ->
+  describe.only 'applications.create', ->
 
     it 'should create a new Application Object', (done) ->  
       applications.create {name}, (error, application) ->

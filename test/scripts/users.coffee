@@ -26,7 +26,6 @@ describe 'User Resource', ->
         passphrase = 'passphrase'
         cli.users.create {email, passphrase}, (error, user_and_multiwallet) ->
           dev.applications (error, apps) ->
-            console.log error if error
             client = cli; developer = dev; applications = apps
             user = user_and_multiwallet.user
             done(error)

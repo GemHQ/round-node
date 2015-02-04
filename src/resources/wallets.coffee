@@ -33,6 +33,7 @@ module.exports = class Wallets extends Collection
       return callback(error) if error
 
       wallet = new Wallet(resource, @client())
-      @collection[name] = wallet
+      
+      @add(name, wallet)
 
       callback(null, wallet)

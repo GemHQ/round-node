@@ -9,14 +9,15 @@ module.exports = class Applications extends Collection
   type: Application
 
 
+  # Content requires name
   create: (content, callback) ->
-    @resource().create content, (error, appResource) =>
+    @resource().create content, (error, resource) =>
       return callback(error) if error
 
-      application = new Application appResource, @client()
-      # the key is a reference to the resource's name
-      # therefor it will update when the resource updates. 
-      @collection[application.resource().name] = application
-      callback null, application
+      application = new Application(resource, @client())
+
+      @add(content.name, application)
+
+      callback(null, application)
 
 

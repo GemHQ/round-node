@@ -29,14 +29,13 @@ module.exports = class Account
       callback null, @_addresses
 
 
-  # FixMe: should not throw errors. Should give the erros to the callback
   pay: (payees, callback) ->
     unless payees
-      throw Error('Payees must be specified')
+      return callback(new Error('Payees must be specified'))
 
     multiwallet = @wallet._multiwallet
     unless multiwallet
-      throw new Error('You must unlock the wallet before attempting a transaction')
+      return callback(new Error('You must unlock the wallet before attempting a transaction'))
 
     @payments().unsigned payees, (error, payment) ->
       return callback(error) if error

@@ -10,12 +10,13 @@ module.exports = class Accounts extends Collection
 
   type: Account
 
-  # content must contain email
+  # Content requires an name
   create: (content, callback) ->
     @resource().create content, (error, accountResource) =>
       return callback(error) if error
 
       account = new Account accountResource, @client(), @wallet
-      @collection[account.resource().name] = account
+      
+      @add(content.name, account)
       
       callback null, account

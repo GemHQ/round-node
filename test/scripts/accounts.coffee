@@ -49,7 +49,8 @@ describe 'Accounts Resource', ->
       expect(account._payments).to.deep.equal(payments)
 
 
-  describe.only 'account.pay', ->
+  # Skipping because we will run out of coins
+  describe.skip 'account.pay', ->
     
     it 'should not throw an error (i.e. make a successful tx)', (done) ->
       account.wallet.unlock("passphrase")
@@ -77,27 +78,28 @@ describe 'Accounts Resource', ->
   # skipping because it creates a wallet for the same
   # user and therefor makes other calls really slow
   describe.skip 'accounts.create', ->
-    `var account, name`
+    newAccount = accountName = null
 
     before (done) ->
-      name = "newAccount#{Date.now()}"
-      accounts.create {name}, (error, accnt) ->
-        account = accnt
+      accountName = "on_account_of_who4"
+      accounts.create {name: accountName}, (error, account) ->
+        newAccount = account
         done(error)
   
     it 'should create a new Account object', () ->
-      expect(account).to.be.an.instanceof(Account)
+      expect(newAccount).to.be.an.instanceof(Account)
 
     it 'should memoize the new account', () ->
       wallet.accounts (error, accounts) ->
-        expect(wallet._accounts.collection).to.have.a.property(name)
+        expect(wallet._accounts.collection).to.have.a.property(accountName)
 
 
   # currently receiving a 401, not sure why
   describe.skip 'account.update', ->
     it 'should update the account resource', (done) ->
       name = "newname#{Date.now()}"
-      account.resource().update {name}, (error, accountResource) ->
+      acnt = accounts.collection.cool_account
+      acnt.resource().update {name}, (error, accountResource) ->
         console.log error, accountResource
         done()
 

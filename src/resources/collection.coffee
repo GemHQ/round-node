@@ -37,3 +37,7 @@ module.exports = class Collection
   refresh: (callback) ->
     @collection = {}
     getData.call(@, callback)
+
+
+  add: (key, model) ->
+    @collection[key] = model
