@@ -36,10 +36,18 @@ describe 'Accounts Resource', ->
                 done(error)
 
 
-  describe.only 'accounts', ->
+  describe 'accounts', ->
     it 'should have a wallet property', ->
       expect(accounts).to.have.a.property('wallet')
       expect(accounts.wallet).to.be.an.instanceof(Wallet)
+
+
+  describe.only 'account.transaction', ->
+    it 'should return an instance of Transactions', (done) ->
+      account.transactions (error, transactions) ->
+        expect(transactions).to.be.an.instanceof(Transactions)
+        done()
+
 
 
   describe 'account.payments', ->
@@ -116,7 +124,6 @@ describe 'Accounts Resource', ->
     before (done) ->
       account.addresses (error, addrs) ->
         addresses = addrs
-        console.log addresses
         done(error)
 
     it 'should return an Addresses object', ->
@@ -128,12 +135,3 @@ describe 'Accounts Resource', ->
     it 'should cache the addresses object on the account', ->
       expect(account._addresses).to.deep.equal(addresses)
 
-
-
-  # account.resource().transactions returns a function
-  # not a resource. Could be a bug in Patchboard
-  describe 'account.transactions', ->
-    it 'should return a transactions object', (done) ->
-      account.resource().get (err, res) ->
-        console.log res.trans
-        done()

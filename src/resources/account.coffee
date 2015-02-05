@@ -39,13 +39,18 @@ module.exports = class Account
         callback(error, data)
   
 
-  # FIX: account.resource().transactions returns a function
-    #  not a resource. Could be a bug in Patchboard
-  # transactions: ->
-  #   transactionsResource = @resource().transactions
-  #   @_transactions ?= new Transactions(transactionsResource, @client())
+  transactions: (callback) ->
+    return callback(null, @_transactions) if @_transactions
+
+    resource = @resource().transactions({}) # Must pass a hash
+
+    transactions = new Transactions(resource, @client())
+    
+    transactions.loadCollection (error, transactions) =>
+      return callback(error) if error
+
+      @_transactions = transactions
+      callback(null, @_transactions)
 
 
-  # FixMe: move this to the constructor
-  #        search and change anywhwere that was using payments() to now use payments
   payments: -> @_payments ?= new PaymentGenerator(@resource().payments, @client())
