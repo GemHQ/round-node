@@ -21,7 +21,7 @@ describe 'Accounts Resource', ->
   client = developer = user = applications = accounts = account = wallet = ''
 
   before (done) ->
-    Round.client (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps;

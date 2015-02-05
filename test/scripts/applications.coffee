@@ -16,7 +16,7 @@ bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
 describe 'Applications Resource', ->
   client = defaultApp = applications = ''
   before (done) ->
-    Round.client (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       client = cli
       # Note: depends on their already existing a developer account for bez@gem.co
       client.authenticateDeveloper bezDevCreds, (error, developer) ->
@@ -63,7 +63,7 @@ describe 'Applications', ->
   name = "newApp#{Date.now()}"
 
   before (done) ->
-    Round.client (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       cli.developers.create newDevCreds(), (error, dev) ->
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps

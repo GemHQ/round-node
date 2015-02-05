@@ -20,7 +20,7 @@ describe 'Wallets Resource', ->
   client = developer = user = applications = ''
 
   before (done) ->
-    Round.client (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         console.log error if error
         dev.applications (error, apps) ->

@@ -16,7 +16,7 @@ describe 'Developer Resource', ->
   client = developer = ''
   
   before (done) ->
-    Round.client (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       cli.developers.create newDevCreds(), (error, dev) ->
         client = cli; developer = dev; done(error)
 
@@ -80,7 +80,7 @@ describe 'Developer Resource', ->
 
 describe 'Developer Errors', ->
   it "should throw 'Missing Credential Error'", (done) ->
-    Round.client (error, client) ->
+    Round.client {url: 'http://localhost:8999'}, (error, client) ->
       client.developers.create {}, (error, dev) ->
         expect(error).to.exist
         done()
