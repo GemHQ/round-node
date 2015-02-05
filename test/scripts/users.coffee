@@ -19,7 +19,7 @@ describe 'User Resource', ->
   client = developer = user = applications = ''
 
   before (done) ->
-    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+    Round.client (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         console.log error if error
         email = "js-test-#{Date.now()}@mail.com"

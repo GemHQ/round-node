@@ -13,14 +13,16 @@ module.exports = class Client
   constructor: (patchboard) ->
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
+
     
     @developers = new Developers(@resources().developers, @)
 
-    # Fix: throw a real error and change relevant tests
+
     @developer = ->
       return @_developer if @_developer
 
-      throw Error 'You have not yet authenticated as a developer'
+      throw new Error('You have not yet authenticated as a developer')
+
 
     @users = new Users(@resources().users, @)
 
@@ -36,7 +38,7 @@ module.exports = class Client
         @_user = new User(userResource, @)
         callback null, @_user
 
-    # QUESTION: Why doesn't this need to make a call to the database?
+
     # QUESTION: shouldn't this method solely live on the wallet? 
     #   What's the benefit of having it on the client
     @account = (url) ->
@@ -114,7 +116,7 @@ module.exports = class Client
         callback(null, true)
 
 
-    # Required credentials are app_url, api_token, instance_id
+    # Credentials requires app_url, api_token, instance_id
     @authenticateApplication = (credentials, callback) ->
       credentials.override = credentials.override || false
       credentials.fetch = credentials.fetch || true
@@ -165,18 +167,3 @@ module.exports = class Client
             return callback(error) if error
 
             callback null, user
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
