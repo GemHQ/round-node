@@ -4,6 +4,7 @@ Developers = require '../../src/resources/developers'
 Developer = require '../../src/resources/developer'
 # Applications = require '../../src/resources/applications'
 Users = require '../../src/resources/users'
+User = require '../../src/resources/user'
 
 expect = require('chai').expect
 fs = require "fs"
@@ -67,6 +68,7 @@ describe 'Client Methods', ->
       Round.client {url: 'http://localhost:8999'}, (error, client) ->
         expect(client.users).to.be.an.instanceof(Users)
         done(error)
+
 
 
   # Notes:

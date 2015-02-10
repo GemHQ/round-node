@@ -30,7 +30,7 @@ module.exports = class Client
 
     # content requires an email or user_url
     @user = (content, callback) ->
-      {email, user_url} = cont
+      {email, user_url} = content
       
       if email?
         resource = @resources().user_query({email})
@@ -103,8 +103,8 @@ module.exports = class Client
       @patchboard().context.authorize 'Gem-Device', credentials
       
       if credentials.fetch
-        userCreds = if credentials.email then credentials.email else credentials.user_url
-        @user userCreds, (error, user) ->
+        {email, user_url} = credentials
+        @user {email, user_url}, (error, user) ->
           callback(error, user)
       else
         callback(null, true)

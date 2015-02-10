@@ -12,9 +12,11 @@ module.exports = {
 
   client: (options, callback) ->
     # Makes options argument optional
-    callback = arguments[0] if arguments.length == 1
+    if arguments.length == 1
+      callback = arguments[0] 
+      options = {}
 
-    url = options.url || if options.network == 'bitcoin_testnet' then SANDBOX_URL else MAINNET_URL
+    url = options.url || if options.network == 'bitcoin' then MAINNET_URL else SANDBOX_URL
     
     if @patchboard?
       callback(null, new Client(@patchboard.spawn()))

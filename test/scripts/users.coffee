@@ -85,7 +85,13 @@ describe 'User Resource', ->
         #   console.log user.resource().url
         #   console.log user.resource().user_token
         #   done(error)
+  
 
+    describe.only 'client.user', ->
+      it 'should return an instance of user when provided an email', (done) ->
+        client.user {email: 'bez@gem.co'}, (error, user) ->
+          expect(user).to.be.an.instanceof(User)
+          done(error)
 
   # Requires device auth
   # Skipping because it takes to long to load
@@ -98,3 +104,6 @@ describe 'User Resource', ->
         expect(wallets).to.be.an.instanceof(Wallets)
         expect(user._wallets).to.deep.equal(wallets)
         done(error)
+
+
+  

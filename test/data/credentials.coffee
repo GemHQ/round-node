@@ -50,7 +50,7 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
 # These value will be printed in the 2nd part of client.authenticateDevice test
 authenticateDeviceCreds = (applications) -> {
   api_token: applications.collection.default.api_token,
-  app_url: applications.collection.default.url,
+  # app_url: applications.collection.default.url,
   key: 'otp.K4Dd_Mq_2AUARpOgbVxvGA',
   secret: 'XUueL4i-7x2Ou59Y1zqnzw',
   device_id: 'newdeviceid1422927709971',
