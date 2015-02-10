@@ -22,17 +22,17 @@ describe 'Applications Resource', ->
       client.authenticateDeveloper bezDevCreds, (error, developer) ->
         developer.applications (error, apps) ->
           defltApp = apps.collection.default
-          {api_token} = defltApp
+          {api_token, url} = defltApp
           
           # STEP 1
           # name = "newAppInstance#{Date.now()}"
-          # defltApp.beginInstanceAuthorization {name, api_token}, (error, applicationInstance) ->
+          # defltApp.authorizeInstance {name}, (error, applicationInstance) ->
           #   done(error)
 
           # STEP 2
           # instance_id comes from an email
           instance_id = 'iGgjgWpsUtg5LT1PmZd1Y7YR-pQ3WKn5VAQcYNC04PA'
-          defltApp.finishInstanceAuthorization {api_token, instance_id}
+          client.authenticateApplication {api_token, instance_id, app_url}
           defaultApp = defltApp; applications = apps
           done(error)
   

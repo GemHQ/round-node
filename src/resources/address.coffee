@@ -1,6 +1,8 @@
 
 module.exports = class Address
 
-  constructor: (addressResource, client, options) ->
+  constructor: (resource, client, options) ->
     @client = -> client
-    @resource = -> addressResource
+    @resource = -> resource
+    @path = resource.path
+    @string = resource.string

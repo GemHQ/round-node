@@ -26,17 +26,10 @@ module.exports = class Application
     @_rules || new Rules @resource().rules, @client()
     
 
-  # Credentials requires an api_token and a name
-  beginInstanceAuthorization: (credentials, callback) ->
+  # Credentials requires a name
+  authorizeInstance: (credentials, callback) ->
     @resource().authorize_instance credentials, (error, applicationInstance) ->
       return callback(error) if error
 
       # applicationInstnace is a useless object - nothing can be done with it
       callback null, applicationInstance
-
-
-  # Credentials requires an api_token and an instance_id
-  finishInstanceAuthorization: (credentials) ->
-    @client().patchboard().context.authorize 'Gem-Application', credentials
-    return @
-
