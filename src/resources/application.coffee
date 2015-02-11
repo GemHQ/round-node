@@ -14,12 +14,14 @@ module.exports = class Application
   users: (callback) ->
     return callback(null, @_users) if @_users
 
-    usersResource = @resource().users
-    new Users usersResource, @client(), (error, users) =>
+    resource = @resource().users
+    users = new Users(resource, @client())
+    
+    users.loadCollection (error, users) =>
       return callback(error) if error
 
       @_users = users
-      callback null, @_users
+      callback(null, @_users)
   
 
   rules: ->
@@ -33,3 +35,28 @@ module.exports = class Application
 
       # applicationInstnace is a useless object - nothing can be done with it
       callback null, applicationInstance
+
+
+  # Content requires a name property
+  # Note: This does not update the key in the collection
+  update: (content, callback) ->
+    @resource().update content, (error, resource) =>
+      return callback(error) if error
+
+      @resource = -> resource
+      @name = resource.name
+
+      callback(null, @)
+
+
+  reset: (callback) ->
+    @resource().reset (error, resource) ->
+      return callback(error) if error
+
+      @resource = -> resource
+      @api_token = resource.api_token
+
+      callback(null, @)
+
+
+

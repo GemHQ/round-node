@@ -33,7 +33,7 @@ describe 'User Resource', ->
             done(error)
 
 
-  describe 'client.users.create', ->
+  describe.only 'client.users.create', ->
     it 'should create a user object', (done) ->
       expect(user.resource()).to.have.a.property('email')
       done()
@@ -87,23 +87,22 @@ describe 'User Resource', ->
         #   done(error)
   
 
-    describe.only 'client.user', ->
+    describe 'client.user', ->
       it 'should return an instance of user when provided an email', (done) ->
         client.user {email: 'bez@gem.co'}, (error, user) ->
           expect(user).to.be.an.instanceof(User)
           done(error)
 
-  # Requires device auth
-  # Skipping because it takes to long to load
-  # Must clear out bez@gem.co wallets
-  describe 'user.wallets', ->
-    it 'should memoize and return a wrapped Wallet object', (done) ->
-      user.wallets (error, wallets) ->
-        console.log wallets
-        expect(error).to.not.exist
-        expect(wallets).to.be.an.instanceof(Wallets)
-        expect(user._wallets).to.deep.equal(wallets)
-        done(error)
+    # Requires device auth
+    # Skipping because it takes to long to load
+    # Must clear out bez@gem.co wallets
+    describe.only 'user.wallets', ->
+      it 'should memoize and return a wrapped Wallet object', (done) ->
+        user.wallets (error, wallets) ->
+          expect(error).to.not.exist
+          expect(wallets).to.be.an.instanceof(Wallets)
+          expect(user._wallets).to.deep.equal(wallets)
+          done(error)
 
 
   

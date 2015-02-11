@@ -128,7 +128,7 @@ module.exports = class Client
       @resources().application(app_url).get (error, resource) =>
         return callback(error) if error
         
-        @_application = new application(resource, @)
+        @_application = new Application(resource, @)
         callback(null, @_application)
 
 

@@ -20,5 +20,3 @@ module.exports = class Applications extends Collection
       @add(content.name, application)
 
       callback(null, application)
-
-

@@ -13,7 +13,6 @@ module.exports = class User
     return callback(null, @_wallets) if @_wallets
     
     resource = @resource().wallets
-
     wallets = new Wallets(resource, @client())
     
     wallets.loadCollection (error, wallets) =>
@@ -22,10 +21,10 @@ module.exports = class User
       @_wallets = wallets
       callback(null, @_wallets)
 
-  # Note: requires user auth
-  #       Should we remove this entirely?
-  update: (properties, callback) ->
-    @resource().update properties, (error, userResource) =>
+
+  # content can take an email, first_name, or last_name
+  update: (content, callback) ->
+    @resource().update content, (error, userResource) =>
       return callback(error) if error
 
       @_user = new User userResource, @client()
