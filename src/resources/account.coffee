@@ -4,9 +4,10 @@ PaymentGenerator = require './payment_generator'
 
 module.exports = class Account
 
-  constructor: (accountResource, client, options) ->
+  constructor: (resource, client, options) ->
     @client = -> client
-    @resource = -> accountResource
+    @resource = -> resource
+    {name, balance} = resource
     @wallet = options.wallet
 
 
@@ -24,7 +25,10 @@ module.exports = class Account
       callback(null, @_addresses)
 
 
-  pay: (payees, callback) ->
+  # content requires payees
+  pay: (content, callback) ->
+    {payees} = content
+
     unless payees
       return callback(new Error('Payees must be specified'))
 
@@ -54,3 +58,15 @@ module.exports = class Account
 
 
   payments: -> @_payments ?= new PaymentGenerator(@resource().payments, @client())
+
+
+  # content takes a name property
+  update: (content, callback) ->
+    @resource().update content, (error, resource) =>
+      return callback(error) if error
+      
+      @resource = -> resource
+      @name = resource.name
+      @balance = resource.balance
+
+      callback(null, @)

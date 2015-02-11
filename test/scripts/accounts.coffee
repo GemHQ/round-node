@@ -49,7 +49,6 @@ describe 'Accounts Resource', ->
         done()
 
 
-
   describe 'account.payments', ->
     payments = null
     
@@ -70,7 +69,7 @@ describe 'Accounts Resource', ->
       account.wallet.unlock("passphrase")
       payees = [{amount: 1000, address: 'mrkGJWekqbpyrVdDbfwjzmizxA86cgP8T8'}]
 
-      account.pay payees, (error, data) ->
+      account.pay {payees}, (error, data) ->
         expect(error).to.not.exist
         done(error)
         
@@ -108,7 +107,7 @@ describe 'Accounts Resource', ->
         expect(wallet._accounts.collection).to.have.a.property(accountName)
 
 
-  # currently receiving a 401, not sure why
+  # skipping because it requires Gem-User auth
   describe.skip 'account.update', ->
     it 'should update the account resource', (done) ->
       name = "newname#{Date.now()}"

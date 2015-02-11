@@ -36,8 +36,6 @@ describe 'Wallets Resource', ->
     wallet = wallets = ''
     # ALERT: MOVE TO PARENT 'BEFORE' BLOCK
     before (done) ->
-      wallet = data.wallet
-      wallet.name = "newwallet#{Date.now()}"
       user.wallets (error, walts) ->
         wallets = walts
         wallet = walts.collection.default
@@ -54,13 +52,29 @@ describe 'Wallets Resource', ->
 
     # skipping because it creates a wallet
     describe.skip 'wallets.create', ->
-      it 'should create and return a Wallet', (done) ->
+      it 'should create and return a Wallet and a backup_seed', (done) ->
         passphrase = 'passphrase'
         name = "new-wallet#{Date.now()}"
         walletData = {name, passphrase}
-        wallets.create walletData, (error, wallet) ->
+        wallets.create walletData, (error, data) ->
+          {wallet, backup_seed} = data
           expect(wallet).to.be.an.instanceof(Wallet)
+          expect(backup_seed).to.exist
           done()
+
+
+    # Find a good way to test without overwriting the default wallet
+    # describe.skip "wallet.update", ->
+    #   it 'should update the wallets resource with a new name', (done) ->
+
+
+    describe 'wallet.reste', ->
+      it.only 'should return a new wallet with the same name', (done) ->
+        wallet = wallets.get("new-wallet1423681039016")
+        console.log wallet.resource()
+        done()
+
+
 
     # Skipping because it takes to long to load
     # Must clear out bez@gem.co wallets
@@ -70,7 +84,7 @@ describe 'Wallets Resource', ->
           done(error)
 
 
-    describe.only 'wallet.accounts', ->
+    describe 'wallet.accounts', ->
       accounts = ''
 
       before (done) ->

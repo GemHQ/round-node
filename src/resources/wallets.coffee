@@ -20,6 +20,7 @@ module.exports = class Wallets extends Collection
     network = content.network || 'bitcoin_testnet'
     multiwallet = MultiWallet.generate(['primary', 'backup'], network)
     primarySeed = multiwallet.trees.primary.toBase58()
+    backup_seed = multiwallet.trees.primary.toBase58()
     encryptedSeed = PassphraseBox.encrypt(passphrase, primarySeed)
 
     walletData = {
@@ -37,4 +38,4 @@ module.exports = class Wallets extends Collection
       
       @add(name, wallet)
 
-      callback(null, wallet)
+      callback(null, {wallet, backup_seed})

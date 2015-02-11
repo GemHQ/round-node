@@ -99,6 +99,7 @@ describe 'User Resource', ->
     describe.only 'user.wallets', ->
       it 'should memoize and return a wrapped Wallet object', (done) ->
         user.wallets (error, wallets) ->
+          console.log wallets.collection
           expect(error).to.not.exist
           expect(wallets).to.be.an.instanceof(Wallets)
           expect(user._wallets).to.deep.equal(wallets)
