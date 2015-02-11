@@ -2,10 +2,15 @@ Application = require './application'
 
 module.exports = class Collection
 
+  _isNumber = (n) ->
+    !isNaN(parseFloat(n)) && isFinite(n)
+
+
   constructor: (applicationsResource, client, callback) ->
     @resource = -> applicationsResource
     @client = -> client
-    @collection = {}
+    @_collection = null
+    @_modelList = null
 
 
   loadCollection: (props, callback) ->
@@ -17,12 +22,18 @@ module.exports = class Collection
     @resource().list (error, resourceArray) =>
       return callback(error) if error
       
-      for resource in resourceArray
-        wrappedResource = new @type(resource, @client(), props)
+      @_modelList = resourceArray.map (resource) =>
+        new @type(resource, @client(), props)
+      
+      if @key
+        @_collection = {}
+        
+        for resource in resourceArray
+          wrappedResource = new @type(resource, @client(), props)
 
-        key = resource[@key]
+          key = resource[@key]
 
-        @add(key, wrappedResource)
+          @add(key, wrappedResource)
 
       callback(null, @)
 
@@ -32,23 +43,30 @@ module.exports = class Collection
 
 
   add: (key, model) ->
-    @collection[key] = model
+    if @_collection?
+      @_collection[key] = model
+    
+    @_modelList.push(model)
 
 
   get: (key) ->
     # Return entire collection if no key is provided
-    return @collection unless key
+    return @_modelList unless key
 
-    model = @collection[key]
+    if _isNumber(key)
+      model = @_modelList[key]
+    else
+      model = @_collection[key]
 
     if model?
       return model
     else
       throw new Error "No object in the #{@type.name}s collection
-                      for that key. Provide the #{@key} of the
-                      #{@type.name} you are looking for."
+                      for that value."
 
 
+  getAll: ->
+    @_modelList
 
 
 

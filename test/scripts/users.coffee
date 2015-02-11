@@ -44,7 +44,7 @@ describe 'User Resource', ->
     it 'should recive a key', (done) ->
       device_id = "newdeviceid#{Date.now()}"
       email = user.resource().email
-      api_token = applications.collection.default.api_token
+      api_token = applications.get('default').api_token
       credentials = { name: 'thecooldevice', device_id, email, api_token }
       client.beginDeviceAuthorization credentials, (error, key) ->
         expect(key.substr(0,3)).to.equal('otp')
@@ -66,7 +66,7 @@ describe 'User Resource', ->
       # # Note: Proceeding lines are commented for automation purposes.
       # # Note: To test fully, you must run the test in 2 steps
       #   # FIRST
-        # api_token = applications.collection.default.api_token
+        # api_token = applications.get('default').api_token
         # name = "newapp"
         # email = "bez@gem.co"
         # device_id =  "newdeviceid#{Date.now()}"
@@ -99,7 +99,7 @@ describe 'User Resource', ->
     describe.only 'user.wallets', ->
       it 'should memoize and return a wrapped Wallet object', (done) ->
         user.wallets (error, wallets) ->
-          console.log wallets.collection
+          console.log wallets.get()
           expect(error).to.not.exist
           expect(wallets).to.be.an.instanceof(Wallets)
           expect(user._wallets).to.deep.equal(wallets)

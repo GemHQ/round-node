@@ -4,9 +4,7 @@ Collection = require './collection'
 
 module.exports = class Addresses extends Collection
 
-
   type: Address
-  key: 'string'
 
 
   create: (callback) ->

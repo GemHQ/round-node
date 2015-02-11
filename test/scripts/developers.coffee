@@ -46,8 +46,8 @@ describe 'Developer Resource', ->
       expect(applications).to.be.an.instanceof(Applications)
 
     it "Applications.collection should have a 'default' Application object", ->
-      expect(applications.collection).to.have.a.property('default')
-      expect(applications.collection.default).to.be.an.instanceof(Application)
+      expect(applications.get('default')).to.exist
+      expect(applications.get('default')).to.be.an.instanceof(Application)
 
     it 'should cache the applications object on the developer', ->
       expect(developer._applications).to.deep.equal(applications)

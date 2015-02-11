@@ -22,10 +22,10 @@ describe 'Addresses Resource', ->
           client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
             user = usr
             user.wallets (error, wallets) ->
-              wallet = wallets.collection.default
+              wallet = wallets.get('default')
               wallet.accounts (error, accnts) ->
                 accounts = accnts
-                account = accounts.collection.default
+                account = accounts.get('default')
                 done(error)
 
 
@@ -43,4 +43,5 @@ describe 'Addresses Resource', ->
       expect(address).to.be.an.instanceof(Address)
 
     it 'should add the new address to the collection', ->
-      expect(addresses.collection).to.have.a.property(address.resource().string)
+      lastAddress = addresses.get().slice(-1)[0]
+      expect(lastAddress.string).to.equal(address.resource().string)

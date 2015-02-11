@@ -28,10 +28,10 @@ describe.skip 'Payments', ->
           client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
             user = usr
             user.wallets (error, wallets) ->
-              wallet = wallets.collection.default
+              wallet = wallets.get('default')
               wallet.accounts (error, accnts) ->
                 accounts = accnts
-                account = accounts.collection.default
+                account = accounts.get('default')
                 done(error)
 
 

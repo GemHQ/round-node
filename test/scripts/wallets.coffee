@@ -38,7 +38,7 @@ describe 'Wallets Resource', ->
     before (done) ->
       user.wallets (error, walts) ->
         wallets = walts
-        wallet = walts.collection.default
+        wallet = walts.get('default')
         done(error)
 
 
@@ -84,7 +84,7 @@ describe 'Wallets Resource', ->
           done(error)
 
 
-    describe 'wallet.accounts', ->
+    describe.only 'wallet.accounts', ->
       accounts = ''
 
       before (done) ->
@@ -97,7 +97,7 @@ describe 'Wallets Resource', ->
         expect(accounts).to.be.an.instanceof(Accounts)
 
       it 'should load accounts.collection with accounts', ->
-        expect(accounts.collection).to.have.a.property('default')
+        expect(accounts.get('default')).to.exist
 
       it 'should memoize the accounts object on the wallet', ->
         expect(wallet._accounts).to.deep.equal(accounts)

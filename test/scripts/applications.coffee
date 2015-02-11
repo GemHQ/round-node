@@ -21,7 +21,7 @@ describe 'Applications Resource', ->
       # Note: depends on their already existing a developer account for bez@gem.co
       client.authenticateDeveloper bezDevCreds, (error, developer) ->
         developer.applications (error, apps) ->
-          defltApp = apps.collection.default
+          defltApp = apps.get('default')
           {api_token, url} = defltApp
           
           # STEP 1
@@ -49,7 +49,7 @@ describe 'Applications Resource', ->
     it 'should return a users object with a collection property', (done) ->
       defaultApp.users (error, users) ->
         expect(users).to.be.an.instanceof(Users)
-        expect(users).to.have.property('collection')
+        expect(users).to.have.property('_collection')
         done(error)
 
 
@@ -80,18 +80,15 @@ describe 'Applications', ->
     it 'should create a new Application Object', ->  
       expect(application).to.be.an.instanceof(Application)
 
-    it 'should add new application to developer._applications.collection', ->
-      expect(developer._applications.collection).to.have.property(name)
 
-
-  describe 'applications.refresh', ->
+  describe.only 'applications.refresh', ->
     it 'should return applications object with new application', (done) ->
       applications.refresh (error, applications) ->
-        expect(applications.collection).to.have.property(name)
+        expect(-> applications.get(name)).to.exist
         done(error)
 
 
-  describe.only 'application.reset', ->
+  describe 'application.reset', ->
     it 'should return an application that has an updated api_token', (done) ->
       oldToken = application.api_token
       application.reset (error, updatedApp) ->

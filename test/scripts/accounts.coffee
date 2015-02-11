@@ -29,10 +29,10 @@ describe 'Accounts Resource', ->
           client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
             user = usr
             user.wallets (error, wallets) ->
-              wallet = wallets.collection.default
+              wallet = wallets.get('default')
               wallet.accounts (error, accnts) ->
                 accounts = accnts
-                account = accounts.collection.default
+                account = accounts.get('default')
                 done(error)
 
 
@@ -42,7 +42,7 @@ describe 'Accounts Resource', ->
       expect(accounts.wallet).to.be.an.instanceof(Wallet)
 
 
-  describe.only 'account.transaction', ->
+  describe 'account.transaction', ->
     it 'should return an instance of Transactions', (done) ->
       account.transactions (error, transactions) ->
         expect(transactions).to.be.an.instanceof(Transactions)
@@ -104,20 +104,20 @@ describe 'Accounts Resource', ->
 
     it 'should memoize the new account', () ->
       wallet.accounts (error, accounts) ->
-        expect(wallet._accounts.collection).to.have.a.property(accountName)
+        expect(wallet._accounts.get()).to.have.a.property(accountName)
 
 
   # skipping because it requires Gem-User auth
   describe.skip 'account.update', ->
     it 'should update the account resource', (done) ->
       name = "newname#{Date.now()}"
-      acnt = accounts.collection.cool_account
+      acnt = accounts.get('cool_account')
       acnt.resource().update {name}, (error, accountResource) ->
         console.log error, accountResource
         done()
 
 
-  describe 'account.addresses', ->
+  describe.only 'account.addresses', ->
     addresses = ''
 
     before (done) ->
@@ -129,7 +129,7 @@ describe 'Accounts Resource', ->
       expect(addresses).to.be.an.instanceof(Addresses)
 
     it 'collection keys should not be undefined', ->
-      expect(addresses.collection).to.not.have.a.property('undefined')
+      expect(-> addresses.get('undefined')).to.throw(Error)
 
     it 'should cache the addresses object on the account', ->
       expect(account._addresses).to.deep.equal(addresses)
