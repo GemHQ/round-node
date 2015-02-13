@@ -7,7 +7,6 @@ Users = require './resources/users'
 User = require './resources/user'
 Account = require './resources/account'
 Wallet = require './resources/wallet'
-errors = require('./errors')
 
 module.exports = class Client
 
@@ -84,7 +83,9 @@ module.exports = class Client
 
       if 'credential' of @patchboard().context.schemes['Gem-OOB-OTP']
         if credentials.override is false
-          throw errors.ExistingAuthenticationError
+          throw new Error "This object is already authenticated.
+                          To override the authentication, provide
+                          the property: 'override: true'"
       
       @patchboard().context.authorize 'Gem-OOB-OTP', credentials
       return true

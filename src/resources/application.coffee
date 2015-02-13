@@ -1,7 +1,6 @@
 
 Users = require './users'
 Rules = require './rules'
-MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class Application
 

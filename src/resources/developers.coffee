@@ -1,6 +1,5 @@
 
 Developer = require './developer'
-MissingCredentialError = require('../errors').MissingCredentialError
 
 # Developers does not inherit from Coolection
 # because the developer resource does not have .list method

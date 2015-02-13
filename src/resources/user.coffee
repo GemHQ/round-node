@@ -1,6 +1,5 @@
 
 Wallets = require './wallets'
-MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class User
 
