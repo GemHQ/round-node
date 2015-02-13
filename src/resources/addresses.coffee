@@ -6,11 +6,12 @@ module.exports = class Addresses extends Collection
 
   type: Address
 
+
   create: (callback) ->
-    @resource().create (error, addressResource) =>
+    @resource().create (error, resource) =>
       return callback(error) if error
 
-      address = new Address(addressResource, @client())
-      @collection[address.resource().string] = address
+      address = new Address(resource, @client())
+      @add(resource.string, address)
       
       callback null, address

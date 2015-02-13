@@ -20,7 +20,7 @@ describe.skip 'Payments', ->
   client = developer = user = applications = accounts = account = wallet = ''
 
   before (done) ->
-    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps;
@@ -28,10 +28,10 @@ describe.skip 'Payments', ->
           client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
             user = usr
             user.wallets (error, wallets) ->
-              wallet = wallets.collection.default
+              wallet = wallets.get('default')
               wallet.accounts (error, accnts) ->
                 accounts = accnts
-                account = accounts.collection.default
+                account = accounts.get('default')
                 done(error)
 
 

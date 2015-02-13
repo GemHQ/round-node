@@ -5,17 +5,21 @@ Collection = require './collection'
 
 module.exports = class Accounts extends Collection
 
-  constructor: (resource, client, callback, @wallet) ->
+  constructor: (resource, client, @wallet) ->
     super
 
-  type: Account
 
-  # content must contain email
+  type: Account
+  key: 'name'
+
+
+  # Content requires an name
   create: (content, callback) ->
     @resource().create content, (error, accountResource) =>
       return callback(error) if error
 
       account = new Account accountResource, @client(), @wallet
-      @collection[account.resource().name] = account
+      
+      @add(content.name, account)
       
       callback null, account

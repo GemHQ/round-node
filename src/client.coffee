@@ -1,6 +1,7 @@
 
 Developers = require './resources/developers'
 Developer = require './resources/developer'
+Application = require './resources/application'
 Applications = require './resources/applications'
 Users = require './resources/users'
 User = require './resources/user'
@@ -13,38 +14,37 @@ module.exports = class Client
   constructor: (patchboard) ->
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
+
     
     @developers = new Developers(@resources().developers, @)
 
-    # Fix: throw a real error and change relevant tests
+
     @developer = ->
       return @_developer if @_developer
 
-      throw Error 'You have not yet authenticated as a developer'
+      throw new Error('You have not yet authenticated as a developer')
+
 
     @users = new Users(@resources().users, @)
 
-    # FIX: should recieve a url. Use python and ruby are very
-    # different in their implentations of this
-    @user = (callback) ->
-      return callback(null, @_user) if @_user
+
+    # content requires an email or user_url
+    @user = (content, callback) ->
+      {email, user_url} = content
       
-      user_url = @patchboard().context.user_url
-      @resources().user(user_url).get (error, userResource) =>
-        return callback(error) if error
-
-        @_user = new User(userResource, @)
-        callback null, @_user
-
-    # QUESTION: Why doesn't this need to make a call to the database?
-    # QUESTION: shouldn't this method solely live on the wallet? 
-    #   What's the benefit of having it on the client
-    @account = (url) ->
-      if url
-        accountResource = @resources().accounts(url)
-        new Account(accountResource, @)
+      if email?
+        resource = @resources().user_query({email})
       else
-        throw "Error: must provide the URL of the account your looking for"
+        resource = @resources().user(user_url)
+      
+      resource.get (error, userResource) =>
+        callback(error, new User(userResource, @)) 
+
+
+    @application = ->
+      return @_application if @_application
+
+      throw new Error('You have not yet authenticated an application')
 
 
     @wallet = (url, callback) ->
@@ -66,30 +66,21 @@ module.exports = class Client
           callback null, @_developer
 
 
+    # Credentials requires email and privkey
     @authenticateDeveloper = (credentials, callback) ->
-      requiredCredentials = ['email', 'pubkey', 'privkey']
-
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
-
       @patchboard().context.authorize 'Gem-Developer', credentials
 
-      @resources().developers.get (error, developerResource) =>
+      @resources().developers.get (error, resource) =>
         return callback(error) if error
 
-        @_developer = new Developer(developerResource, @)
+        @_developer = new Developer(resource, @)
         callback null, @_developer
 
 
-    # takes 'override', as an optional property
+    # Credentials requires api_token, key, secret
+    # Credentials takes 'override', as an optional property
     @authenticateOTP = (credentials) ->
-      requiredCredentials = ['api_token', 'key', 'secret']
       credentials.override = credentials.override || true
-
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
 
       if 'credential' of @patchboard().context.schemes['Gem-OOB-OTP']
         if credentials.override is false
@@ -99,42 +90,107 @@ module.exports = class Client
       return true
 
 
-    # optional credentials are: app_url, override, fetch
+    # Credentials requires api_token, user_token, device_id, [user_url or email]
+    # Optional credentials are: override, fetch
     @authenticateDevice = (credentials, callback) ->
-      requiredCredentials = ['api_token', 'user_url', 'user_token', 'device_id']
-      credentials.override = credentials.override || false
-      credentials.fetch = credentials.fetch || true
+      credentials.override ||= false
+      credentials.fetch ||= true
 
       deviceScheme = @patchboard().context.schemes['Gem-Device']
       if 'credentials' of deviceScheme and !credentials.override
-        return callback errors.ExistingAuthenticationError
-      
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
+        return callback new Error('This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=true.')
 
       @patchboard().context.authorize 'Gem-Device', credentials
-      # ????? SHOULD I MEMOIZE THE USER ?????
+      
       if credentials.fetch
-        @user (error, user) ->
-          return callback error if error
-          callback null, user
+        {email, user_url} = credentials
+        @user {email, user_url}, (error, user) ->
+          callback(error, user)
       else
-        callback null, true
+        callback(null, true)
 
 
+    # Credentials requires api_token, instance_id, app_url
+    # Credentials takes override as an optional property
     @authenticateApplication = (credentials, callback) ->
-      requiredCredentials = ['app_url', 'api_token', 'instance_id']
-      credentials.override = credentials.override || false
-      credentials.fetch = credentials.fetch || true
+      {app_url, api_token, instance_id} = credentials
+      if !api_token or !instance_id or !app_url
+        return callback(new Error("api_token, instance_id, and app_url are required"))
+      
+      credentials.override  ||= false
 
       applicationScheme = @patchboard().context.schemes['Gem-Application']
       if 'credential' of applicationScheme and !credentials.override
-        return callback errors.ExistingAuthenticationError
+        return callback(new Error("This object is already authenticated. To override the authentication, provide the property: 'override: true"))
 
-      for credential in requiredCredentials
-        if credential not of credentials
-          return callback errors.MissingCredentialError(credential)
+      @patchboard().context.authorize 'Gem-Application', credentials
 
-      @patchboard.context.authorize 'Gem-Application', credentials
+      @resources().application(app_url).get (error, resource) =>
+        return callback(error) if error
+        
+        @_application = new Application(resource, @)
+        callback(null, @_application)
+
+
+    # Credentials requires device_id, email, api_token, name (device)
+    @beginDeviceAuthorization = (credentials, callback) ->
+      {name, device_id, email, api_token} = credentials
+      @authenticateOTP({api_token})
+      
+      resource = @resources().user_query({email})
+      resource.authorize_device {name, device_id}, (error) ->
+        responseHeader = error.response.headers['www-authenticate']
+        regx = /key="(.*)"/
+        matches = regx.exec responseHeader
+        if matches
+          key = matches[1]
+          callback(null, key)
+        else
+          callback(error)
+
+
+    # credentials requires: api_token, key, secret, name (of device), device_id, email
+    @completeDeviceAuthorization = (credentials, callback) ->
+      @authenticateOTP(credentials)
+
+      {name, device_id, email} = credentials
+      
+      resource = @resources().user_query({email})
+      resource.authorize_device {name, device_id}, (error, userResource) =>
+        return callback(error) if error
+
+        @authenticateDevice {
+          api_token: credentials.api_token
+          user_url: userResource.url
+          user_token: userResource.user_token
+          device_id: credentials.device_id
+          }, (error, user) ->
+            callback(error, user)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

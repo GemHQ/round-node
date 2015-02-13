@@ -2,38 +2,72 @@ Application = require './application'
 
 module.exports = class Collection
 
-  # populates collection with wrapped resources
-  getData = (callback) ->
-    @resource().list (error, resourceArray) =>
-      return callback(error) if error
-
-      for resource in resourceArray
-        wrappedResource = new @type(resource, @client())
-
-        # FIXME:  it's inefficient to check name on every loop
-                  # for every type of Collection
-        if @type.name == 'Account'
-          wrappedResource.wallet = @wallet
-
-        # The key is a reference to the resource's name
-        # therefor it will update when the resource updates.
-        name = wrappedResource.resource().name or
-               # name = string for addresses
-               wrappedResource.resource().string
-        @collection[name] = wrappedResource
-
-      callback null, @
+  _isNumber = (n) ->
+    !isNaN(parseFloat(n)) && isFinite(n)
 
 
   constructor: (applicationsResource, client, callback) ->
-    @client = -> client
     @resource = -> applicationsResource
-    @collection = {}
-    # calls like client.users do not need to fetch data
-    # therefor they don't pass a callback
-    getData.call(@, callback) if callback
+    @client = -> client
+    @_collection = null
+    @_modelList = null
+
+
+  loadCollection: (props, callback) ->
+    # Makes props optional
+    if arguments.length == 1
+      callback = arguments[0]
+      props = {}
+
+    @resource().list (error, resourceArray) =>
+      return callback(error) if error
+      
+      @_modelList = resourceArray.map (resource) =>
+        new @type(resource, @client(), props)
+      
+      if @key
+        @_collection = {}
+        
+        for resource in resourceArray
+          wrappedResource = new @type(resource, @client(), props)
+
+          key = resource[@key]
+
+          @add(key, wrappedResource)
+
+      callback(null, @)
 
 
   refresh: (callback) ->
-    @collection = {}
-    getData.call(@, callback)
+    @loadCollection(callback)
+
+
+  add: (key, model) ->
+    if @_collection?
+      @_collection[key] = model
+    
+    @_modelList.push(model)
+
+
+  get: (key) ->
+    # Return entire collection if no key is provided
+    return @_modelList unless key
+
+    if _isNumber(key)
+      model = @_modelList[key]
+    else
+      model = @_collection[key]
+
+    if model?
+      return model
+    else
+      throw new Error "No object in the #{@type.name}s collection
+                      for that value."
+
+
+  getAll: ->
+    @_modelList
+
+
+
+

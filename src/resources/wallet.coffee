@@ -7,9 +7,10 @@ MultiWallet = CoinOp.bit.MultiWallet
 
 module.exports = class Wallet
 
-  constructor: (walletResource, client) ->
+  constructor: (resource, client, options) ->
     @client = -> client
-    @resource = -> walletResource
+    @resource = -> resource
+    @name = resource.name
 
 
   rules: () ->
@@ -22,13 +23,17 @@ module.exports = class Wallet
 
   accounts: (callback) ->
     return callback(null, @_accounts) if @_accounts
+    
+    resource = @resource().accounts
 
-    accountsResource = @resource().accounts
-    new Accounts accountsResource, @client(), ((error, accounts) =>
+    accounts = new Accounts(resource, @client(), @)
+    
+    accounts.loadCollection {wallet: @}, (error, accounts) =>
       return callback(error) if error
 
       @_accounts = accounts
-      callback null, @_accounts), @ #accounts takes a wallet
+      callback(null, @_accounts)
+
 
   unlock: (passphrase) ->
     primary_seed = PassphraseBox.decrypt(passphrase, @resource().primary_private_seed)
@@ -41,3 +46,29 @@ module.exports = class Wallet
         backup: @resource().backup_public_seed
       }
     }
+
+
+  # content takes a name property
+  update: (content, callback) ->
+    @resource().update content, (error, resource) =>
+      return callback(error) if error
+      
+      @resource = -> resource
+      @name = resource.name
+
+      callback(null, @)
+
+
+  # Note: Not yet implamented on the API
+  # reset: (callback) ->
+  #   @resource().reset (error, resource) =>
+  #     return callback(error) if error
+      
+  #     newWallet = new Wallet(resource, client())
+
+  #     callback(null, newWallet)
+      
+
+
+
+

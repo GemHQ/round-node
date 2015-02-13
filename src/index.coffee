@@ -4,50 +4,24 @@ Context = require "./context"
 Client = require "./client"
 
 
-defaultUrl = 'http://localhost:8999'
-defaultNetwork = 'testnet3'
-schemes = ['developer', 'application', 'device', 'otp']
+MAINNET_URL = "https://api.gem.co"
+SANDBOX_URL = "https://api-sandbox.gem.co"
+
 
 module.exports = {
 
-  url: defaultUrl
+  client: (options, callback) ->
+    # Makes options argument optional
+    if arguments.length == 1
+      callback = arguments[0] 
+      options = {}
 
-  # default values are only used if the user
-  # explicitely enters 'null' or 'undefined' for those values
-  client: (url=defaultUrl, network=defaultNetwork, callback) ->
+    url = options.url || if options.network == 'bitcoin' then MAINNET_URL else SANDBOX_URL
+    
     if @patchboard?
-      callback null, new Client(@patchboard.spawn())
+      callback(null, new Client(@patchboard.spawn()))
     else
       Patchboard.discover url, {context: Context}, (error, @patchboard) =>
-        if error
-          callback error if callback
-        else
-          callback(null, new Client(@patchboard)) if callback
-
-
-  # args is an object
-  authenticate: (args, callback) ->
-    url = args.url || defaultUrl
-    network = args.network || defaultNetwork
-    if args.developer then return @authenticateDeveloper url, args.developer, network, callback
-    if args.application then return @authenticateApplication url, args.application, network, callback
-    if args.device then return @authenticateDevice url, args.device, network, callback
-    if args.otp then return @authenticateOtp url, args.otp, network, callback
-    else throw """Please supply a supported authentication scheme.
-                  Supported authentication schemes are #{schemes.join(', ')}"""
-
-
-  authenticateDeveloper: (url, developerCreds, network, callback) ->
-    if 'email' of developerCreds and 'privkey' of developerCreds
-      # create a new client object
-      @client url, network, (error, client) ->
-        # authorize the client with developer permissions
-        client.patchboard().context.authorize 'Gem-Developer', developerCreds
-        
-        return callback error if error
-        callback null, client
-    else
-      throw "Must provide email and privkey"
-
+        callback(error, new Client(@patchboard)) if callback
 
 }

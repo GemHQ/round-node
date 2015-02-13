@@ -5,9 +5,7 @@ MissingCredentialError = require('../errors').MissingCredentialError
 
 module.exports = class Application
 
-  constructor: (resource, client) ->
-    # !!!!! WHICH PROPERTIES SHOULD WE MAKE DIRECTLY ACCESSIBLE ?????
-    # NAME, API_TOKEN, URL, KEY?
+  constructor: (resource, client, options) ->
     {@name, @api_token, @url, @key} = resource
     @resource = -> resource
     @client = -> client
@@ -16,40 +14,49 @@ module.exports = class Application
   users: (callback) ->
     return callback(null, @_users) if @_users
 
-    usersResource = @resource().users
-    new Users usersResource, @client(), (error, users) =>
+    resource = @resource().users
+    users = new Users(resource, @client())
+    
+    users.loadCollection (error, users) =>
       return callback(error) if error
 
       @_users = users
-      callback null, @_users
+      callback(null, @_users)
   
 
   rules: ->
     @_rules || new Rules @resource().rules, @client()
     
 
-  # Note: credentials requires an api_token and a name
-  beginInstanceAuthorization: (credentials, callback) ->
-    requiredCredentials = ['name', 'api_token']
-
-    for credential in requiredCredentials
-      if credential not of credentials
-        return callback(MissingCredentialError(credential))
-
+  # Credentials requires a name
+  authorizeInstance: (credentials, callback) ->
     @resource().authorize_instance credentials, (error, applicationInstance) ->
       return callback(error) if error
 
       # applicationInstnace is a useless object - nothing can be done with it
       callback null, applicationInstance
 
-  # Note: credentials requires an api_token and an instance_id
-  finishInstanceAuthorization: (credentials) ->
-    requiredCredentials = ['instance_id', 'api_token']
 
-    for credential in requiredCredentials
-      if credential not of credentials
-        return callback(MissingCredentialError(credential))
+  # Content requires a name property
+  # Note: This does not update the key in the collection
+  update: (content, callback) ->
+    @resource().update content, (error, resource) =>
+      return callback(error) if error
 
-    @client().patchboard().context.authorize 'Gem-Application', credentials
-    return @
+      @resource = -> resource
+      @name = resource.name
+
+      callback(null, @)
+
+
+  reset: (callback) ->
+    @resource().reset (error, resource) ->
+      return callback(error) if error
+
+      @resource = -> resource
+      @api_token = resource.api_token
+
+      callback(null, @)
+
+
 

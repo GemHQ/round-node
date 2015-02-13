@@ -14,7 +14,7 @@ module.exports = class Users extends Collection
   # content requires email and wallet
   create: (content, callback) ->
     # ALERT: should the network be hardcoded to testnet?
-    network = 'testnet'
+    network = content.network || 'bitcoin_testnet'
     {email, passphrase} = content
     multiwallet = MultiWallet.generate(['primary', 'backup'], network)
     primarySeed = multiwallet.trees.primary.toBase58()
@@ -27,11 +27,9 @@ module.exports = class Users extends Collection
     }
 
     params = {email, wallet}
-    @resource().create params, (error, userResource) =>
+    @resource().create params, (error, resource) =>
       return callback(error) if error
 
-      user = new User(userResource, @client())
-      # the key is a reference to the resource's name
-      # therefor it should update when the resource updates.
-      @collection[user.resource().name] = user
+      user = new User(resource, @client())
+
       callback(null, {multiwallet, user})

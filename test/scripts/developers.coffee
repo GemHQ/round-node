@@ -10,13 +10,13 @@ string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds} = credentials
-
+bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
 
 describe 'Developer Resource', ->
   client = developer = ''
   
   before (done) ->
-    Round.client 'http://localhost:8999','testnet3', (error, cli) ->
+    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       cli.developers.create newDevCreds(), (error, dev) ->
         client = cli; developer = dev; done(error)
 
@@ -34,7 +34,7 @@ describe 'Developer Resource', ->
         done(error)
 
 
-  describe 'developer.applications(callback)', ->
+  describe.only 'developer.applications', ->
     applications = ''
     
     before (done) ->
@@ -46,8 +46,11 @@ describe 'Developer Resource', ->
       expect(applications).to.be.an.instanceof(Applications)
 
     it "Applications.collection should have a 'default' Application object", ->
-      expect(applications.collection).to.have.a.property('default')
-      expect(applications.collection.default).to.be.an.instanceof(Application)
+      expect(applications.get('default')).to.exist
+      expect(applications.get('default')).to.be.an.instanceof(Application)
+
+    it 'should cache the applications object on the developer', ->
+      expect(developer._applications).to.deep.equal(applications)
 
 
   describe 'developer.update', ->
@@ -74,11 +77,12 @@ describe 'Developer Resource', ->
         expect(developerResource).to.deep.equal(updatedDeveloper.resource())
         done(error)
 
+
 describe 'Developer Errors', ->
   it "should throw 'Missing Credential Error'", (done) ->
-    Round.client 'http://localhost:8999','testnet3', (error, client) ->
+    Round.client {url: 'http://localhost:8999'}, (error, client) ->
       client.developers.create {}, (error, dev) ->
-        expect(error.type).to.equal('Missing Credential Error')
+        expect(error).to.exist
         done()
 
 

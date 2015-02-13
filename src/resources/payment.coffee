@@ -1,37 +1,25 @@
 
 module.exports = class Payment
 
-  constructor: (resource, client) ->
+  constructor: (resource, client, options) ->
     @resource = -> resource
     @client = -> client
 
 
-  # sign: (wallet, callback) ->
-  #   unless wallet
-  #     throw Error('A wallet is required to sign a transaction')
+  sign: (wallet, callback) ->
+    {signatures, txHash} = wallet.prepareTransaction(@resource())
+    signature = signatures[0]
 
-  #   # ALERT: not checking if its a valid output
-  #     # Ex: https://github.com/GemHQ/round-rb/blob/master/lib/round/payment.rb#L8
-
-  #   tx = new bitcoin.Transaction()
-  #   paymentResource = payment.resource()
+    # Use this when you have more coins to test
+    # signatures = signatures.map (signature) ->
+    #   {primary: signature}
     
-  #   paymentResource.inputs.forEach (input) ->
-  #     prevTx = input.output.transaction_hash
-  #     index = input.output.index
-  #     tx.addInput(prevTx, index)
+    transactionContent = {
+      transaction_hash: txHash,
+      inputs: [{primary: signature}]
+      # use this when you uncomment changes above
+      # inputs: signatures
+    }
 
-  #   paymentResource.outputs.forEach (output) ->
-  #     address = output.address
-  #     value = output.value
-  #     tx.addOutput(address, value)
-
-  #   @resource.sign({
-  #     transaction_hash: tx.getHash # or is it .getHex
-  #     inputs: 
-  #   })
-    
-
-
-
-    
+    @resource().sign transactionContent, (error, data) ->
+      callback(error, data)

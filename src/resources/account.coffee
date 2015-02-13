@@ -4,50 +4,69 @@ PaymentGenerator = require './payment_generator'
 
 module.exports = class Account
 
-  constructor: (accountResource, client, @wallet) ->
+  constructor: (resource, client, options) ->
     @client = -> client
-    @resource = -> accountResource
-
-  # FIX: Currently receiving a 401
-  # update: (content, callback) ->
-  #   @resource().update content, (error, accountResource) ->
-  #     return callback(error) if error
-
-  #     @resource = -> accountResource
-
-  #     return @
+    @resource = -> resource
+    {name, balance} = resource
+    @wallet = options.wallet
 
 
   addresses: (callback) ->
     return callback(null, @_addresses) if @_addresses
     
-    addressesResource = @resource().addresses
-    new Addresses addressesResource, @client(), (error, addresses) =>
+    resource = @resource().addresses
+
+    addresses = new Addresses(resource, @client())
+    
+    addresses.loadCollection (error, addresses) =>
       return callback(error) if error
 
       @_addresses = addresses
-      callback null, @_addresses
+      callback(null, @_addresses)
 
 
-  pay: (payees, callback) ->
+  # content requires payees
+  pay: (content, callback) ->
+    {payees} = content
+
     unless payees
-      throw Error('Payees must be specified')
+      return callback(new Error('Payees must be specified'))
 
     multiwallet = @wallet._multiwallet
     unless multiwallet
-      throw Error('You must unlock the wallet before attempting a transaction')
+      return callback(new Error('You must unlock the wallet before attempting a transaction'))
 
     @payments().unsigned payees, (error, payment) ->
-      callback(error) if error
+      return callback(error) if error
       
-      signedPayment = payment.sign(multiwallet)
-      callback null, signedPayment
+      payment.sign multiwallet, (error, data) ->
+        callback(error, data)
   
-  # FIX: account.resource().transactions returns a function
-    #  not a resource. Could be a bug in Patchboard
-  # transactions: ->
-  #   transactionsResource = @resource().transactions
-  #   @_transactions ?= new Transactions(transactionsResource, @client())
+
+  transactions: (callback) ->
+    return callback(null, @_transactions) if @_transactions
+
+    resource = @resource().transactions({}) # Must pass a hash
+
+    transactions = new Transactions(resource, @client())
+    
+    transactions.loadCollection (error, transactions) =>
+      return callback(error) if error
+
+      @_transactions = transactions
+      callback(null, @_transactions)
 
 
   payments: -> @_payments ?= new PaymentGenerator(@resource().payments, @client())
+
+
+  # content takes a name property
+  update: (content, callback) ->
+    @resource().update content, (error, resource) =>
+      return callback(error) if error
+      
+      @resource = -> resource
+      @name = resource.name
+      @balance = resource.balance
+
+      callback(null, @)
