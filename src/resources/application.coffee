@@ -49,7 +49,7 @@ module.exports = class Application
 
 
   reset: (callback) ->
-    @resource().reset (error, resource) ->
+    @resource().reset (error, resource) =>
       return callback(error) if error
 
       @resource = -> resource
