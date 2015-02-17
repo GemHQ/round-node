@@ -12,12 +12,12 @@
   "dependencies": {
     "base64-url": "1.0.0",
     "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer",
-    "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#feature/multiwallet"
+    "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#feature/transaction"
   },
   "devDependencies": {
     "chai": "^1.9.2",
     "js-yaml": "^3.2.2",
     "mocha": "^2.0.1",
-    "node-inspector": "^0.7.4",
+    "node-inspector": "^0.7.4"
   }
 }
