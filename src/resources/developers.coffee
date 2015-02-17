@@ -13,7 +13,10 @@ module.exports = class Developers
   # Credentials requires email and pubkey
   # It can also take a privkey to authorize the client as a developer
   create: (credentials, callback) ->
-    @resource().create credentials, (error, developerResource) =>
+    {email, pubkey} = credentials
+    newDevCreds = {email, pubkey}
+    
+    @resource().create newDevCreds, (error, developerResource) =>
       return callback(error) if error
 
       @client()._developer = new Developer(developerResource, @client())

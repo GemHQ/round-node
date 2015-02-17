@@ -14,14 +14,14 @@ bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
 
 describe 'Developer Resource', ->
   client = developer = ''
-  
   before (done) ->
     Round.client {url: 'http://localhost:8999'}, (error, cli) ->
-      cli.developers.create newDevCreds(), (error, dev) ->
-        client = cli; developer = dev; done(error)
+      newDevCreds (creds) ->
+        cli.developers.create creds, (error, dev) ->
+          client = cli; developer = dev; done(error)
 
 
-  describe 'developers.create', ->
+  describe.only 'developers.create', ->
     it 'should return a developer object', ->
       expect(developer).to.be.an.instanceof(Developer)
 
@@ -34,7 +34,7 @@ describe 'Developer Resource', ->
         done(error)
 
 
-  describe.only 'developer.applications', ->
+  describe 'developer.applications', ->
     applications = ''
     
     before (done) ->

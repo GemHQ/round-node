@@ -1,7 +1,7 @@
 
 Application = require './application'
 Collection = require './collection'
-errors = require '../errors'
+
 
 module.exports = class Applications extends Collection
 

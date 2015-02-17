@@ -21,10 +21,11 @@ describe 'Client Methods', ->
   
   before (done) ->
     Round.client {url: 'http://localhost:8999'}, (error, client) ->
-      client.developers.create newDevCreds(), (error, developer) ->
-        email = developer.resource().email
-        existingDevCreds = {email, pubkey, privkey}
-        done(error)
+      newDevCreds (creds) ->
+        client.developers.create creds, (error, developer) ->
+          email = developer.resource().email
+          existingDevCreds = creds
+          done(error)
 
 
   describe 'Round.client', ->
@@ -35,7 +36,7 @@ describe 'Client Methods', ->
         done(error)
 
 
-  describe 'client.authenticateDeveloper', ->
+  describe.only 'client.authenticateDeveloper', ->
     it 'should authenticate a client as a Gem-Developer & memoize _developer on the client ', (done) ->
       Round.client {url: 'http://localhost:8999'}, (error, client) ->
         client.authenticateDeveloper existingDevCreds, (error, developer) ->

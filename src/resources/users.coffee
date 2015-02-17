@@ -26,7 +26,7 @@ module.exports = class Users extends Collection
       primary_private_seed: encryptedSeed
     }
 
-    params = {email, wallet}
+    params = {email, default_wallet: wallet}
     @resource().create params, (error, resource) =>
       return callback(error) if error
 

@@ -60,17 +60,18 @@ describe 'Applications Resource', ->
       expect(rules).to.be.an.instanceof(Rules)
       
 
-describe 'Applications', ->
+describe.only 'Applications', ->
   client = developer = applications = application = ''
   name = "newApp#{Date.now()}"
 
   before (done) ->
     Round.client {url: 'http://localhost:8999'}, (error, cli) ->
-      cli.developers.create newDevCreds(), (error, dev) ->
-        dev.applications (error, apps) ->
-          apps.create {name}, (error, app) ->
-            client = cli; developer = dev; applications = apps; application = app
-            done(error)
+      newDevCreds (creds) ->
+        cli.developers.create creds, (error, dev) ->
+          dev.applications (error, apps) ->
+            apps.create {name}, (error, app) ->
+              client = cli; developer = dev; applications = apps; application = app
+              done(error)
 
   it 'should memoize applications on the developer', ->
     expect(developer).to.have.a.property('_applications')
@@ -81,7 +82,7 @@ describe 'Applications', ->
       expect(application).to.be.an.instanceof(Application)
 
 
-  describe.only 'applications.refresh', ->
+  describe 'applications.refresh', ->
     it 'should return applications object with new application', (done) ->
       applications.refresh (error, applications) ->
         expect(-> applications.get(name)).to.exist

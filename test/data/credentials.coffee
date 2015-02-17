@@ -1,5 +1,6 @@
 fs = require "fs"
 yaml = require "js-yaml"
+cp = require 'child_process'
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 
@@ -44,6 +45,7 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
   nDx0pX2tKDrix8yGKr/EttgjRKyymTIngxSZb9vLTX9aEOubIxCp
   -----END RSA PRIVATE KEY-----
   """
+  
 # NOTE: ALL PROPERTIES NEED TO BE RESET WHEN DB IS RESET
 # NOTE: USER_TOKEN AND USER_URL NEED BE TAKEN FROM A
 # NEW USER, WITH EMAIL: 'bez@gem.co'
@@ -61,12 +63,33 @@ authenticateDeviceCreds = (applications) -> {
 }
 
 
+genKeys = (cb) ->
+  # gen private
+  cp.exec 'openssl genrsa 2048', (err, priv, stderr) ->
+    # tmp file
+    randomfn = './' + Math.random().toString(36).substring(7)
+    fs.writeFileSync randomfn, priv
+    # gen public
+    cp.exec 'openssl rsa -in ' + randomfn + ' -pubout', (err, pub, stderr) ->
+      # delete tmp file
+      fs.unlinkSync randomfn
+      # callback
+      cb {
+        pub: pub
+        priv: priv
+      }
+
+
+
 module.exports = {
   pubkey: pubkey
 
   privkey: privkey
   
-  newDevCreds: -> {email: email(), pubkey, privkey }
+  newDevCreds: (cb) ->
+    genKeys (keys) ->
+      {pub, priv} = keys
+      cb {email: email(), pubkey: pub, privkey: priv }
 
   newUserContent: -> {email: "js-test-#{Date.now()}@mail.com", wallet: data.wallet }
 
@@ -78,21 +101,3 @@ module.exports = {
 }
 
 
-
-
-# # STARTUP SCRIPT
-# describe 'setup', ->
-#   it 'should create a developer and user for you', (done) ->
-#     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
-#       email = email()
-#       cli.developers.create {email, pubkey, privkey}, (error, dev) ->
-#         console.log error, "Developer email #{dev.resource().email} "
-#         bezUserCreds = {email: 'bez@gem.co', wallet: data.wallet}
-#         cli.users.create bezUserCreds, (error, usr) ->
-#           console.log error, "bez user created"
-#           done(error)
-
-#   it 'should create a bez developer', (done) ->
-#     Round.client 'http://localhost:8999','testnet3', (error, cli) ->
-#       cli.developers.create {email:'bez@gem.co', pubkey, privkey}, (error, developer) ->
-#         console.log error, "bez developer created"
