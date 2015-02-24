@@ -159,6 +159,8 @@ module.exports = class Client
       
       resource = @resources().user_query({email})
       resource.authorize_device {name, device_id}, (error, userResource) =>
+        console.log "user Resource -------------------"
+        console.log error, userResource
         return callback(error) if error
 
         @authenticateDevice {

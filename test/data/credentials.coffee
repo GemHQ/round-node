@@ -52,13 +52,13 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
 # These value will be printed in the 2nd part of client.authenticateDevice test
 authenticateDeviceCreds = (applications) -> {
   api_token: applications.get('default').api_token,
-  # app_url: applications.collection.default.url,
-  key: 'otp.K4Dd_Mq_2AUARpOgbVxvGA',
-  secret: 'XUueL4i-7x2Ou59Y1zqnzw',
-  device_id: 'newdeviceid1422927709971',
-  user_token: 'RDbfKjf9DeLhMYTuLqOkDSmzATzfhqkupzXK7Yuf5NQ',
-  user_url: 'http://localhost:8999/users/RpwPD84-a6_XQHqduWKZlw',
-  name: 'newapp'
+  app_url: applications.get('default').url,
+  key: 'otp.014tR1nXauqaEry9UdZqFw',
+  secret: 'zaG2YRcH_Gvx0ZeaWR5f-g',
+  device_id: 'newdeviceid1424811501127',
+  # user_token: 'RDbfKjf9DeLhMYTuLqOkDSmzATzfhqkupzXK7Yuf5NQ',
+  # user_url: 'http://localhost:8999/users/RpwPD84-a6_XQHqduWKZlw',
+  name: 'newDevice'
   email: 'bez@gem.co'
 }
 
