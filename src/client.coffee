@@ -10,7 +10,8 @@ Wallet = require './resources/wallet'
 
 module.exports = class Client
 
-  constructor: (patchboard) ->
+  constructor: (patchboard, network) ->
+    @network = network
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
 
