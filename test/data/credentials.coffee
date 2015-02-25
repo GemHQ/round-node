@@ -98,6 +98,8 @@ module.exports = {
 
   authenticateDeviceCreds: authenticateDeviceCreds
 
+  genKeys: genKeys
+
 }
 
 

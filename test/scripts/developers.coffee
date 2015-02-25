@@ -9,18 +9,22 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, existingDevCreds} = credentials
+{pubkey, privkey, newDevCreds, existingDevCreds, genKeys} = credentials
+
+url = 'http://localhost:8999'
+# url = "https://api.gem.co"
+# url = "https://api-sandbox.gem.co"
 
 describe 'Developer Resource', ->
   client = developer = ''
   before (done) ->
-    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
+    Round.client {url}, (error, cli) ->
       newDevCreds (creds) ->
         cli.developers.create creds, (error, dev) ->
           client = cli; developer = dev; done(error)
 
 
-  describe.only 'developers.create', ->
+  describe 'developers.create', ->
     it 'should return a developer object', ->
       expect(developer).to.be.an.instanceof(Developer)
 
@@ -52,15 +56,17 @@ describe 'Developer Resource', ->
       expect(developer._applications).to.deep.equal(applications)
 
 
-  describe 'developer.update', ->
+  describe.only 'developer.update', (done) ->
 
     updatedDeveloper = ''
     newEmail = "thenewemail#{Date.now()}@mail.com"
 
     before (done) ->
-      developer.update {email: newEmail, privkey}, (error, updatedDev) ->
-        updatedDeveloper = updatedDev
-        done(error)
+      genKeys (keys) ->
+        {priv, pub} = keys
+        developer.update {email: newEmail, privkey: priv, pubkey: pub}, (error, updatedDev) ->
+          updatedDeveloper = updatedDev
+          done(error)
 
     it 'should return a Developer object', ->
       expect(updatedDeveloper).to.be.an.instanceof(Developer)
@@ -79,7 +85,7 @@ describe 'Developer Resource', ->
 
 describe 'Developer Errors', ->
   it "should throw 'Missing Credential Error'", (done) ->
-    Round.client {url: 'http://localhost:8999'}, (error, client) ->
+    Round.client {url}, (error, client) ->
       client.developers.create {}, (error, dev) ->
         expect(error).to.exist
         done()

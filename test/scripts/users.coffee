@@ -14,12 +14,13 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
+url = 'http://localhost:8999'
 
 describe 'User Resource', ->
   client = developer = user = applications = ''
 
   before (done) ->
-    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
+    Round.client {url}, (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps
@@ -96,10 +97,9 @@ describe 'User Resource', ->
     # Requires device auth
     # Skipping because it takes to long to load
     # Must clear out bez@gem.co wallets
-    describe.skip 'user.wallets', ->
+    describe 'user.wallets', ->
       it 'should memoize and return a wrapped Wallet object', (done) ->
         user.wallets (error, wallets) ->
-          console.log wallets.get()
           expect(error).to.not.exist
           expect(wallets).to.be.an.instanceof(Wallets)
           expect(user._wallets).to.deep.equal(wallets)

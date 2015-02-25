@@ -11,11 +11,12 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds} = credentials
 
+url = 'http://localhost:8999'
 
 describe 'Applications Resource', ->
   client = defaultApp = applications = ''
   before (done) ->
-    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
+    Round.client {url}, (error, cli) ->
       client = cli
       # Note: depends on their already existing a developer account for bez@gem.co
       client.authenticateDeveloper existingDevCreds, (error, developer) ->
@@ -64,7 +65,7 @@ describe 'Applications', ->
   name = "newApp#{Date.now()}"
 
   before (done) ->
-    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
+    Round.client {url}, (error, cli) ->
       newDevCreds (creds) ->
         cli.developers.create creds, (error, dev) ->
           dev.applications (error, apps) ->
