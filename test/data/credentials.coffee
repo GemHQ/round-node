@@ -53,10 +53,10 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
 authenticateDeviceCreds = (applications) -> {
   api_token: applications.get('default').api_token,
   app_url: applications.get('default').url,
-  key: 'otp.014tR1nXauqaEry9UdZqFw',
-  secret: 'zaG2YRcH_Gvx0ZeaWR5f-g',
-  device_id: 'newdeviceid1424811501127',
-  # user_token: 'RDbfKjf9DeLhMYTuLqOkDSmzATzfhqkupzXK7Yuf5NQ',
+  key: 'otp.sJiihGPdK9hS2jElPm-FbQ',
+  secret: '79p3Dds5O09itmZM60XHPw',
+  device_id: 'newdeviceid1424820618380',
+  user_token: 'KpMJUyGfpf4z463fXetX9QoWFBvQ6uQmdlmGOEOS8Ok',
   # user_url: 'http://localhost:8999/users/RpwPD84-a6_XQHqduWKZlw',
   name: 'newDevice'
   email: 'bez@gem.co'

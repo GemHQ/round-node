@@ -48,39 +48,44 @@ describe 'User Resource', ->
         done()
 
 
-  describe "Authenticated User", ->
-    # user = ''
-    # before (done) ->
-    #   client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
-    #     user = usr
-    #     done(error)
+  describe.skip 'client.authenticateDevice', ->
+    it 'return an authenticated user', (done) ->
+    # Note: Proceeding lines are commented for automation purposes.
+    # Note: To test fully, you must run the test in 2 steps
+      # # FIRST
+      # {name, email, api_token} = authenticateDeviceCreds(applications)
+      # device_id =  "newdeviceid#{Date.now()}"
+      # console.log 'device_id ------------------------------'
+      # console.log device_id
+      # client.beginDeviceAuthorization {api_token, email, device_id, name}, (error, key) ->
+      #   console.log "key -------------------------------"
+      #   console.log key
+      #   done(error)
 
+
+    # Note: proceeding lines are commented inorder to automate tests.
+    # SECOND
+      {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
+      client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
+        # console.log user.resource().url
+        console.log user.resource().user_token
+        done(error)
+
+
+  # should only be run if at one point a user has gone through
+  # the 2-step process listed above
+  describe "Authenticated User", ->
+    user = ''
+    before (done) ->
+      client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
+        user = usr
+        done(error)
 
     describe 'client.authenticateDevice', ->
       it 'return an authenticated user', (done) ->
-        # expect(user).to.be.an.instanceof(User)
-        # done()
-      # Note: Proceeding lines are commented for automation purposes.
-      # Note: To test fully, you must run the test in 2 steps
-        # # FIRST
-        # {name, email, api_token} = authenticateDeviceCreds(applications)
-        # device_id =  "newdeviceid#{Date.now()}"
-        # console.log 'device_id ------------------------------'
-        # console.log device_id
-        # client.beginDeviceAuthorization {api_token, email, device_id, name}, (error, key) ->
-        #   console.log "key -------------------------------"
-        #   console.log key
-        #   done(error)
+        expect(user).to.be.an.instanceof(User)
+        done()
 
-
-      # # Note: proceeding lines are commented inorder to automate tests.
-      # SECOND
-        {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
-        client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
-          console.log user.resource().url
-          console.log user.resource().user_token
-          done(error)
-  
 
     describe.skip 'client.user', ->
       it 'should return an instance of user when provided an email', (done) ->

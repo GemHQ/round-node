@@ -30,7 +30,7 @@ describe 'Applications Resource', ->
 
           # STEP 2
           # instance_id comes from an email
-          instance_id = 'nxSzPywsExPmebVMvEZX5lh5oiwXIqVryav1qDeYuyA'
+          instance_id = '_m4EPHWcPNfdNIAsTotkW8Xf1kiOngi65dIO7hJD9tY'
           client.authenticateApplication {api_token, instance_id, app_url: url}, (error, app) ->
             defaultApp = app; applications = apps
             done(error)
