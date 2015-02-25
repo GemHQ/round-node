@@ -49,9 +49,9 @@ module.exports = class Context
     return {scheme: '', credential: ''} if arguments.length < 4
     
     for scheme in schemes
-      if scheme of @schemes and 'credentials' of @schemes[scheme]
+      if @schemes[scheme]? and  @schemes[scheme]['credentials']?
         if scheme is 'Gem-Developer'
-          body = if 'body' of request then request['body'] else '{}'
+          body = if request['body']? then request['body'] else '{}'
           timestamp = Math.round(Date.now() / 1000)
           return {
             scheme,
