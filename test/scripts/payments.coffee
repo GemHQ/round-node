@@ -15,12 +15,13 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
+url = 'http://localhost:8999'
 
 describe.skip 'Payments', ->
   client = developer = user = applications = accounts = account = wallet = ''
 
   before (done) ->
-    Round.client {url: 'http://localhost:8999'}, (error, cli) ->
+    Round.client {url}, (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
         dev.applications (error, apps) ->
           client = cli; developer = dev; applications = apps;

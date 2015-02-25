@@ -1,4 +1,5 @@
 
+clone = require 'clone'
 Applications = require './applications'
 
 module.exports = class Developer
@@ -22,11 +23,11 @@ module.exports = class Developer
       callback(null, @_applications)
 
 
-  # Updates authenticated developer's credentials
-  # with the provided credentials. Then autheticates
-  # with the new credentials and returns the developer object
   update: (credentials, callback) ->
-    @resource().update credentials, (error, developerResource) =>
+    updateCreds = clone(credentials, false)
+    delete updateCreds.privkey if updateCreds.privkey
+
+    @resource().update updateCreds, (error, developerResource) =>
       return callback(error) if error
       
       @resource = -> developerResource

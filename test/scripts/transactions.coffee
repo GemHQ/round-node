@@ -11,7 +11,7 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds} = credentials
 
-
+url = 'http://localhost:8999'
 
 describe.skip 'Transactions Resource', ->
 
