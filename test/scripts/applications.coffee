@@ -9,8 +9,7 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent} = credentials
-bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
+{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds} = credentials
 
 
 describe 'Applications Resource', ->
@@ -19,19 +18,19 @@ describe 'Applications Resource', ->
     Round.client {url: 'http://localhost:8999'}, (error, cli) ->
       client = cli
       # Note: depends on their already existing a developer account for bez@gem.co
-      client.authenticateDeveloper bezDevCreds, (error, developer) ->
+      client.authenticateDeveloper existingDevCreds, (error, developer) ->
         developer.applications (error, apps) ->
           defltApp = apps.get('default')
           {api_token, url} = defltApp
           
-          # STEP 1
-          # name = "newAppInstance#{Date.now()}"
+          # # STEP 1
+          # name = "MainAppInstance"
           # defltApp.authorizeInstance {name}, (error, applicationInstance) ->
           #   done(error)
 
           # STEP 2
           # instance_id comes from an email
-          instance_id = 'iGgjgWpsUtg5LT1PmZd1Y7YR-pQ3WKn5VAQcYNC04PA'
+          instance_id = '_m4EPHWcPNfdNIAsTotkW8Xf1kiOngi65dIO7hJD9tY'
           client.authenticateApplication {api_token, instance_id, app_url: url}, (error, app) ->
             defaultApp = app; applications = apps
             done(error)
@@ -60,7 +59,7 @@ describe 'Applications Resource', ->
       expect(rules).to.be.an.instanceof(Rules)
       
 
-describe.only 'Applications', ->
+describe 'Applications', ->
   client = developer = applications = application = ''
   name = "newApp#{Date.now()}"
 

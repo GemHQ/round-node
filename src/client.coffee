@@ -10,7 +10,8 @@ Wallet = require './resources/wallet'
 
 module.exports = class Client
 
-  constructor: (patchboard) ->
+  constructor: (patchboard, network) ->
+    @network = network
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
 
@@ -91,26 +92,6 @@ module.exports = class Client
       return true
 
 
-    # Credentials requires api_token, user_token, device_id, [user_url or email]
-    # Optional credentials are: override, fetch
-    @authenticateDevice = (credentials, callback) ->
-      credentials.override ||= false
-      credentials.fetch ||= true
-
-      deviceScheme = @patchboard().context.schemes['Gem-Device']
-      if 'credentials' of deviceScheme and !credentials.override
-        return callback new Error('This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=true.')
-
-      @patchboard().context.authorize 'Gem-Device', credentials
-      
-      if credentials.fetch
-        {email, user_url} = credentials
-        @user {email, user_url}, (error, user) ->
-          callback(error, user)
-      else
-        callback(null, true)
-
-
     # Credentials requires api_token, instance_id, app_url
     # Credentials takes override as an optional property
     @authenticateApplication = (credentials, callback) ->
@@ -131,6 +112,26 @@ module.exports = class Client
         
         @_application = new Application(resource, @)
         callback(null, @_application)
+
+
+    # Credentials requires api_token, user_token, device_id, [user_url or email]
+    # Optional credentials are: override, fetch
+    @authenticateDevice = (credentials, callback) ->
+      credentials.override ||= false
+      credentials.fetch ||= true
+
+      deviceScheme = @patchboard().context.schemes['Gem-Device']
+      if 'credentials' of deviceScheme and !credentials.override
+        return callback new Error('This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=true.')
+
+      @patchboard().context.authorize 'Gem-Device', credentials
+      
+      if credentials.fetch
+        {email, user_url} = credentials
+        @user {email, user_url}, (error, user) ->
+          callback(error, user)
+      else
+        callback(null, true)
 
 
     # Credentials requires device_id, email, api_token, name (device)

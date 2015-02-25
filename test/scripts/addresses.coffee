@@ -30,7 +30,7 @@ describe 'Addresses Resource', ->
 
 
   # skipping because it creates everytime
-  describe 'addresses.create', ->
+  describe.skip 'addresses.create', ->
     addresses = address =''
 
     before (done) ->

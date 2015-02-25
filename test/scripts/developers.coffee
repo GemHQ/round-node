@@ -9,8 +9,7 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds} = credentials
-bezDevCreds = {email: 'bez@gem.co', pubkey, privkey }
+{pubkey, privkey, newDevCreds, existingDevCreds} = credentials
 
 describe 'Developer Resource', ->
   client = developer = ''

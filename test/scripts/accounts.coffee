@@ -42,9 +42,11 @@ describe 'Accounts Resource', ->
       expect(accounts.wallet).to.be.an.instanceof(Wallet)
 
 
-  describe 'account.transaction', ->
+  describe.skip 'account.transaction', ->
     it 'should return an instance of Transactions', (done) ->
       account.transactions (error, transactions) ->
+        # console.log transactions
+        # console.log transactions._modelList[4].resource().cancel (error, data) -> console.log error, data
         expect(transactions).to.be.an.instanceof(Transactions)
         done()
 
@@ -63,13 +65,14 @@ describe 'Accounts Resource', ->
 
 
   # Skipping because we will run out of coins
-  describe.skip 'account.pay', ->
+  describe.only 'account.pay', ->
     
     it 'should not throw an error (i.e. make a successful tx)', (done) ->
       account.wallet.unlock("passphrase")
-      payees = [{amount: 1000, address: 'mrkGJWekqbpyrVdDbfwjzmizxA86cgP8T8'}]
+      payees = [{amount: 5430, address: 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx'}]
 
       account.pay {payees}, (error, data) ->
+        # console.log error
         expect(error).to.not.exist
         done(error)
         
@@ -117,11 +120,12 @@ describe 'Accounts Resource', ->
         done()
 
 
-  describe.only 'account.addresses', ->
+  describe.skip 'account.addresses', ->
     addresses = ''
 
     before (done) ->
       account.addresses (error, addrs) ->
+        console.log addrs.get()
         addresses = addrs
         done(error)
 
