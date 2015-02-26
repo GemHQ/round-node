@@ -11,9 +11,9 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, existingDevCreds, genKeys} = credentials
 
-url = 'http://localhost:8999'
+# url = 'http://localhost:8999'
 # url = "https://api.gem.co"
-# url = "https://api-sandbox.gem.co"
+url = "https://api-sandbox.gem.co"
 
 describe 'Developer Resource', ->
   client = developer = ''
@@ -56,7 +56,7 @@ describe 'Developer Resource', ->
       expect(developer._applications).to.deep.equal(applications)
 
 
-  describe.only 'developer.update', (done) ->
+  describe 'developer.update', (done) ->
 
     updatedDeveloper = ''
     newEmail = "thenewemail#{Date.now()}@mail.com"
@@ -91,7 +91,13 @@ describe 'Developer Errors', ->
         done()
 
 
-
+# SHOULD ONLY BE USED WHEN CREATING BEZ@GEM.CO FOR THE FIRST TIME
+describe.only 'Developer Resource', ->
+  it 'should create a dev acccount for bez@gem.co', (done) ->
+    Round.client {url}, (error, cli) ->
+      cli.developers.create existingDevCreds, (error, dev) ->
+        expect(dev).to.be.an.instanceof(Developer)
+        done(error)
 
 
 

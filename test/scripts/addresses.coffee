@@ -10,6 +10,8 @@ credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
 
 url = 'http://localhost:8999'
+# url = "https://api.gem.co"
+# url = "https://api-sandbox.gem.co"
 
 describe 'Addresses Resource', ->
   client = developer = user = applications = accounts = account = wallet = ''
