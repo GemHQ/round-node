@@ -7,9 +7,17 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
+{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds, authenticateDeviceCredsStaging, authenticateDeviceCredsProd } = credentials
 
-url = 'http://localhost:8999'
+# url = 'http://localhost:8999'
+url = "https://api.gem.co"
+# url = "https://api-sandbox.gem.co"
+
+if url == "https://api-sandbox.gem.co"
+  authenticateDeviceCreds = authenticateDeviceCredsStaging
+if url == "https://api.gem.co"
+  authenticateDeviceCreds = authenticateDeviceCredsProd
+
 
 describe 'Addresses Resource', ->
   client = developer = user = applications = accounts = account = wallet = ''
@@ -31,7 +39,7 @@ describe 'Addresses Resource', ->
 
 
   # skipping because it creates everytime
-  describe.skip 'addresses.create', ->
+  describe 'addresses.create', ->
     addresses = address =''
 
     before (done) ->

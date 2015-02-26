@@ -15,6 +15,8 @@ credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds} = credentials
 
 url = 'http://localhost:8999'
+# url = "https://api.gem.co"
+# url = "https://api-sandbox.gem.co"
 
 describe 'Client Methods', ->
   existingDevCreds = ''

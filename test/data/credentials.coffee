@@ -62,6 +62,30 @@ authenticateDeviceCreds = (applications) -> {
   email: 'bez@gem.co'
 }
 
+authenticateDeviceCredsStaging = (applications) -> {
+  api_token: applications.get('default').api_token,
+  app_url: applications.get('default').url,
+  key: 'otp.63Y8c9bz4TdWU32OYK3BYA',
+  secret: '-le88vtvjno6LZnswwze6A',
+  device_id: 'newdeviceid1424911381196',
+  user_token: 'PTh3qahlBAm92fhayH76nkevIc6OX3WaSpdHWZBBkpU',
+  # user_url: 'http://localhost:8999/users/RpwPD84-a6_XQHqduWKZlw',
+  name: 'newDevice'
+  email: 'bez@gem.co'
+}
+
+authenticateDeviceCredsProd = (applications) -> {
+  api_token: applications.get('default').api_token,
+  app_url: applications.get('default').url,
+  key: 'otp.8yklMHXZ7vq4rB4AN_SYqw',
+  secret: 'Q_x7ZuaDqrs7tlG2h1GVEg',
+  device_id: 'newdeviceid1424911796635',
+  user_token: 'nZtQVByB7WYSXNkt2M4OKoWczpFOIYJ5ljfopTjjEIM',
+  # user_url: 'http://localhost:8999/users/RpwPD84-a6_XQHqduWKZlw',
+  name: 'newDevice'
+  email: 'bez@gem.co'
+}
+
 
 genKeys = (cb) ->
   # gen private
@@ -97,6 +121,10 @@ module.exports = {
   existingDevCreds: {email: 'bez@gem.co', pubkey, privkey }
 
   authenticateDeviceCreds: authenticateDeviceCreds
+
+  authenticateDeviceCredsStaging: authenticateDeviceCredsStaging
+
+  authenticateDeviceCredsProd: authenticateDeviceCredsProd
 
   genKeys: genKeys
 

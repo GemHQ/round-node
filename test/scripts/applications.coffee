@@ -11,7 +11,9 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds} = credentials
 
-url = 'http://localhost:8999'
+# url = 'http://localhost:8999'
+url = "https://api.gem.co"
+# url = "https://api-sandbox.gem.co"
 
 describe 'Applications Resource', ->
   client = defaultApp = applications = ''
@@ -24,14 +26,19 @@ describe 'Applications Resource', ->
           defltApp = apps.get('default')
           {api_token, url} = defltApp
           
-          # # STEP 1
+          # STEP 1
           # name = "MainAppInstance"
           # defltApp.authorizeInstance {name}, (error, applicationInstance) ->
           #   done(error)
 
           # STEP 2
           # instance_id comes from an email
-          instance_id = '_m4EPHWcPNfdNIAsTotkW8Xf1kiOngi65dIO7hJD9tY'
+          # LOCAL
+          # instance_id = '_m4EPHWcPNfdNIAsTotkW8Xf1kiOngi65dIO7hJD9tY'
+          ## STAGING
+          # instance_id = 'wne_EdkCeFug6W7jzauqpRh20uCkgu0amkjlamu_Mlw'
+          ## PRODUCTION
+          instance_id = 'JnGIJyPcxYfG8-fwj1qM9r9Wj70LMxPtFb3dPWBXCVI'
           client.authenticateApplication {api_token, instance_id, app_url: url}, (error, app) ->
             defaultApp = app; applications = apps
             done(error)

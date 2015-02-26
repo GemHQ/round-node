@@ -12,9 +12,17 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
+{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds, authenticateDeviceCredsStaging, authenticateDeviceCredsProd } = credentials
 
-url = 'http://localhost:8999'
+# url = 'http://localhost:8999'
+url = "https://api.gem.co"
+# url = "https://api-sandbox.gem.co"
+
+if url == "https://api-sandbox.gem.co"
+  authenticateDeviceCreds = authenticateDeviceCredsStaging
+if url == "https://api.gem.co"
+  authenticateDeviceCreds = authenticateDeviceCredsProd
+
 
 describe 'User Resource', ->
   client = developer = user = applications = ''
@@ -30,6 +38,7 @@ describe 'User Resource', ->
   describe.skip 'client.users.create', ->
     it 'should create a user object', (done) ->
       email = "js-test-#{Date.now()}@mail.com"
+      # email = "bez@gem.co"
       passphrase = 'passphrase'
       client.users.create {email, passphrase}, (error, user_and_backup_seed) ->
         {user, backup_seed} = user_and_backup_seed
@@ -53,7 +62,7 @@ describe 'User Resource', ->
     it 'return an authenticated user', (done) ->
     # Note: Proceeding lines are commented for automation purposes.
     # Note: To test fully, you must run the test in 2 steps
-      # # FIRST
+      # FIRST
       # {name, email, api_token} = authenticateDeviceCreds(applications)
       # device_id =  "newdeviceid#{Date.now()}"
       # console.log 'device_id ------------------------------'
@@ -66,7 +75,6 @@ describe 'User Resource', ->
 
     # Note: proceeding lines are commented inorder to automate tests.
     # SECOND
-      {api_token, key, secret, device_id, name} = authenticateDeviceCreds(applications)
       client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
         # console.log user.resource().url
         console.log user.resource().user_token
@@ -88,7 +96,7 @@ describe 'User Resource', ->
         done()
 
 
-    describe.skip 'client.user', ->
+    describe 'client.user', ->
       it 'should return an instance of user when provided an email', (done) ->
         client.user {email: 'bez@gem.co'}, (error, user) ->
           expect(user).to.be.an.instanceof(User)
