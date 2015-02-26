@@ -14,11 +14,16 @@ yaml = require "js-yaml"
 string = fs.readFileSync "./test/data/wallet.yaml"
 data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds} = credentials
+{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds, authenticateDeviceCredsStaging, authenticateDeviceCredsProd } = credentials
 
-url = 'http://localhost:8999'
-# url = "https://api.gem.co"
+# url = 'http://localhost:8999'
+url = "https://api.gem.co"
 # url = "https://api-sandbox.gem.co"
+
+if url == "https://api-sandbox.gem.co"
+  authenticateDeviceCreds = authenticateDeviceCredsStaging
+if url == "https://api.gem.co"
+  authenticateDeviceCreds = authenticateDeviceCredsProd
 
 
 describe 'Accounts Resource', ->
@@ -73,10 +78,12 @@ describe 'Accounts Resource', ->
     
     it 'should not throw an error (i.e. make a successful tx)', (done) ->
       account.wallet.unlock("passphrase")
-      payees = [{amount: 5430, address: 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx'}]
+      # payees = [{amount: 5430, address: 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx'}]
+      # MainNet
+      payees = [{amount: 400000, address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr'}]
 
       account.pay {payees}, (error, data) ->
-        # console.log error
+        console.log error, data
         expect(error).to.not.exist
         done(error)
         
