@@ -27,16 +27,18 @@ module.exports = class Account
 
   # content requires payees
   pay: (content, callback) ->
-    {payees} = content
+    {payees, confirmations} = content
 
     unless payees
       return callback(new Error('Payees must be specified'))
+
+    confirmations ||= 6
 
     multiwallet = @wallet._multiwallet
     unless multiwallet
       return callback(new Error('You must unlock the wallet before attempting a transaction'))
 
-    @payments().unsigned payees, (error, payment) ->
+    @payments().unsigned payees, confirmations, (error, payment) ->
       return callback(error) if error
 
       payment.sign multiwallet, (error, data) ->
