@@ -56,7 +56,7 @@ describe 'Developer Resource', ->
       expect(developer._applications).to.deep.equal(applications)
 
 
-  describe.only 'developer.update', (done) ->
+  describe 'developer.update', (done) ->
 
     updatedDeveloper = ''
     newEmail = "thenewemail#{Date.now()}@mail.com"
