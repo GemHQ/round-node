@@ -71,14 +71,6 @@ describe 'Wallets Resource', ->
     #   it 'should update the wallets resource with a new name', (done) ->
 
 
-    describe 'wallet.reste', ->
-      it.only 'should return a new wallet with the same name', (done) ->
-        wallet = wallets.get("new-wallet1423681039016")
-        console.log wallet.resource()
-        done()
-
-
-
     # Skipping because it takes to long to load
     # Must clear out bez@gem.co wallets
     describe.skip 'wallets.refresh', ->
