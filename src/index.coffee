@@ -21,14 +21,14 @@ module.exports = {
   client: (options, callback) ->
     # Makes options argument optional
     if arguments.length == 1
-      callback = arguments[0] 
+      callback = arguments[0]
       options = {}
 
     network = NETWORKS[options.network] || "bitcoin_testnet"
     url = options.url || if network == 'bitcoin' then MAINNET_URL else SANDBOX_URL
-    
+
     if @patchboard?
-      callback(null, new Client(@patchboard.spawn()), network)
+      callback(null, new Client(@patchboard.spawn(), network))
     else
       Patchboard.discover url, {context: Context}, (error, @patchboard) =>
         callback(error, new Client(@patchboard, network)) if callback
