@@ -13,11 +13,11 @@ module.exports = class Account
 
   addresses: (callback) ->
     return callback(null, @_addresses) if @_addresses
-    
+
     resource = @resource().addresses
 
     addresses = new Addresses(resource, @client())
-    
+
     addresses.loadCollection (error, addresses) =>
       return callback(error) if error
 
@@ -38,10 +38,10 @@ module.exports = class Account
 
     @payments().unsigned payees, (error, payment) ->
       return callback(error) if error
-      
+
       payment.sign multiwallet, (error, data) ->
         callback(error, data)
-  
+
 
   transactions: (callback) ->
     return callback(null, @_transactions) if @_transactions
@@ -49,7 +49,7 @@ module.exports = class Account
     resource = @resource().transactions({}) # Must pass a hash
 
     transactions = new Transactions(resource, @client())
-    
+
     transactions.loadCollection (error, transactions) =>
       return callback(error) if error
 
@@ -64,7 +64,7 @@ module.exports = class Account
   update: (content, callback) ->
     @resource().update content, (error, resource) =>
       return callback(error) if error
-      
+
       @resource = -> resource
       @name = resource.name
       @balance = resource.balance

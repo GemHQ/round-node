@@ -19,7 +19,7 @@ module.exports = class Accounts extends Collection
       return callback(error) if error
 
       account = new Account accountResource, @client(), @wallet
-      
+
       @add(content.name, account)
-      
+
       callback null, account

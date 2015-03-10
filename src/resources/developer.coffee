@@ -7,15 +7,15 @@ module.exports = class Developer
   constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
-    
-  
+
+
   applications: (callback) ->
     return callback(null, @_applications) if @_applications
 
     resource = @resource().applications
 
     applications = new Applications(resource, @client())
-    
+
     applications.loadCollection (error, applications) =>
       return callback(error) if error
 
@@ -29,7 +29,7 @@ module.exports = class Developer
 
     @resource().update updateCreds, (error, developerResource) =>
       return callback(error) if error
-      
+
       @resource = -> developerResource
       @client().patchboard().context.authorize 'Gem-Developer', credentials
 

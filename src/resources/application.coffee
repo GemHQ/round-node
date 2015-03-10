@@ -9,23 +9,23 @@ module.exports = class Application
     @resource = -> resource
     @client = -> client
 
-  
+
   users: (callback) ->
     return callback(null, @_users) if @_users
 
     resource = @resource().users
     users = new Users(resource, @client())
-    
+
     users.loadCollection (error, users) =>
       return callback(error) if error
 
       @_users = users
       callback(null, @_users)
-  
+
 
   rules: ->
     @_rules || new Rules @resource().rules, @client()
-    
+
 
   # Credentials requires a name
   authorizeInstance: (credentials, callback) ->
@@ -56,6 +56,3 @@ module.exports = class Application
       @api_token = resource.api_token
 
       callback(null, @)
-
-
-

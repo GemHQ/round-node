@@ -21,13 +21,13 @@ module.exports = class Collection
 
     @resource().list (error, resourceArray) =>
       return callback(error) if error
-      
+
       @_modelList = resourceArray.map (resource) =>
         new @type(resource, @client(), props)
-      
+
       if @key
         @_collection = {}
-        
+
         for resource in resourceArray
           wrappedResource = new @type(resource, @client(), props)
 
@@ -45,7 +45,7 @@ module.exports = class Collection
   add: (key, model) ->
     if @_collection?
       @_collection[key] = model
-    
+
     @_modelList.push(model)
 
 
@@ -67,7 +67,3 @@ module.exports = class Collection
 
   getAll: ->
     @_modelList
-
-
-
-

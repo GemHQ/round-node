@@ -13,5 +13,5 @@ module.exports = class Addresses extends Collection
 
       address = new Address(resource, @client())
       @add(resource.string, address)
-      
+
       callback null, address

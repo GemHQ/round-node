@@ -14,7 +14,7 @@ module.exports = class PaymentGenerator
     outputs = @outputsFromPayees(payees)
     @resource().create outputs, (error, paymentResource) =>
       return callback(error) if error
-      
+
       callback(null, new Payment(paymentResource, @client() ))
 
 
@@ -31,5 +31,3 @@ module.exports = class PaymentGenerator
       }
 
     {outputs}
-
-

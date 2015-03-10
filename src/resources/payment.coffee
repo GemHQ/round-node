@@ -8,11 +8,11 @@ module.exports = class Payment
 
   sign: (wallet, callback) ->
     {signatures, txHash} = wallet.prepareTransaction(@resource())
-    
+
     # Currently just using the first (and only) signature
     # Eventually this needs to account for more than one signature
     signature = signatures[0]
-      
+
     transactionContent = {
       transaction_hash: txHash,
       inputs: [{primary: signature}]

@@ -10,7 +10,7 @@ Collection = require './collection'
 module.exports = class Users extends Collection
 
   type: User
-  
+
   # content requires email and wallet
   create: (content, callback) ->
     network = @client().network
