@@ -42,6 +42,7 @@ describe 'Developer Resource', ->
     
     before (done) ->
       developer.applications (error, apps) ->
+        console.log apps.get()
         applications = apps
         done(error)
 

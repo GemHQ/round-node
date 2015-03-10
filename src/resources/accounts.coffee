@@ -20,6 +20,6 @@ module.exports = class Accounts extends Collection
 
       account = new Account accountResource, @client(), @wallet
       
-      @add(content.name, account)
+      @add(account)
       
       callback null, account
