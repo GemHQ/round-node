@@ -15,7 +15,7 @@ module.exports = class Client
     @patchboard = -> patchboard
     @resources = -> patchboard.resources
 
-    
+
     @developers = new Developers(@resources().developers, @)
 
 
@@ -31,14 +31,14 @@ module.exports = class Client
     # content requires an email or user_url
     @user = (content, callback) ->
       {email, user_url} = content
-      
+
       if email?
         resource = @resources().user_query({email})
       else
         resource = @resources().user(user_url)
-      
+
       resource.get (error, userResource) =>
-        callback(error, new User(userResource, @)) 
+        callback(error, new User(userResource, @))
 
 
     @application = ->
@@ -50,14 +50,14 @@ module.exports = class Client
     @wallet = (url, callback) ->
       @resources().wallet(url).get (error, walletResource) ->
         return callback(error) if error
-        
+
         wallet = new Wallet(walletResource, @)
         callback null, wallet
 
 
     @authenticate = (scheme, credentials, callback) ->
       @patchboard().context.authorize scheme, credentials
-      
+
       if scheme is 'Gem-Developer'
         @resources().developers.get (error, developerResource) =>
           return callback(error) if error
@@ -87,7 +87,7 @@ module.exports = class Client
           throw new Error "This object is already authenticated.
                           To override the authentication, provide
                           the property: 'override: true'"
-      
+
       @patchboard().context.authorize 'Gem-OOB-OTP', credentials
       return true
 
@@ -98,7 +98,7 @@ module.exports = class Client
       {app_url, api_token, instance_id} = credentials
       if !api_token or !instance_id or !app_url
         return callback(new Error("api_token, instance_id, and app_url are required"))
-      
+
       credentials.override  ||= false
 
       applicationScheme = @patchboard().context.schemes['Gem-Application']
@@ -109,7 +109,7 @@ module.exports = class Client
 
       @resources().application(app_url).get (error, resource) =>
         return callback(error) if error
-        
+
         @_application = new Application(resource, @)
         callback(null, @_application)
 
@@ -125,7 +125,7 @@ module.exports = class Client
         return callback new Error('This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=true.')
 
       @patchboard().context.authorize 'Gem-Device', credentials
-      
+
       if credentials.fetch
         {email, user_url} = credentials
         @user {email, user_url}, (error, user) ->
@@ -138,7 +138,7 @@ module.exports = class Client
     @beginDeviceAuthorization = (credentials, callback) ->
       {name, device_id, email, api_token} = credentials
       @authenticateOTP({api_token})
-      
+
       resource = @resources().user_query({email})
       resource.authorize_device {name, device_id}, (error) ->
         responseHeader = error.response.headers['www-authenticate']
@@ -156,7 +156,7 @@ module.exports = class Client
       @authenticateOTP(credentials)
 
       {name, device_id, email} = credentials
-      
+
       resource = @resources().user_query({email})
       resource.authorize_device {name, device_id}, (error, userResource) =>
         return callback(error) if error
@@ -168,31 +168,3 @@ module.exports = class Client
           device_id: credentials.device_id
           }, (error, user) ->
             callback(error, user)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

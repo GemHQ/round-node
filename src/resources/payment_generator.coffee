@@ -7,14 +7,16 @@ module.exports = class PaymentGenerator
     @client = -> client
 
 
-  unsigned: (payees, callback) ->
+  unsigned: (payees, confirmations, callback) ->
     unless payees?
       return callback(new Error('Must supply a list of payees'))
 
+    confirmations ||= 6
     outputs = @outputsFromPayees(payees)
-    @resource().create outputs, (error, paymentResource) =>
+
+    @resource().create {outputs, confirmations}, (error, paymentResource) =>
       return callback(error) if error
-      
+
       callback(null, new Payment(paymentResource, @client() ))
 
 
@@ -30,6 +32,4 @@ module.exports = class PaymentGenerator
         payee: {address: payee.address}
       }
 
-    {outputs}
-
-
+    outputs

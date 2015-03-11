@@ -23,11 +23,11 @@ module.exports = class Wallet
 
   accounts: (callback) ->
     return callback(null, @_accounts) if @_accounts
-    
+
     resource = @resource().accounts
 
     accounts = new Accounts(resource, @client(), @)
-    
+
     accounts.loadCollection {wallet: @}, (error, accounts) =>
       return callback(error) if error
 
@@ -52,7 +52,7 @@ module.exports = class Wallet
   update: (content, callback) ->
     @resource().update content, (error, resource) =>
       return callback(error) if error
-      
+
       @resource = -> resource
       @name = resource.name
 
@@ -63,12 +63,7 @@ module.exports = class Wallet
   # reset: (callback) ->
   #   @resource().reset (error, resource) =>
   #     return callback(error) if error
-      
+
   #     newWallet = new Wallet(resource, client())
 
   #     callback(null, newWallet)
-      
-
-
-
-

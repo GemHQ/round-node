@@ -10,10 +10,10 @@ module.exports = class User
 
   wallets: (callback) ->
     return callback(null, @_wallets) if @_wallets
-    
+
     resource = @resource().wallets
     wallets = new Wallets(resource, @client())
-    
+
     wallets.loadCollection (error, wallets) =>
       return callback(error) if error
 

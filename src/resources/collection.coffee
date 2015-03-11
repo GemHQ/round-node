@@ -14,7 +14,6 @@ module.exports = class Collection
     # a hash table is populated if the model provides a key
     # ex: Accounts has a key property of 'name'
     @_hash = null
-    
 
 
   loadCollection: (props, callback) ->
@@ -30,14 +29,14 @@ module.exports = class Collection
 
     @resource().list (error, resourceArray) =>
       return callback(error) if error
-      
+
       @_list = resourceArray.map (resource) =>
         new @type(resource, @client(), props)
-      
+
       # only creates a hash table if collection has a key
       if @key
         @_hash = {}
-        
+
         for model in @_list
           key = model.resource()[@key]
 
@@ -54,7 +53,7 @@ module.exports = class Collection
     if @key?
       key = model.resource()[@key]
       @_hash[key] = model
-    
+
     @_list.push(model)
 
 
@@ -76,7 +75,3 @@ module.exports = class Collection
 
   getAll: ->
     @_list
-
-
-
-

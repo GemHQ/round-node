@@ -13,11 +13,11 @@ module.exports = class Account
 
   addresses: (callback) ->
     return callback(null, @_addresses) if @_addresses
-    
+
     resource = @resource().addresses
 
     addresses = new Addresses(resource, @client())
-    
+
     addresses.loadCollection (error, addresses) =>
       return callback(error) if error
 
@@ -27,21 +27,23 @@ module.exports = class Account
 
   # content requires payees
   pay: (content, callback) ->
-    {payees} = content
+    {payees, confirmations} = content
 
     unless payees
       return callback(new Error('Payees must be specified'))
+
+    confirmations ||= 6
 
     multiwallet = @wallet._multiwallet
     unless multiwallet
       return callback(new Error('You must unlock the wallet before attempting a transaction'))
 
-    @payments().unsigned payees, (error, payment) ->
+    @payments().unsigned payees, confirmations, (error, payment) ->
       return callback(error) if error
-      
+
       payment.sign multiwallet, (error, data) ->
         callback(error, data)
-  
+
 
   transactions: (callback) ->
     return callback(null, @_transactions) if @_transactions
@@ -49,7 +51,7 @@ module.exports = class Account
     resource = @resource().transactions({}) # Must pass a hash
 
     transactions = new Transactions(resource, @client())
-    
+
     transactions.loadCollection (error, transactions) =>
       return callback(error) if error
 
@@ -64,7 +66,7 @@ module.exports = class Account
   update: (content, callback) ->
     @resource().update content, (error, resource) =>
       return callback(error) if error
-      
+
       @resource = -> resource
       @name = resource.name
       @balance = resource.balance

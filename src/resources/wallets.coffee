@@ -35,7 +35,7 @@ module.exports = class Wallets extends Collection
       return callback(error) if error
 
       wallet = new Wallet(resource, @client())
-      
+
       @add(wallet)
 
       callback(null, {wallet, backup_seed})

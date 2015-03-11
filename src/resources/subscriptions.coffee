@@ -16,7 +16,7 @@ module.exports = class Subsciptions extends Collection
     # Return the new round.Subscription object.
     # Required arguments:
     # callback_url -- URI of an active endpoint which can receive notifications
-    
+
     content.subscribed_to = "address"
 
     @resource().create content, (error, resource) =>
@@ -24,15 +24,3 @@ module.exports = class Subsciptions extends Collection
 
       subscription = new Subscription(resource, client())
       @add(subscription)
-
-
-
-
-
-
-
-
-
-
-
-
