@@ -35,13 +35,12 @@ describe 'User Resource', ->
           done(error)
 
 
-  describe.skip 'client.users.create', ->
+  describe.only 'client.users.create', ->
     it 'should create a user object', (done) ->
       email = "js-test-#{Date.now()}@mail.com"
       # email = "bez@gem.co"
       passphrase = 'passphrase'
-      client.users.create {email, passphrase}, (error, user_and_backup_seed) ->
-        {user, backup_seed} = user_and_backup_seed
+      client.users.create {email, passphrase}, (error, backup_seed, user) ->
         expect(user.resource()).to.have.a.property('email')
         done()
 
@@ -58,7 +57,7 @@ describe 'User Resource', ->
         done()
 
 
-  describe.only 'client.authenticateDevice', ->
+  describe 'client.authenticateDevice', ->
     it 'return an authenticated user', (done) ->
     # Note: Proceeding lines are commented for automation purposes.
     # Note: To test fully, you must run the test in 2 steps
@@ -78,6 +77,9 @@ describe 'User Resource', ->
       client.completeDeviceAuthorization authenticateDeviceCreds(applications), (error, user) ->
         # console.log user.resource().url
         console.log user.resource().user_token
+
+        console.log user.email
+        console.log user.url
         done(error)
 
 

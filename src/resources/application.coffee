@@ -5,9 +5,9 @@ Rules = require './rules'
 module.exports = class Application
 
   constructor: (resource, client, options) ->
-    {@name, @api_token, @url, @key} = resource
     @resource = -> resource
     @client = -> client
+    {@name, @api_token, @url} = resource
 
 
   users: (callback) ->

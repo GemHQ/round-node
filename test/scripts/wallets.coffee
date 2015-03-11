@@ -20,31 +20,20 @@ url = 'http://localhost:8999'
 # url = "https://api-sandbox.gem.co"
 
 describe 'Wallets Resource', ->
-  client = developer = user = applications = ''
+  client = developer = user = applications = wallet = wallets = ''
 
   before (done) ->
     Round.client {url}, (error, cli) ->
       cli.authenticateDeveloper existingDevCreds, (error, dev) ->
-        console.log error if error
         dev.applications (error, apps) ->
-          console.log error if error
           client = cli; developer = dev; applications = apps
           client.authenticateDevice authenticateDeviceCreds(apps), (error, usr) ->
-            console.log error if error
-            user = usr
-            done(error)
+            usr.wallets (error, walts) ->
+              wallet = walts.get('default'); wallets = walts; user = usr
+              done(error)
 
 
   describe 'Wallet Resource', ->
-    wallet = wallets = ''
-    # ALERT: MOVE TO PARENT 'BEFORE' BLOCK
-    before (done) ->
-      user.wallets (error, walts) ->
-        wallets = walts
-        wallet = walts.get('default')
-        done(error)
-
-
     describe "wallet unlock", ->
       it "return a MultiWallet instance", ->
         multiwallet = wallet.unlock("passphrase")

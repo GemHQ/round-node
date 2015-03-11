@@ -4,4 +4,4 @@ module.exports = class Transaction
   constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
-    @data = resource.data
+    {@data, @confirmations, @hash} = resource

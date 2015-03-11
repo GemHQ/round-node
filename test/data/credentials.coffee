@@ -52,7 +52,7 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
 # These value will be printed in the 2nd part of client.authenticateDevice test
 authenticateDeviceCreds = (applications) -> {
   api_token: applications.get('default').api_token,
-  app_url: applications.get('default').url,
+  app_url: applications.get('default').resource().url,
   key: 'otp.NwfKqk3FiRhyYwSnzLcqNg',
   secret: 'kStHKmhA_SM3QJq8okFNjQ',
   device_id: 'newdeviceid1426027794021',

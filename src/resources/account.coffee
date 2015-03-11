@@ -7,7 +7,7 @@ module.exports = class Account
   constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
-    {name, balance} = resource
+    {@name, @balance, @path, @pending, @rules, @subscriptions} = resource
     @wallet = options.wallet
 
 
@@ -68,7 +68,6 @@ module.exports = class Account
       return callback(error) if error
 
       @resource = -> resource
-      @name = resource.name
-      @balance = resource.balance
+      {@name} = resource
 
       callback(null, @)

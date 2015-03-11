@@ -10,7 +10,9 @@ module.exports = class Wallet
   constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
-    @name = resource.name
+    {@name, @network, @cosigner_public_seed, @backup_public_seed,
+    @primary_public_seed, @balance, @default_account,
+    @subscriptions, @transactions} = resource
 
 
   rules: () ->

@@ -24,8 +24,9 @@ describe 'Developer Resource', ->
           client = cli; developer = dev; done(error)
 
 
-  describe 'developers.create', ->
+  describe.only 'developers.create', ->
     it 'should return a developer object', ->
+      console.log developer.resource().applications
       expect(developer).to.be.an.instanceof(Developer)
 
     it 'should authorize if privkey is provided', (done) ->

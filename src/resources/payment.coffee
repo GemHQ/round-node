@@ -4,6 +4,7 @@ module.exports = class Payment
   constructor: (resource, client, options) ->
     @resource = -> resource
     @client = -> client
+    {@outputs, @confirmations, @fee} = resource
 
 
   sign: (wallet, callback) ->

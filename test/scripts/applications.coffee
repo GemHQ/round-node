@@ -44,7 +44,7 @@ describe 'Applications Resource', ->
             done(error)
   
 
-  describe 'application.authorizeInstance', ->
+  describe.only 'application.authorizeInstance', ->
     it 'should authorize client as an application instance', (done) ->
       # lack of error proves that the authorization was successful
       defaultApp.users (error, users) ->

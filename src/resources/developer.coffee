@@ -6,6 +6,7 @@ module.exports = class Developer
   constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
+    {@email, @pubkey} = resource
 
 
   applications: (callback) ->
@@ -29,10 +30,11 @@ module.exports = class Developer
     {privkey} = credentials 
     delete credentials.privkey if credentials.privkey
 
-    @resource().update credentials, (error, developerResource) =>
+    @resource().update credentials, (error, resource) =>
       return callback(error) if error
 
-      @resource = -> developerResource
+      @resource = -> resource
+      {@email, @pubkey} = resource
 
       credentials.privkey = privkey
       @client().patchboard().context.authorize 'Gem-Developer', credentials

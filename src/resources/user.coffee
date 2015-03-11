@@ -3,9 +3,11 @@ Wallets = require './wallets'
 
 module.exports = class User
 
-  constructor: (userResource, client, options) ->
+  constructor: (resource, client, options) ->
     @client = -> client
-    @resource = -> userResource
+    @resource = -> resource
+    {@email, @url, @first_name, @last_name, @user_token,
+    @applications, @default_wallet, @subscriptions} = resource
 
 
   wallets: (callback) ->
@@ -23,8 +25,10 @@ module.exports = class User
 
   # content can take an email, first_name, or last_name
   update: (content, callback) ->
-    @resource().update content, (error, userResource) =>
+    @resource().update content, (error, resource) =>
       return callback(error) if error
 
-      @_user = new User userResource, @client()
-      callback null, @_user
+      @resource = -> resource
+      {email, @first_name, @last_name} = resource
+
+      callback(null, @)
