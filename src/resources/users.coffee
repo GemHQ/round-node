@@ -33,4 +33,4 @@ module.exports = class Users extends Collection
       user = new User(resource, @client())
 
       backup_seed = multiwallet.trees.backup.toBase58()
-      callback(null, {backup_seed, user})
+      callback(null, backup_seed, user)
