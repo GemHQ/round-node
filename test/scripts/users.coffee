@@ -14,8 +14,8 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds, authenticateDeviceCredsStaging, authenticateDeviceCredsProd } = credentials
 
-# url = 'http://localhost:8999'
-url = "https://api.gem.co"
+url = 'http://localhost:8999'
+# url = "https://api.gem.co"
 # url = "https://api-sandbox.gem.co"
 
 if url == "https://api-sandbox.gem.co"

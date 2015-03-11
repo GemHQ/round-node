@@ -12,6 +12,6 @@ module.exports = class Addresses extends Collection
       return callback(error) if error
 
       address = new Address(resource, @client())
-      @add(resource.string, address)
+      @add(address)
 
       callback null, address

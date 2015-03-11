@@ -11,8 +11,8 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, newUserContent, existingDevCreds} = credentials
 
-# url = 'http://localhost:8999'
-url = "https://api.gem.co"
+url = 'http://localhost:8999'
+# url = "https://api.gem.co"
 # url = "https://api-sandbox.gem.co"
 
 describe 'Applications Resource', ->
@@ -34,11 +34,11 @@ describe 'Applications Resource', ->
           # STEP 2
           # instance_id comes from an email
           # LOCAL
-          # instance_id = '_m4EPHWcPNfdNIAsTotkW8Xf1kiOngi65dIO7hJD9tY'
+          instance_id = '_m4EPHWcPNfdNIAsTotkW8Xf1kiOngi65dIO7hJD9tY'
           ## STAGING
           # instance_id = 'wne_EdkCeFug6W7jzauqpRh20uCkgu0amkjlamu_Mlw'
-          ## PRODUCTION
-          instance_id = 'JnGIJyPcxYfG8-fwj1qM9r9Wj70LMxPtFb3dPWBXCVI'
+          # PRODUCTION
+          # instance_id = 'JnGIJyPcxYfG8-fwj1qM9r9Wj70LMxPtFb3dPWBXCVI'
           client.authenticateApplication {api_token, instance_id, app_url: url}, (error, app) ->
             defaultApp = app; applications = apps
             done(error)
@@ -53,10 +53,10 @@ describe 'Applications Resource', ->
 
 
   describe 'application.users', ->
-    it 'should return a users object with a collection property', (done) ->
+    it 'should return a users object with a hash property', (done) ->
       defaultApp.users (error, users) ->
         expect(users).to.be.an.instanceof(Users)
-        expect(users).to.have.property('_collection')
+        expect(users).to.have.property('_hash')
         done(error)
 
 
@@ -77,6 +77,8 @@ describe 'Applications', ->
         cli.developers.create creds, (error, dev) ->
           dev.applications (error, apps) ->
             apps.create {name}, (error, app) ->
+              console.log "name: #{name}"
+              console.log apps.get()
               client = cli; developer = dev; applications = apps; application = app
               done(error)
 

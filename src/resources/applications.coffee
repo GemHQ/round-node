@@ -17,6 +17,6 @@ module.exports = class Applications extends Collection
 
       application = new Application(resource, @client())
 
-      @add(content.name, application)
+      @add(application)
 
       callback(null, application)

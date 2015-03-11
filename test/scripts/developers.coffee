@@ -11,9 +11,9 @@ data = yaml.safeLoad(string)
 credentials = require '../data/credentials'
 {pubkey, privkey, newDevCreds, existingDevCreds, genKeys} = credentials
 
-# url = 'http://localhost:8999'
+url = 'http://localhost:8999'
 # url = "https://api.gem.co"
-url = "https://api-sandbox.gem.co"
+# url = "https://api-sandbox.gem.co"
 
 describe 'Developer Resource', ->
   client = developer = ''
@@ -42,6 +42,7 @@ describe 'Developer Resource', ->
     
     before (done) ->
       developer.applications (error, apps) ->
+        console.log apps.get()
         applications = apps
         done(error)
 
@@ -92,7 +93,7 @@ describe 'Developer Errors', ->
 
 
 # SHOULD ONLY BE USED WHEN CREATING BEZ@GEM.CO FOR THE FIRST TIME
-describe.only 'Developer Resource', ->
+describe.skip 'Developer Resource', ->
   it 'should create a dev acccount for bez@gem.co', (done) ->
     Round.client {url}, (error, cli) ->
       cli.developers.create existingDevCreds, (error, dev) ->

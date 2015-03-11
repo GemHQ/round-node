@@ -36,6 +36,6 @@ module.exports = class Wallets extends Collection
 
       wallet = new Wallet(resource, @client())
 
-      @add(name, wallet)
+      @add(wallet)
 
       callback(null, {wallet, backup_seed})

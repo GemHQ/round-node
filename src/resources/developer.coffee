@@ -1,5 +1,4 @@
 
-clone = require 'clone'
 Applications = require './applications'
 
 module.exports = class Developer
@@ -24,13 +23,18 @@ module.exports = class Developer
 
 
   update: (credentials, callback) ->
-    updateCreds = clone(credentials, false)
-    delete updateCreds.privkey if updateCreds.privkey
+    # Save and remove privkey because the update call
+    # can't receive the privkey. However the privkey is still
+    # needed to reauthorize with the new credentials. 
+    {privkey} = credentials 
+    delete credentials.privkey if credentials.privkey
 
-    @resource().update updateCreds, (error, developerResource) =>
+    @resource().update credentials, (error, developerResource) =>
       return callback(error) if error
 
       @resource = -> developerResource
+
+      credentials.privkey = privkey
       @client().patchboard().context.authorize 'Gem-Developer', credentials
 
       callback null, @

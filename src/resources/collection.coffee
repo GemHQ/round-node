@@ -9,12 +9,20 @@ module.exports = class Collection
   constructor: (applicationsResource, client, callback) ->
     @resource = -> applicationsResource
     @client = -> client
-    @_collection = null
-    @_modelList = null
+    # an arry of models is populated for all resource types
+    @_list = null
+    # a hash table is populated if the model provides a key
+    # ex: Accounts has a key property of 'name'
+    @_hash = null
 
 
   loadCollection: (props, callback) ->
     # Makes props optional
+    # Props is only used in cases where a collection needs
+    # additional info at initialization time.
+    # ex: when calling wallet.accounts you need to pass the wallet
+    # so that all of the accounts can be created with a refrence to
+    # the wallet that they belong to.
     if arguments.length == 1
       callback = arguments[0]
       props = {}
@@ -22,18 +30,17 @@ module.exports = class Collection
     @resource().list (error, resourceArray) =>
       return callback(error) if error
 
-      @_modelList = resourceArray.map (resource) =>
+      @_list = resourceArray.map (resource) =>
         new @type(resource, @client(), props)
 
+      # only creates a hash table if collection has a key
       if @key
-        @_collection = {}
+        @_hash = {}
 
-        for resource in resourceArray
-          wrappedResource = new @type(resource, @client(), props)
+        for model in @_list
+          key = model.resource()[@key]
 
-          key = resource[@key]
-
-          @add(key, wrappedResource)
+          @_hash[key] = model
 
       callback(null, @)
 
@@ -42,21 +49,22 @@ module.exports = class Collection
     @loadCollection(callback)
 
 
-  add: (key, model) ->
-    if @_collection?
-      @_collection[key] = model
+  add: (model) ->
+    if @key?
+      key = model.resource()[@key]
+      @_hash[key] = model
 
-    @_modelList.push(model)
+    @_list.push(model)
 
 
   get: (key) ->
     # Return entire collection if no key is provided
-    return @_modelList unless key
+    return @_list unless key
 
     if _isNumber(key)
-      model = @_modelList[key]
+      model = @_list[key]
     else
-      model = @_collection[key]
+      model = @_hash[key]
 
     if model?
       return model
@@ -66,4 +74,4 @@ module.exports = class Collection
 
 
   getAll: ->
-    @_modelList
+    @_list
