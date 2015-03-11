@@ -58,11 +58,11 @@ describe 'User Resource', ->
         done()
 
 
-  describe.skip 'client.authenticateDevice', ->
+  describe.only 'client.authenticateDevice', ->
     it 'return an authenticated user', (done) ->
     # Note: Proceeding lines are commented for automation purposes.
     # Note: To test fully, you must run the test in 2 steps
-      # FIRST
+      # # FIRST
       # {name, email, api_token} = authenticateDeviceCreds(applications)
       # device_id =  "newdeviceid#{Date.now()}"
       # console.log 'device_id ------------------------------'

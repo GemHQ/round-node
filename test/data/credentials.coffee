@@ -53,9 +53,9 @@ privkey = """-----BEGIN RSA PRIVATE KEY-----
 authenticateDeviceCreds = (applications) -> {
   api_token: applications.get('default').api_token,
   app_url: applications.get('default').url,
-  key: 'otp.sJiihGPdK9hS2jElPm-FbQ',
-  secret: '79p3Dds5O09itmZM60XHPw',
-  device_id: 'newdeviceid1424820618380',
+  key: 'otp.NwfKqk3FiRhyYwSnzLcqNg',
+  secret: 'kStHKmhA_SM3QJq8okFNjQ',
+  device_id: 'newdeviceid1426027794021',
   user_token: 'KpMJUyGfpf4z463fXetX9QoWFBvQ6uQmdlmGOEOS8Ok',
   # user_url: 'http://localhost:8999/users/RpwPD84-a6_XQHqduWKZlw',
   name: 'newDevice'
