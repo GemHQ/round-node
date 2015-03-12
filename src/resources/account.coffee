@@ -34,14 +34,14 @@ module.exports = class Account
 
     confirmations ||= 6
 
-    multiwallet = @wallet._multiwallet
-    unless multiwallet
+    multiWallet = @wallet.multiWallet
+    unless multiWallet
       return callback(new Error('You must unlock the wallet before attempting a transaction'))
 
     @payments().unsigned payees, confirmations, (error, payment) ->
       return callback(error) if error
 
-      payment.sign multiwallet, (error, data) ->
+      payment.sign multiWallet, (error, data) ->
         callback(error, data)
 
 

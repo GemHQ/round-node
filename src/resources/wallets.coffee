@@ -1,6 +1,6 @@
 Wallet = require './wallet'
 Collection = require './collection'
-CoinOp = require('coinop')
+CoinOp = require('coinop-node')
 PassphraseBox = CoinOp.crypto.PassphraseBox
 MultiWallet = CoinOp.bit.MultiWallet
 
@@ -38,4 +38,4 @@ module.exports = class Wallets extends Collection
 
       @add(wallet)
 
-      callback(null, {wallet, backup_seed})
+      callback(null, backup_seed, wallet)

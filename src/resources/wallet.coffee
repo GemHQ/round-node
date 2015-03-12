@@ -1,7 +1,7 @@
 
 Rules = require './rules'
 Accounts = require './accounts'
-CoinOp = require 'coinop'
+CoinOp = require 'coinop-node'
 PassphraseBox = CoinOp.crypto.PassphraseBox
 MultiWallet = CoinOp.bit.MultiWallet
 
@@ -10,6 +10,8 @@ module.exports = class Wallet
   constructor: (resource, client, options) ->
     @client = -> client
     @resource = -> resource
+    # gets set in @unlock
+    @multiWallet = null
     {@name, @network, @cosigner_public_seed, @backup_public_seed,
     @primary_public_seed, @balance, @default_account,
     @subscriptions, @transactions} = resource
@@ -39,7 +41,7 @@ module.exports = class Wallet
 
   unlock: (passphrase) ->
     primary_seed = PassphraseBox.decrypt(passphrase, @resource().primary_private_seed)
-    @_multiwallet = new MultiWallet {
+    @multiWallet = new MultiWallet {
       private: {
         primary: primary_seed
       },
