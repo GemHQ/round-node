@@ -38,4 +38,4 @@ module.exports = class Wallets extends Collection
 
       @add(wallet)
 
-      callback(null, {wallet, backup_seed})
+      callback(null, backup_seed, wallet)

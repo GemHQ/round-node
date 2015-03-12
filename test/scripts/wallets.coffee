@@ -48,8 +48,7 @@ describe 'Wallets Resource', ->
         passphrase = 'passphrase'
         name = "new-wallet#{Date.now()}"
         walletData = {name, passphrase}
-        wallets.create walletData, (error, data) ->
-          {wallet, backup_seed} = data
+        wallets.create walletData, (error, backup_seed, walet) ->
           expect(wallet).to.be.an.instanceof(Wallet)
           expect(backup_seed).to.exist
           done()

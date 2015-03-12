@@ -12,7 +12,6 @@
   "license": "MIT",
   "dependencies": {
     "base64-url": "1.0.0",
-    "clone": "^1.0.0",
     "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#master",
     "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#add_request_to_authorizer"
   },
