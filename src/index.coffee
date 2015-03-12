@@ -24,6 +24,10 @@ module.exports = {
       callback = arguments[0]
       options = {}
 
+    # in case options was set to null or undefined it
+    # is assigned to an empty object instead
+    options ?= {}
+
     network = NETWORKS[options.network] || "bitcoin_testnet"
     url = options.url || if network == 'bitcoin' then MAINNET_URL else SANDBOX_URL
 
