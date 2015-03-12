@@ -2,7 +2,7 @@
   "name": "round-node",
   "version": "0.1.2-alpha1",
   "description": "Client for the Gem cryptocurrency API",
-  "repository": "git@github.com:BitVault/round-node.git",
+  "repository": "git@github.com:GemHQ/round-node.git",
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "coffee -o lib -c src",

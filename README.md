@@ -14,7 +14,7 @@ Require Round where needed:
 ```node
   var Round = require("round-node");
 
-  Round.client(function (error, client) {
+  Round.client(function(error, client) {
       ...
   });
 ```
@@ -155,10 +155,10 @@ account.addresses(function(error, addresses) {
 Sending payments is easy too:
 ```node
 payees = [
-  {address: <ADDRESS>, amount: <PAYMENT_AMOUNT>},
-  {address: <ADDRESS>, amount: <PAYMENT_AMOUNT>},
-  {address: <ADDRESS>, amount: <PAYMENT_AMOUNT>}
-]
+  {address: ADDRESS, amount: PAYMENT_AMOUNT},
+  {address: ADDRESS, amount: PAYMENT_AMOUNT},
+  {address: ADDRESS, amount: PAYMENT_AMOUNT}
+];
 account.pay({payees: payees}, function(error, data) {
   ...
 });
@@ -167,5 +167,5 @@ account.pay({payees: payees}, function(error, data) {
 You can add as many payees as you need.
 Don't forget to unlock the wallet before trying to pay someone:
 ```node
-wallet.unlock(<PASSPHRASE>)
+wallet.unlock(PASSPHRASE);
 ```
