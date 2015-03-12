@@ -11,12 +11,13 @@ For detailed usage please visit the [documentation page](https://guide.gem.co)
 ## Configuration
 
 Require Round where needed:
+```node
+  var Round = require("round-node");
 
-  var Round = require("round-node")
-
-  Round.client(function(error, client) {
+  Round.client(function (error, client) {
       ...
   });
+```
 
 ## Authentication
 
