@@ -1,6 +1,6 @@
 Wallet = require './wallet'
 Collection = require './collection'
-CoinOp = require('coinop')
+CoinOp = require('coinop-node')
 PassphraseBox = CoinOp.crypto.PassphraseBox
 MultiWallet = CoinOp.bit.MultiWallet
 
