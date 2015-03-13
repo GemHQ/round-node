@@ -7,13 +7,15 @@ For detailed usage please visit the [documentation page](https://guide.gem.co)
 ### Install gem dependencies:
 Round depends on libsodium. On a Mac run:
   
-  $ brew install libsodium
+      $ brew install libsodium
 
-For Linux, follow the instructions on: http://doc.libsodium.org/installation/README.html
+For Linux, follow the instructions on: 
+      
+      http://doc.libsodium.org/installation/README.html
   
 Install the rest of the dependencies: 
 
-  $ npm install
+      $ npm install
 
 ## Configuration
 
