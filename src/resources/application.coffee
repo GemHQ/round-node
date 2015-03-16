@@ -27,7 +27,7 @@ module.exports = class Application
     @_rules || new Rules @resource().rules, @client()
 
 
-  # Credentials requires a name
+  # Credentials requires a (instance) name
   authorizeInstance: (credentials, callback) ->
     @resource().authorize_instance credentials, (error, applicationInstance) ->
       return callback(error) if error
