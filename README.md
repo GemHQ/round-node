@@ -1,6 +1,6 @@
 # Gem Node Client
 
-For detailed usage please visit the [documentation page](https://guide.gem.co)
+For detailed usage please visit the [documentation page](http://guide.gem.co)
 
 ## Installation
 
