@@ -5,6 +5,9 @@ For detailed usage please visit the [documentation page](http://guide.gem.co)
 ## Installation
 
 ### Install gem dependencies:
+node => Tested @ 0.10.21 - 0.10.36
+libsodium => 1.0.2
+
 Round depends on libsodium. On a Mac run:
   
       $ brew install libsodium
