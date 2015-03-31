@@ -1,183 +1,174 @@
-# Gem Node Client
+# round-py: A Python client for the Gem API
+The round client is designed to interact with Gem's API to make building blockchain apps drop dead simple.  All the complexity of the bitcoin protocol and crypto has been abstracted away so you can focus on building your product.  Here are a few of the many great things the API and clients provide:
 
-For detailed usage please visit the [documentation page](http://guide.gem.co)
+* Multi-signature wallets with Gem as a cosigner
+* Webhook notifications automatically subscribed for you
+* Integrated 2FA solution with arbitrary endpoints to build into your app
+* Simplified balance inqueries
+* Easy address management
+* Hardware Security Modules for co-signing key
+* Rules engine for transactions
+* SDKs for many popular languages
 
-## Installation
+## Support information
+* __Support email__: [support@gem.co](mailto:support@gem.co) 
+* __Support IRC chat__: `#gemhq` on `irc.freenode.net`
+* __Issues__:  Use github issues
+* __Slack room__:  Send email to support requesting access to the slack room for this client
+* __Detailed API Docs__:  http://guide.gem.co
 
-### Install gem dependencies:
-node => Tested @ 0.10.21 - 0.10.36
-libsodium => 1.0.2
+## Installing round-py:
+### Prerequisites:
+* Python 2.7
+* Virtualenv and virtualenvwrapper (or equivalent virtual environment solution) is required for Linux and recommended for everyone.
+* Git and a python extension build environment.
+* libffi
 
-Round depends on libsodium. On a Mac run:
-  
-      $ brew install libsodium
+#### [Linux (debian-based, tested on Ubuntu 14.04)](docs/install.md#linux-debian-based-tested-on-ubuntu-1404)
+#### [Mac OSX](docs/install.md#mac-osx)
+#### [Heroku](docs/install.md#heroku)
 
-For Linux, follow the instructions on: 
-      
-      http://doc.libsodium.org/installation/README.html
-  
-Install the rest of the dependencies: 
+## Getting Started Tutorial
+#### Table of Contents
+* [Introduction](README.md#Introduction)
+* [1. Run the client](README.md#1-run-the-client)
+* [2. Configure your application and API token](README.md#2-configure-your-applicaiton-and-api-token)
+* [3. Create your User and Wallet](README.md#3-create-your-user-and-wallet)
+* [4. Authenticate your User](README.md#4-authenticate-your-user)
+* [5. Access the wallet and Default Account](README.md#5-access-the-wallet-and-default-account)
+* [6. Generate an Address and Add Funds](README.md#6-generate-an-address-and-add-funds)
+* [7. Make a Payment](README.md#7-make-a-payment)
+* [Advanced Topics](docs/advanced.md)
+	* [More about Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
+	* [More about Transactions](docs/advanced.md#transactions-and-payments)
+	* [Subscriptions](docs/advanced.md#subscriptions)
+	* [Integrated 2FA](docs/advanced.md#integrated-2fa)
+	* [Operational/Custodail wallet models](docs/advanced.md#operationalcustodial-wallets)
+	* [Operational/Custodial payments](docs/advanced.md#payments)
 
-      $ npm install
+### Introduction
+This tutorial will have you run through setting up your application and creating your own wallet as a user of your application.  By the end of the tutorial, you will have created your User, wallet, account, an address as well as fund it and then make a payment using the bitcoin testnet network.
 
-## Configuration
+This tutoril assumes that you have completed the developer signup and that you have successfully [installed the client](docs/install.md)
 
-Require Round where needed:
-```node
-  var Round = require("round-node");
+### 1. Run the Client
+In this step you will learn how to instantiate the API client for the given networks.
 
-  Round.client(function(error, client) {
-      ...
-  });
-```
+1. start an interactive shell and import the round library
 
-## Authentication
+	```bash
+	$ bpython
+	>>> import round
+	```
 
-You must authenticate to interact with the API. Depending on what you are trying to do there are different authentication schemes available.
+1. Create the client object using the sandbox stack 
 
-### Developer
+	```python 
+	# the default client is set to sandbox the testnet stack 
+	client = round.client()
 
-Authenticating as a developer will allow you create and manage your applications. Authenticating in this way requires the developer's email, as well as their private key. The method will return a `Round::Developer` object.
-```node
-var developerCreds = {
-  privkey: PRIVKEY,
-  email: EMAIL@ADDRE.SS
-};
+	# if you want to configure the client for production mainnet
+	client = round.client("production")
+	```
 
-client.authenticateDeveloper(developerCreds, function(error, dev) {
-  ...
-});
-```
+[[top]](README.md#getting-started-tutorial)
 
-### Application
+### 2. Configure your applicaiton and API Token
+In this step your application and you will retrieve the API Token for the application and set your applications redirect url.  The url is used to push the user back to your app after they complete an out of band challange.
 
-Authenticating as an application will give you read-only access to your users and their wallets. This requires the `app_url`, the `api_token`, and an `instance_id`. The method will return a Round Application object.
-```node
-var applicationCreds = {
-  app_url: APP_URL,
-  api_token: API_TOKEN,
-  instance_id: INSTANCE_ID
-};
+1. Set the redirect url by clicking in the options gear and selecting `add redirect url`
 
-client.authenticateApplication(applicationCreds, function(error, app) {
-  ...
-});
-```
+1. In the [console](https://my.gem.co) copy your api token down by clicking on show
 
-Your `instance_id` is provided to you via email when you authorize an application instance using Developer auth:
-```node
-client.authenticateDeveloper(developerCreds, function (error, developer) {
-  developer.applications(function(error, apps) {
-    var app = apps.get('default');
-    
-    app.authorizeInstance({name: INSTANCE_NAME}, function(error) {
-      // handle error if error
-      // an instance_id has been sent to your developer email
-    });
-  });
-});
-```
+1. Go back to your shell session and set a variable for api_token
 
-### Device
+	```python
+	api_token = u'q234t09ergoasgr-9_qt4098qjergjia-asdf2490'
+	```
 
-Authenticating as a device allows you to perform all actions on a wallet permitted by a user. Requires an `email`, an `api_token`, a `user_token`, and a `device_id`. The method will return a Round User object.
-```node
-var deviceCreds = {
-  email: USER_EMAIL,
-  api_token: API_TOKEN,
-  user_token: USER_TOKEN,
-  device_id: DEVICE_ID
-};
+[[top]](README.md#getting-started-tutorial)
 
-client.authenticateDevice(deviceCreds, function(error, user) {
-  ...
-});
-```
-The `user_token` is obtained by a user authorizing your application to operate on their wallet. This level of authorization is received through the `completeDeviceAuthorization` call:
-```node
-var deviceCreds = {
-  api_token: API_TOKEN,
-  device_id: DEVICE_ID,
-  name: DEVICE_NAME,
-  email: USER_EMAIL
-};
+### 3. Create your User and Wallet
+In this step you will create your own personal Gem user and wallet authorized on your application.  This is an end user account for a user to have a Gem wallet to hold bitcoin with and generate 2 of 3 keys thus the user is in full control.
 
+1. Create your user and wallet:
 
-client.beginDeviceAuthorization(deviceCreds, function(error, key) {
-  deviceCreds.key = key
-});
-```
+	```python
+	#  Store the device token for future authentication
+	device_token, lite_user = client.users.create(
+			first_name = "YOUR FIRST NAME",
+			last_name = "YOUR LAST NAME",
+			email = "YOUR EMAIL ADDRESS",
+			passphrase = "aReallyStrongPassword",
+			device_id = "UUID String",
+			device_name = "SOME DEVICE NAME")
+	```
+1. **Store the device_token safety** as this will be used for subsequent login sessions with the user.
+1. You will receive an email from Gem asking you to confirm your account and finish setup.  Please follow the instructions.
 
-This will trigger an out of band email to the user that will include a one time pass that will allow you to complete the device authorization:
-```node
-var deviceCreds = {
-  api_token: API_TOKEN,
-  device_id: DEVICE_ID,
-  name: DEVICE_NAME,
-  email: USER_EMAIL,
-  key: KEY,
-  secret: OTP_FROM_EMAIL
-};
+[[top]](README.md#getting-started-tutorial)
 
-client.completeDeviceAuthorization(<DEVICE_NAME>, <DEVICE_ID>, <API_TOKEN>, key, <OTP_FROM_EMAIL>)
-```
+### 4. Authenticate your User
+In this step you will learn how to authenticate a users device to get a fully functional user to perform wallet actions.  You use this call when the user returns to your app from the create step, or subsequent calls thereafter.
 
-## Basic Usage
+1. Call the authenticate_device method from the client object
+	
+	```python
+	full_user = client.authenticate_device(
+						api_token = api_token,
+						device_token = device_token,
+						user_email = email)
+	```
 
-### Wallets
+[[top]](README.md#getting-started-tutorial)
 
-Once you've got a User authenticated with a device you can start to do fun stuff like create wallets:
+### 5. Access the wallet and Default Account
+In this section you'll learn how to get to the default account of a wallet.  A wallet is a collection of accounts.  [Learn more about the wallet and acocunts]([docs/wallet-and-account-details.md)
 
-```node
-var walletData = {
-  name: WALLET_NAME,
-  passphrase: WALLET_PASSPHRASE
-};
+1. Get the default wallet and then default account
 
-user.wallets(function(error, wallets) {
-  wallets.create(walletData, function(error, backup_seed, wallet) {
-    ...
-  });
-});
+	```python
+	my_account = full_user.wallets['default'].accounts['default']
+	```
 
-```
+[[top]](README.md#getting-started-tutorial)
 
-__IMPORTANT__: Creating a wallet this way will automatically generate your backup key tree. You can get it by accessing `wallet.multiWallet`. This will return the `CoinOp.Bit.MultiWallet` object containing both private seeds. __Make sure you save it somewhere__.
+### 6. Generate an Address and Add Funds
+In this section you'll learn how to create an address to fund with testnet coins aka funny money.
 
-### Accounts
+1. Create an address
 
-Once you have a wallet you're going to want to send and receive funds from it, right? You do this by creating accounts within the wallet:
-```node
-wallet.accounts(function(error, accounts) {
-  accounts.create({name: ACCOUNT_NAME}, function(error, account) {
-    ...
-  });
-});
-```
+	```python
+	 address = my_account.addresses.create()
+	print address.string, address.path
+	```
+1. Copy the address string and go to a faucet to fund it:
+	1. [TP's TestNet Faucet](https://tpfaucet.appspot.com/)
+	1. [Mojocoin Testnet3 Faucet](http://faucet.xeno-genesis.com/)
 
-To receive payments, you'll have to generate a new address:
-```node
-account.addresses(function(error, addresses) {
-  addresses.create(function(error, address) {
-    ...
-  });
-});
-```
+Payments have to be confirmed by the network and on Testnet that can be slow.  To monitor for confirmations: input the address into the following url `https://live.blockcypher.com/btc-testnet/address/<YOUR ADDRESS>`.  The current standard number of confirmations for a transaction to be considered safe is 6. 
 
-Sending payments is easy too:
-```node
-payees = [
-  {address: ADDRESS, amount: PAYMENT_AMOUNT},
-  {address: ADDRESS, amount: PAYMENT_AMOUNT},
-  {address: ADDRESS, amount: PAYMENT_AMOUNT}
-];
-account.pay({payees: payees}, function(error, data) {
-  ...
-});
-```
+You will be able to make a payment on a single confirmation.  While you wait for that to happen, feel free to read more details about:
+[Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
 
-You can add as many payees as you need.
-Don't forget to unlock the wallet before trying to pay someone:
-```node
-wallet.unlock(PASSPHRASE);
-```
+[[top]](README.md#getting-started-tutorial)
+
+### 7. Make a Payment
+In this section you’ll learn how to create a payment a multi-signature payment in an HD wallet.  Once your address gets one more more confirmations we’ll be able to send a payment out of the wallet.  To make a payment, you'll unlock a wallet, generate a list of payees and then call the pay method.
+
+1. Unlock the wallet:
+
+	```python
+	wallet.unlock(<YOUR PASSWORD>)
+	```
+1. Make a payment
+
+	```python
+	payment = account.pay([{‘address’:’ mxzdT4ShBudVtZbMqPMh9NVM3CS56Fp11s’, ‘amount’:25000}],confirmations = 1, ‘https://my.mobileapp.com')
+	```
+
+the pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  Confirmations default to six and represents the number of confirmations an unspent output needs to have in order to be used in the transaction.  The last arg is the redirect url for Gem to send the user back to your application after the user submits their 2FA challenge.  
+
+**CONGRATS** - now build something cool. 
+
+[[top]](README.md#getting-started-tutorial)
