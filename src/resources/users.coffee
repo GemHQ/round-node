@@ -12,8 +12,9 @@ module.exports = class Users extends Collection
   type: User
 
   # content requires email and wallet
-  create: (content, callback) ->
-    network = @client().network
+  create: ({first_name, last_name, email,
+           passphrase, device_name, redirect_uri}, callback) ->
+    network = @client.network
     {email, passphrase} = content
     multiwallet = MultiWallet.generate(['primary', 'backup'], network)
     primary_seed = multiwallet.trees.primary.toBase58()
@@ -27,10 +28,10 @@ module.exports = class Users extends Collection
     }
 
     params = {email, default_wallet: wallet}
-    @resource().create params, (error, resource) =>
+    @resource.create params, (error, resource) =>
       return callback(error) if error
 
-      user = new User(resource, @client())
+      user = new User(resource, @client)
 
       backup_seed = multiwallet.trees.backup.toBase58()
       callback(null, backup_seed, user)

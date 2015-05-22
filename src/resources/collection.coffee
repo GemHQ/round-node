@@ -1,4 +1,3 @@
-Application = require './application'
 
 module.exports = class Collection
 
@@ -6,9 +5,9 @@ module.exports = class Collection
     !isNaN(parseFloat(n)) && isFinite(n)
 
 
-  constructor: (applicationsResource, client, callback) ->
-    @resource = -> applicationsResource
-    @client = -> client
+  constructor: ({resource, client}, callback) ->
+    @resource = resource
+    @client = client
     # an arry of models is populated for all resource types
     @_list = null
     # a hash table is populated if the model provides a key
@@ -27,18 +26,20 @@ module.exports = class Collection
       callback = arguments[0]
       props = {}
 
-    @resource().list (error, resourceArray) =>
+    @resource.list (error, resourceArray) =>
       return callback(error) if error
 
       @_list = resourceArray.map (resource) =>
-        new @type(resource, @client(), props)
+        # type is defined on the child class
+        new @type({resource, @client, props})
 
       # only creates a hash table if collection has a key
+      # key is defined on the child class
       if @key
         @_hash = {}
 
         for model in @_list
-          key = model.resource()[@key]
+          key = model.resource[@key]
 
           @_hash[key] = model
 
@@ -51,7 +52,7 @@ module.exports = class Collection
 
   add: (model) ->
     if @key?
-      key = model.resource()[@key]
+      key = model.resource[@key]
       @_hash[key] = model
 
     @_list.push(model)
@@ -59,7 +60,7 @@ module.exports = class Collection
 
   get: (key) ->
     # Return entire collection if no key is provided
-    return @_list unless key
+    return @_list unless key?
 
     if _isNumber(key)
       model = @_list[key]

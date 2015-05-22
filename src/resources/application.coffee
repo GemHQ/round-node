@@ -1,58 +1,37 @@
 
-Users = require './users'
-Rules = require './rules'
+Users = require('./users')
+Wallets = require('./wallets')
+Base = require('./base')
 
-module.exports = class Application
+module.exports = class Application extends Base
 
-  constructor: (resource, client, options) ->
-    @resource = -> resource
-    @client = -> client
+  constructor: ({resource, client}) ->
+    @resource = resource
+    @client = client
     {@name, @api_token, @url} = resource
+    @wallets = new Wallets({
+      resource: resource.wallets,
+      client,
+      application: @
+    })
 
 
   users: (callback) ->
-    return callback(null, @_users) if @_users
+    @getAssociatedCollection({
+      collectionClass: Users,
+      name: 'users'
+      callback 
+    }) 
+    # return callback(null, @_users) if @_users
 
-    resource = @resource().users
-    users = new Users(resource, @client())
+    # resource = @resource.users
+    # users = new Users({resource, @client})
 
-    users.loadCollection (error, users) =>
-      return callback(error) if error
+    # users.loadCollection (error, users) =>
+    #   return callback(error) if error
 
-      @_users = users
-      callback(null, @_users)
-
-
-  rules: ->
-    @_rules || new Rules @resource().rules, @client()
-
-
-  # Credentials requires a (instance) name
-  authorizeInstance: (credentials, callback) ->
-    @resource().authorize_instance credentials, (error, applicationInstance) ->
-      return callback(error) if error
-
-      # applicationInstnace is a useless object - nothing can be done with it
-      callback null, applicationInstance
+    #   @_users = users
+    #   callback(null, @_users)
 
 
-  # Content requires a name property
-  # Note: This does not update the key in the collection
-  update: (content, callback) ->
-    @resource().update content, (error, resource) =>
-      return callback(error) if error
 
-      @resource = -> resource
-      @name = resource.name
-
-      callback(null, @)
-
-
-  reset: (callback) ->
-    @resource().reset (error, resource) =>
-      return callback(error) if error
-
-      @resource = -> resource
-      @api_token = resource.api_token
-
-      callback(null, @)

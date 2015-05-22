@@ -1,5 +1,4 @@
 
-Rules = require './rules'
 Accounts = require './accounts'
 CoinOp = require 'coinop-node'
 PassphraseBox = CoinOp.crypto.PassphraseBox
