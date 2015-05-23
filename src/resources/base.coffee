@@ -15,14 +15,16 @@ module.exports = class Base
   # name = the name of the collection that you wan to retreive
   # callback = provided by the developer. It ss called after the instance
   #            has been populated
-  getAssociatedCollection: ({collectionClass, name, callback}) ->
+  # options = non-standard props that a Collection might need.
+  #           ex: Wallets needs access to the application it belongs to
+  getAssociatedCollection: ({collectionClass, name, options, callback}) ->
     # if memoized, return the collection
     return  callback(null, @collectionInstance) if @collectionInstance?
      
     # resource is the collection's resource
     # this would be similar to user.resource.users
     resource = @resource[name]
-    collectionInstance = new collectionClass({resource, @client})
+    collectionInstance = new collectionClass({resource, @client, options})
 
     # populate the collection. loadCollection lives in the Collection class
     collectionInstance.loadCollection (error, collectionInstance) ->

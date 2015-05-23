@@ -10,5 +10,8 @@ module.exports = class Devices
     @resource.create arguments[0], (error, authRequestResource) ->
       return callback(error) if error
 
-      {device_token, mfa_uri} = authRequestResource.metadata
+      callback(null, {
+        device_token: authRequestResource.metadata.device_token,
+        mfa_uri: authRequestResource.mfa_uri
+      })
       

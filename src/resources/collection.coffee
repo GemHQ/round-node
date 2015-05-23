@@ -5,7 +5,7 @@ module.exports = class Collection
     !isNaN(parseFloat(n)) && isFinite(n)
 
 
-  constructor: ({resource, client}, callback) ->
+  constructor: ({resource, client, options}, callback) ->
     @resource = resource
     @client = client
     # an arry of models is populated for all resource types
@@ -13,6 +13,10 @@ module.exports = class Collection
     # a hash table is populated if the model provides a key
     # ex: Accounts has a key property of 'name'
     @_hash = null
+    # options allows a Collection to add non-standard props
+    # ex: wallets needs access to the application
+    for key, val of options
+      @[key] = value 
 
 
   loadCollection: (props, callback) ->
@@ -52,7 +56,7 @@ module.exports = class Collection
 
   add: (model) ->
     if @key?
-      key = model.resource[@key]
+      key = model
       @_hash[key] = model
 
     @_list.push(model)

@@ -20,6 +20,13 @@ module.exports = class User extends Base
     })
 
 
+  wallet: (callback) ->
+    @Wallets (error, wallets) ->
+      return callback(error) if error
+
+      callback(null, wallets.get(0))
+
+
   devices: (callback) ->
     resource = @client.resources.devices_query({@email})
     devices = new Devices({resource, @client})

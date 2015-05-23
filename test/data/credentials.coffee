@@ -14,6 +14,15 @@ module.exports = credentials  = {
     email: 'bez@gemm.co',
     api_token: 'c87MDkPcGTstW233_xrZZhgPAZqud4j0t82FNPOE8qw',
     admin_token: 'PKS_5xZI9HyiZDhUAL3CqK99A9YNWKYzmaf0P2DhdrM'
+  },
+
+  user: {
+    email: 'bez@gem.co',
+    first_name: 'bez',
+    last_name: 'reyhan',
+    passphrase: 'password',
+    device_name: 'devy'
+    device_token: '1JaNXjf3Wn7JdWVdlRvV583Hb6faHtE9paRL6NMwe0w'
   }
 
 }

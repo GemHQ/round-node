@@ -19,19 +19,17 @@ module.exports = class Application extends Base
   users: (callback) ->
     @getAssociatedCollection({
       collectionClass: Users,
-      name: 'users'
-      callback 
-    }) 
-    # return callback(null, @_users) if @_users
-
-    # resource = @resource.users
-    # users = new Users({resource, @client})
-
-    # users.loadCollection (error, users) =>
-    #   return callback(error) if error
-
-    #   @_users = users
-    #   callback(null, @_users)
+      name: 'users',
+      callback: callback
+    })
 
 
-
+  wallets: (callback) ->
+    @getAssociatedCollection({
+      collectionClass: Wallets,
+      name: 'wallets',
+      options: {
+        application: @
+      },
+      callback: callback
+    })
