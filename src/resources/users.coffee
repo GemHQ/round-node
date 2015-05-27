@@ -40,4 +40,4 @@ module.exports = class Users extends Collection
     @resource.create params, (error, resource) ->
       return callback(error) if error
 
-      callback(null, {device_token: resource.metadata.device_token})
+      callback(null, resource.metadata.device_token)

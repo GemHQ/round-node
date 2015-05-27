@@ -9,11 +9,6 @@ module.exports = class Application extends Base
     @resource = resource
     @client = client
     {@name, @api_token, @url} = resource
-    @wallets = new Wallets({
-      resource: resource.wallets,
-      client,
-      application: @
-    })
 
 
   users: (callback) ->

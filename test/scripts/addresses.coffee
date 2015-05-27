@@ -1,56 +1,37 @@
-Round = require '../../src'
-Address = require '../../src/resources/address'
-
+Round = require('../../src')
+Address = require('../../src/resources/address')
+# Devices = require('../../src/resources/devices')
 expect = require('chai').expect
-fs = require "fs"
-yaml = require "js-yaml"
-string = fs.readFileSync "./test/data/wallet.yaml"
-data = yaml.safeLoad(string)
-credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds, authenticateDeviceCredsStaging, authenticateDeviceCredsProd } = credentials
-
-# url = 'http://localhost:8999'
-url = "https://api.gem.co"
-# url = "https://api-sandbox.gem.co"
-
-if url == "https://api-sandbox.gem.co"
-  authenticateDeviceCreds = authenticateDeviceCredsStaging
-if url == "https://api.gem.co"
-  authenticateDeviceCreds = authenticateDeviceCredsProd
+credentials = require('../data/credentials')
+devCreds = credentials.developer
+url = credentials.url
 
 
 describe 'Addresses Resource', ->
-  client = developer = user = applications = accounts = account = wallet = ''
-
+  addresses = null
   before (done) ->
     Round.client {url}, (error, cli) ->
-      cli.authenticateDeveloper existingDevCreds, (error, dev) ->
-        dev.applications (error, apps) ->
-          client = cli; developer = dev; applications = apps;
-
-          client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
-            user = usr
-            user.wallets (error, wallets) ->
-              wallet = wallets.get('default')
-              wallet.accounts (error, accnts) ->
-                accounts = accnts
-                account = accounts.get('default')
-                done(error)
+      {api_token, admin_token} = devCreds
+      cli.authenticate_application {api_token, admin_token}, (error, app) ->
+        app.wallets (error, wallets) ->
+          wallet = wallets.get(0)
+          wallet.accounts (error, accounts) ->
+            account = accounts.get(1)
+            console.log account
+            account.addresses (error, addrs) ->
+              addresses = addrs
+              done(error)
 
 
-  # skipping because it creates everytime
-  describe 'addresses.create', ->
-    addresses = address =''
+  describe 'Address', ->
+    describe 'addresses.create', ->
+      address = null
 
-    before (done) ->
-      account.addresses (error, addrs) ->
-        addrs.create (error, addr) ->
-          addresses = addrs; address = addr
+      before (done) ->
+        addresses.create (error, addr) ->
+          address = addr
           done(error)
 
-    it 'should create an addresses object', ->
-      expect(address).to.be.an.instanceof(Address)
-
-    it 'should add the new address to the collection', ->
-      lastAddress = addresses.get().slice(-1)[0]
-      expect(lastAddress.string).to.equal(address.resource().string)
+      it 'should create an addresses object', ->
+        console.log address
+        expect(address).to.be.an.instanceof(Address)

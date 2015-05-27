@@ -1,151 +1,67 @@
-Round = require '../../src'
-Account = require '../../src/resources/account'
-Addresses = require '../../src/resources/addresses'
-Transactions = require '../../src/resources/transactions'
-Wallet = require '../../src/resources/wallet'
-Payment = require '../../src/resources/payment'
-PaymentGenerator = require '../../src/resources/payment_generator'
-
-paymentResource = require('../data/transaction.json').payment
-
+Round = require('../../src')
+Account = require('../../src/resources/account')
+Wallet = require('../../src/resources/wallet')
+Addresses = require('../../src/resources/addresses')
+Transactions = require('../../src/resources/transactions')
+# Devices = require('../../src/resources/devices')
 expect = require('chai').expect
-fs = require "fs"
-yaml = require "js-yaml"
-string = fs.readFileSync "./test/data/wallet.yaml"
-data = yaml.safeLoad(string)
-credentials = require '../data/credentials'
-{pubkey, privkey, newDevCreds, newUserContent, existingDevCreds, authenticateDeviceCreds, authenticateDeviceCredsStaging, authenticateDeviceCredsProd } = credentials
-
-url = 'http://localhost:8999'
-# url = "https://api.gem.co"
-# url = "https://api-sandbox.gem.co"
-
-if url == "https://api-sandbox.gem.co"
-  authenticateDeviceCreds = authenticateDeviceCredsStaging
-if url == "https://api.gem.co"
-  authenticateDeviceCreds = authenticateDeviceCredsProd
+credentials = require('../data/credentials')
+devCreds = credentials.developer
+url = credentials.url
 
 
 describe 'Accounts Resource', ->
-  client = developer = user = applications = accounts = account = wallet = ''
-
+  wallet = accounts = null
   before (done) ->
     Round.client {url}, (error, cli) ->
-      cli.authenticateDeveloper existingDevCreds, (error, dev) ->
-        dev.applications (error, apps) ->
-          client = cli; developer = dev; applications = apps;
-
-          client.authenticateDevice authenticateDeviceCreds(applications), (error, usr) ->
-            user = usr
-            user.wallets (error, wallets) ->
-              wallet = wallets.get('default')
-              wallet.accounts (error, accnts) ->
-                accounts = accnts
-                account = accounts.get('default')
-                done(error)
+      {api_token, admin_token} = devCreds
+      cli.authenticate_application {api_token, admin_token}, (error, app) ->
+        app.wallets (error, wallts) ->
+          wallet = wallts.get(0)
+          wallet.accounts (error, accnts) ->
+            accounts = accnts
+            done(error)
 
 
-  describe 'accounts', ->
-    it 'should have a wallet property', ->
-      expect(accounts).to.have.a.property('wallet')
-      expect(accounts.wallet).to.be.an.instanceof(Wallet)
-
-
-  describe.skip 'account.transaction', ->
-    it 'should return an instance of Transactions', (done) ->
-      account.transactions (error, transactions) ->
-        # console.log transactions
-        # console.log transactions._modelList[4].resource().cancel (error, data) -> console.log error, data
-        expect(transactions).to.be.an.instanceof(Transactions)
-        done()
-
-
-  describe 'account.payments', ->
-    payments = null
-    
+  describe 'Account', ->
+    account = null
     before ->
-      payments = account.payments()
+      account = accounts.get(0)
 
-    it 'should return an instance of PaymentGenerator ', ->
-      expect(payments).to.be.an.instanceof(PaymentGenerator)
+    describe 'account.addresses', ->
+      it 'should create a new Addresses object', (done) ->
+        account.addresses (error, addresses) ->
+          expect(addresses).to.be.an.instanceof(Addresses)
+          done(error)
 
-    it 'should memoize the instance on @_payments', ->
-      expect(account._payments).to.deep.equal(payments)
-
-
-  # Skipping because we will run out of coins
-  describe.only 'account.pay', ->
-    
-    it 'should not throw an error (i.e. make a successful tx)', (done) ->
-      account.wallet.unlock("passphrase")
-      payees = [{amount: 5430, address: 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx'}]
-      # MainNet
-      # payees = [{amount: 400000, address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr'}]
-
-      account.pay {payees}, (error, data) ->
-        console.log error, data
-        expect(error).to.not.exist
-        done(error)
-        
-
-  describe 'account.wallet', ->
-    it 'should reference the wallet it belongs to', ->
-      expect(account.wallet).to.be.instanceof(Wallet)
+    describe 'account.transactions', ->
+      it 'should return a new transactions object', (done) ->
+        account.transactions (error, transactions) ->
+          console.log transactions
+          expect(transactions).to.be.an.instanceof(Transactions)
+          done(error)
 
 
-  # Note: We may be removing client.account
-  describe 'client.account', ->
-    `var account`
-    it 'should return an Account object', ->
-      accountUrl = wallet.resource().accounts.url
-      account = client.account accountUrl
-      expect(account).to.be.an.instanceof(Account)
 
 
-  # skipping because it creates a wallet for the same
-  # user and therefor makes other calls really slow
-  describe.skip 'accounts.create', ->
-    newAccount = accountName = null
+  # describe 'Accounts', ->
 
-    before (done) ->
-      accountName = "on_account_of_who4"
-      accounts.create {name: accountName}, (error, account) ->
-        newAccount = account
-        done(error)
+  #   account = null
+  #   describe 'accounts.create', ->
+  #     before (done) ->
+  #       name = "newAccount#{Date.now()}"
+  #       network = 'bitcoin_testnet'
+  #       accounts.create {name, network}, (error, accnt) ->
+  #         account = accnt
+  #         done(error)
+
+  #     it 'should create a new account object', ->
+  #       expect(account).to.be.an.instanceof(Account)
+
+  #     it 'should have a refrence to the wallet it belongs to', ->
+  #       expect(account.wallet).to.be.an.instanceof(Wallet)
+  #       expect(account.wallet).to.equal(wallet)
+
+
   
-    it 'should create a new Account object', () ->
-      expect(newAccount).to.be.an.instanceof(Account)
-
-    it 'should memoize the new account', () ->
-      wallet.accounts (error, accounts) ->
-        expect(wallet._accounts.get()).to.have.a.property(accountName)
-
-
-  # skipping because it requires Gem-User auth
-  describe.skip 'account.update', ->
-    it 'should update the account resource', (done) ->
-      name = "newname#{Date.now()}"
-      acnt = accounts.get('cool_account')
-      acnt.resource().update {name}, (error, accountResource) ->
-        console.log error, accountResource
-        done()
-
-
-  describe.skip 'account.addresses', ->
-    addresses = ''
-
-    before (done) ->
-      account.addresses (error, addrs) ->
-        console.log addrs.get()
-        addresses = addrs
-        done(error)
-
-    it 'should return an Addresses object', ->
-      expect(addresses).to.be.an.instanceof(Addresses)
-
-    it 'collection keys should not be undefined', ->
-      expect(-> addresses.get('undefined')).to.throw(Error)
-
-    it 'should cache the addresses object on the account', ->
-      expect(account._addresses).to.deep.equal(addresses)
 

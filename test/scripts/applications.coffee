@@ -2,6 +2,7 @@ Round = require '../../src'
 # Application = require '../../src/resources/application'
 Users = require '../../src/resources/users'
 Wallets = require '../../src/resources/wallets'
+Application = require '../../src/resources/application'
 expect = require('chai').expect
 credentials = require '../data/credentials'
 devCreds = credentials.developer
@@ -28,9 +29,11 @@ describe 'Applications Resource', ->
 
 
   describe 'application.wallets', ->
-    it 'should return a popluated wallets collection', (done) ->
-      console.log application.wallets
+    it 'should hold a refrence the application it belongs to', (done) ->
       application.wallets (error, wallets) ->
         expect(wallets).to.be.an.instanceof(Wallets)
-        expect(wallets._list).to.have.length.above(0)
+        # makes sure _list is not null - at the least it should be []
+        expect(wallets._list).to.exist
+        expect(wallets.application).to.be.an.instanceof(Application)
+        expect(wallets.application).to.equal(application)
         done(error)

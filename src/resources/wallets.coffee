@@ -21,14 +21,13 @@ module.exports = class Wallets extends Collection
 
   
   create: ({name, passphrase, multiwallet}, callback) ->
-
     return callback(new Error('Must provide a passphrase')) unless passphrase
     return callback(new Error('Must provide a name')) unless name
 
     multiwallet ?= MultiWallet.generate(['primary', 'backup'], NETWORK)
     primarySeed = multiwallet.trees.primary.seed.toString('hex')
-    backup_seed = multiwallet.trees.primary.toBase58()
     encryptedSeed = PassphraseBox.encrypt(passphrase, primarySeed)
+    backup_seed = multiwallet.trees.backup.seed.toString('hex')
 
     walletData = {
       name: name,
@@ -41,7 +40,6 @@ module.exports = class Wallets extends Collection
       return callback(error) if error
 
       wallet = new Wallet({resource, @client, multiwallet, @application})
-
       @add(wallet)
 
-      callback(null, backup_seed, wallet)
+      callback(null, wallet, backup_seed)

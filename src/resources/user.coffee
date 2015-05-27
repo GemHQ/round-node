@@ -12,19 +12,24 @@ module.exports = class User extends Base
     @default_wallet} = resource
 
 
-  wallets: (callback) ->
-    @getAssociatedCollection({
-      collectionClass: Wallets,
-      name: 'wallets',
-      callback
-    })
+  # wallets: (callback) ->
+  #   @getAssociatedCollection({
+  #     collectionClass: Wallets,
+  #     name: 'wallets',
+  #     callback
+  #   })
 
 
   wallet: (callback) ->
-    @Wallets (error, wallets) ->
+    return callback(null, @_wallet) if @_wallet
+
+    resource = @resource.wallets
+    wallets = new Wallets({resource, @client})
+    wallets.loadCollection (error, wallets) ->
       return callback(error) if error
 
-      callback(null, wallets.get(0))
+      @_wallet = wallets.get(0)
+      callback(null, @_wallet)
 
 
   devices: (callback) ->

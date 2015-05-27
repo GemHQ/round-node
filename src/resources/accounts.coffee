@@ -3,23 +3,25 @@ Account = require './account'
 Collection = require './collection'
 
 
-module.exports = class Accounts extends Collection
+VALID_NETWORKS = ['bitcoin', 'bitcoin_testnet', 'litecoin', 'dogecoin']
 
-  constructor: (resource, client, @wallet) ->
-    super
+
+module.exports = class Accounts extends Collection
 
 
   type: Account
   key: 'name'
 
 
-  # Content requires an name
-  create: (content, callback) ->
-    @resource().create content, (error, accountResource) =>
+  create: ({name, network}, callback) ->
+    if VALID_NETWORKS.indexOf(network) < 0
+      return callback(new Error("Network must be one of the
+                                following: #{VALID_NETWORKS.join(' ')}"))
+
+    @resource.create arguments[0], (error, resource) =>
       return callback(error) if error
 
-      account = new Account accountResource, @client(), @wallet
-
+      account = new Account({resource, @client, @wallet})
       @add(account)
 
-      callback null, account
+      callback(null, account)

@@ -15,8 +15,8 @@ module.exports = class Collection
     @_hash = null
     # options allows a Collection to add non-standard props
     # ex: wallets needs access to the application
-    for key, val of options
-      @[key] = value 
+    for key, value of options
+      @[key] = value
 
 
   loadCollection: (props, callback) ->

@@ -35,16 +35,15 @@ describe 'Users Resource', ->
 
   describe 'Users', ->
     describe 'users.create', ->
-      it 'should return an object with a device_token prop', (done) ->
+      it 'should return a device_token', (done) ->
         client.users.create({
           first_name: 'bez',
           last_name: 'reyhan',
           email: "bez#{Date.now()}@gem.co",
           device_name: 'devy',
           passphrase: 'password'
-        }, (error, data) ->
-          expect(data).to.have.property('device_token')
-          expect(data.device_token).to.exist
+        }, (error, device_token) ->
+          expect(device_token).to.have.property(exist)
           done(error)
         )
 
