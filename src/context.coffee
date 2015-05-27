@@ -17,6 +17,9 @@ module.exports = class Context
 
 
   constructor: ->
+    # mfa_token is set on account.pay if the transaction
+    # is being initiated by an application wallet
+    @mfa_token = null
     @schemes =
       'Gem-Identify':
         credentials: null
@@ -36,61 +39,33 @@ module.exports = class Context
     if Object.keys(credentials).length == 0
       throw new Error('credentials cannot be empty')
 
-    formatedCreds = Object.keys(credentials)
-      .filter((credKey) =>
-        credKey in @schemes[scheme]['params']
-      )
-      .map((credKey) ->
-        "#{credKey}=\"#{credentials[credKey]}\""
-      )
-      .join(', ')
-
-    @schemes[scheme]['credentials'] = formatedCreds
-
-    
-    # for field of credentials
-    #   if field in @schemes[scheme]['params']
-    #     # adds the credential to the Context instance
-    #     @[field] = credentials[field]
-    #     if field not in ['privkey', 'app_url', 'user_url']
-    #       params[field] = credentials[field]
-
-    # @schemes[scheme]['credentials'] = @formatParams params
+    @schemes[scheme]['credentials'] = credentials
 
 
   # Called by Patchboard on every request
   authorizer: (schemes, resource, action, request) ->
     for scheme in schemes
       if @schemes[scheme]? and @schemes[scheme]['credentials']?
-        return { scheme, credential: @schemes[scheme]['credentials'] }
+        credential = @formatCredsForScheme(scheme)
+        return { scheme, credential }
 
 
+  formatCredsForScheme: (scheme) ->
+    credentials = @schemes[scheme]['credentials']
+    params = @schemes[scheme]['params']
     
-
-    # for scheme in schemes
-    #   if @schemes[scheme]? and  @schemes[scheme]['credentials']?
-    #     if scheme is 'Gem-Developer'
-    #       body = if request['body']? then request['body'] else '{}'
-    #       timestamp = Math.round(Date.now() / 1000)
-    #       return {
-    #         scheme,
-    #         credential: "#{@schemes[scheme]['credentials']},
-    #                     signature=\"#{@devSignature(body, timestamp)}\",
-    #                     timestamp=\"#{timestamp}\"",
-    #       }
-    #     else
-    #       return { scheme, credential: @schemes[scheme]['credentials'] }
+    compiled = Object.keys(credentials)
+      .filter((credKey) ->
+        params.indexOf(credKey) > -1
+      )
+      .map((credKey) ->
+        "#{credKey}=\"#{credentials[credKey]}\""
+      )
+      .join(', ')
+    
+    compiled.concat(", mfa_token=#{@mfa_token}") if @mfa_token
+    compiled
 
 
-  # devSignature: (requestBody, timestamp) ->
-  #   signer = crypto.createSign 'RSA-SHA256'
-  #   content = "#{requestBody}-#{timestamp}"
-  #   signer.update content
-  #   signature = signer.sign @privkey
-  #   base64url.encode signature
-
-
-  # formatParams: (params) ->
-  #   parts = for key, value of params
-  #     "#{key}=\"#{value}\""
-  #   parts.join(", ")
+  setMFA: (mfa_token) ->
+    @mfa_token = mfa_token

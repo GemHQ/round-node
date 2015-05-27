@@ -22,11 +22,11 @@ module.exports = class Client
     @users = new Users({resource: @resources.users, client: @})
 
 
-  authenticate_application: ({admin_token, api_token}, callback) ->
+  authenticate_application: ({admin_token, api_token, totp_secret}, callback) ->
     @patchboard.context.authorize 'Gem-Application', arguments[0]
     @authenticate_identify({api_token})
 
-    @application (error, application) ->
+    @application {totp_secret}, (error, application) ->
       callback(error, application)
 
 
@@ -43,13 +43,13 @@ module.exports = class Client
       callback(error, user)
 
    
-  application: (callback) ->
+  application: ({totp_secret}, callback) ->
     return @_application if @_application
 
     @resources.app.get (error, resource) =>
       return callback(error) if error
 
-      @_application = new Application({resource, client: @})
+      @_application = new Application({resource, client: @, totp_secret})
       callback(null, @_application)
 
 

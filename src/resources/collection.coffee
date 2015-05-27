@@ -19,23 +19,25 @@ module.exports = class Collection
       @[key] = value
 
 
-  loadCollection: (props, callback) ->
-    # Makes props optional
-    # Props is only used in cases where a collection needs
+  loadCollection: (options, callback) ->
+    # Makes options optional
+    # options is only used in cases where a collection needs
     # additional info at initialization time.
     # ex: when calling wallet.accounts you need to pass the wallet
     # so that all of the accounts can be created with a refrence to
     # the wallet that they belong to.
     if arguments.length == 1
       callback = arguments[0]
-      props = {}
+      options = {}
 
     @resource.list (error, resourceArray) =>
       return callback(error) if error
 
       @_list = resourceArray.map (resource) =>
+        options.resource = resource
+        options.client = @client
         # type is defined on the child class
-        new @type({resource, @client, props})
+        new @type(options)
 
       # only creates a hash table if collection has a key
       # key is defined on the child class

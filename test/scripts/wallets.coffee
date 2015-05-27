@@ -55,3 +55,9 @@ describe 'Wallets Resource', ->
           expect(accounts.wallet).to.exist
           expect(accounts.wallet).to.equal(wallet)
           done(error)
+
+
+    describe 'wallet.unlock', ->
+      it 'should retrun a wallet that has a multiwallet property', ->
+        wallet = wallets.get(0).unlock({passphrase: 'password'})
+        expect(wallet.multiwallet).to.exist

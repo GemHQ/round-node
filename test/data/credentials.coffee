@@ -13,7 +13,8 @@ module.exports = credentials  = {
   developer: {
     email: 'bez@gemm.co',
     api_token: 'c87MDkPcGTstW233_xrZZhgPAZqud4j0t82FNPOE8qw',
-    admin_token: 'PKS_5xZI9HyiZDhUAL3CqK99A9YNWKYzmaf0P2DhdrM'
+    admin_token: 'PKS_5xZI9HyiZDhUAL3CqK99A9YNWKYzmaf0P2DhdrM',
+    totp_secret: 'rk2sulvbdcwglqd3'
   },
 
   user: {

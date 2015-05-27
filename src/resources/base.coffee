@@ -7,6 +7,7 @@ module.exports = class Base
   # to retreive and memoize a populated users collection.)
   # collectionClass = the class of the collection which you want to
   #                   populate and retreive
+  # ARGUMENTS
   # name = the name of the collection that you wan to retreive
   # callback = provided by the developer. It ss called after the instance
   #            has been populated
@@ -19,13 +20,15 @@ module.exports = class Base
     # if memoized, return the collection
     return  callback(null, @["_#{name}"]) if @["_#{name}"]?
      
+    options ?= {}
+
     # resource is the collection's resource
     # this would be similar to user.resource.users
     resource = resource || @resource[name]
     collectionInstance = new collectionClass({resource, @client, options})
 
     # populate the collection. loadCollection lives in the Collection class
-    collectionInstance.loadCollection (error, collectionInstance) ->
+    collectionInstance.loadCollection options, (error, collectionInstance) ->
       return callback(error) if error
 
       # memoize the collection

@@ -30,9 +30,9 @@ module.exports = class Wallet extends Base
     })
 
 
-  unlock: (passphrase) ->
+  unlock: ({passphrase}) ->
     primary_seed = PassphraseBox.decrypt(passphrase, @resource.primary_private_seed)
-    @multiwallet = new MultiWallet {
+    @multiwallet = new MultiWallet({
       private: {
         primary: primary_seed
       },
@@ -40,7 +40,8 @@ module.exports = class Wallet extends Base
         cosigner: @resource.cosigner_public_seed,
         backup: @resource.backup_public_seed
       }
-    }
+    })
+    return @
 
 
   backup_key: ->

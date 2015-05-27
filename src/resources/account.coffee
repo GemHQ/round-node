@@ -1,7 +1,8 @@
-Addresses = require './addresses'
-Transactions = require './transactions'
-PaymentGenerator = require './payment_generator'
-Base = require './base'
+Addresses = require('./addresses')
+Transactions = require('./transactions')
+PaymentGenerator = require('./payment_generator')
+Base = require('./base')
+
 
 module.exports = class Account extends Base
 
@@ -21,23 +22,34 @@ module.exports = class Account extends Base
 
 
   pay: ({payees, confirmations, redirect_uri, mfa_token}, callback) ->
-
     unless payees
       return callback(new Error('Payees must be specified'))
 
-    multiwallet = @wallet.multiwallet
-    unless multiWallet?
+    wallet = @wallet
+    {multiwallet} = wallet
+    unless multiwallet?
       return callback(new Error('You must unlock the wallet before
                                  attempting a transaction'))
 
-    network = @network
-    @resource.transactions.create({payees, confirmations, redirect_uri},
+    tx = new Transactions({resource: @resource.transactions({}), @client})
+    tx.create({payees, confirmations, redirect_uri},
       (error, payment) ->
         return callback(error) if error
         
-        payment.sign({multiwallet, network})
-    )
 
+        payment.sign {multiwallet}, (error, signedTx) ->
+          console.log "signing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          return callback(error) if error
+
+          if wallet.application?
+            mfa_token ?= wallet.application.get_mfa()
+            signedTx.approve {mfa_token}, (error, data) ->
+              console.log "approving -----------------------"
+              callback(error, signedTx)
+          else
+            console.log "other ???????????????????????????"
+            callback(null, signedTx)
+    )
 
 
   transactions: (query, callback) ->
