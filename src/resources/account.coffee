@@ -9,10 +9,6 @@ module.exports = class Account extends Base
     @client = client
     @resource = resource
     @wallet = wallet
-    payments: new PaymentGenerator({
-      resource: @resource.payments,
-      client: client
-    })
     {@name, @balance, @path, @pending, @network} = resource
 
 
@@ -31,17 +27,16 @@ module.exports = class Account extends Base
 
     multiwallet = @wallet.multiwallet
     unless multiWallet?
-      return callback(new Error('You must unlock the wallet before attempting a transaction'))
+      return callback(new Error('You must unlock the wallet before
+                                 attempting a transaction'))
 
     network = @network
-
-    @transactions {}, (error, transactions) ->
-      return callback(error) if error
-      
-      transactions.create {payees, confirmations, redirect_uri}, (error, payment) ->
+    @resource.transactions.create({payees, confirmations, redirect_uri},
+      (error, payment) ->
         return callback(error) if error
         
-        payment.sign({multiwallet, network})  
+        payment.sign({multiwallet, network})
+    )
 
 
 
