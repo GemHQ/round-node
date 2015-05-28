@@ -37,8 +37,7 @@ module.exports = class Account extends Base
         return callback(error) if error
         
 
-        payment.sign {multiwallet}, (error, signedTx) ->
-          console.log "signing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        payment.sign {wallet: multiwallet}, (error, signedTx) ->
           return callback(error) if error
 
           if wallet.application?
