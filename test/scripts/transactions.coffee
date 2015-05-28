@@ -9,7 +9,7 @@ url = credentials.url
 
 
 describe 'Transactions Resource', ->
-  transactions = null
+  accounts = null
   before (done) ->
     Round.client {url}, (error, cli) ->
       {api_token, admin_token, totp_secret} = devCreds
@@ -17,14 +17,16 @@ describe 'Transactions Resource', ->
         app.wallets (error, wallts) ->
           wallet = wallts.get(0)
           wallet.accounts (error, accnts) ->
-            accnts.get(1).transactions (error, txs) ->
-              transactions = txs
-              transactions.get().forEach (tx) ->
-                console.log tx.status
-              done(error)
+            accounts = accnts
+            done(error)
 
 
   describe 'Transaction', ->
+    transactions = null
+    before (done) ->
+      accounts.get('dogecoin').transactions (error, txs) ->
+        transactions = txs
+        done(error)
     
     describe 'transaction.cancel', ->
       it 'should cancel the transaction', (done) ->
@@ -32,6 +34,14 @@ describe 'Transactions Resource', ->
           expect(tx).to.be.an.instanceof(Transaction)
           expect(tx.status).to.equal('canceled')
           done(error)
+
+
+  describe 'Cancel Txs', ->
+    transactions = null
+    before (done) ->
+      accounts.get('dogecoin').transactions (error, txs) ->
+        transactions = txs
+        done(error)
 
     describe.only 'cancel all unsigned transactions', ->
       it 'should cancel all unsigned txs', (done) ->
@@ -50,8 +60,12 @@ describe 'Transactions Resource', ->
             else
               cancelAllTxs(transactions, i+1, canceledTxs, cb)
         
+        console.log transactions.get()
         cancelAllTxs transactions.get(), 0, [], (error, canceledTxs) ->
+          console.log canceledTxs
+          console.log canceledTxs.length
           canceledTxs.forEach (tx) ->
+            console.log tx.status
             expect(tx.status).to.equal('canceled')
           done(error)
 

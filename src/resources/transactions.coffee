@@ -17,7 +17,7 @@ module.exports = class Transactions extends Collection
       utxo_confirmations: confirmations,
       payees: payees,
       redirect_uri: redirect_uri
-    }, (error, resource) ->
+    }, (error, resource) =>
       return callback(error) if error
 
       payment = new Transaction({resource, @client})

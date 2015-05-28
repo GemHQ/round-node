@@ -3,7 +3,6 @@ Account = require('../../src/resources/account')
 Wallet = require('../../src/resources/wallet')
 Addresses = require('../../src/resources/addresses')
 Transactions = require('../../src/resources/transactions')
-# Devices = require('../../src/resources/devices')
 expect = require('chai').expect
 credentials = require('../data/credentials')
 devCreds = credentials.developer
@@ -45,7 +44,7 @@ describe 'Accounts Resource', ->
 
   describe 'Accounts', ->
 
-    describe 'accounts.create', ->
+    describe.skip 'accounts.create', ->
       account = null
       before (done) ->
         name = "newAccount#{Date.now()}"
@@ -66,17 +65,13 @@ describe 'Accounts Resource', ->
       it 'should create a successful transaction', (done) ->
         wallet = wallet.unlock {passphrase: 'password'}
         payees = [{
-          address: 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx'
-          amount: 20000
+          address: 'DB8QuLZComTJ9oa7maXQYUuxUNLkC5ksJm'
+          amount: 50000
         }]
-        account = accounts.get(1)
+        account = accounts.get('dogecoin')
         account.pay {payees}, (error, data) ->
           console.log "----------------------"
           console.log error, data
           console.log "----------------------"
           expect(data).to.exist
           done(error)
-
-
-  
-

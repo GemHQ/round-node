@@ -1,11 +1,16 @@
+Base = require('./base')
 
-module.exports = class Transaction
+module.exports = class Transaction extends Base
+
+  @PROPS_LIST: ['value', 'fee', 'confirmations', 'hash', 'status', 'inputs',
+                'outputs', 'destination_address', 'lock_time', 'network']
 
   constructor: ({resource, client}) ->
     @client = client
     @resource = resource
-    {@value, @fee, @confirmations, @hash, @status, @inputs,
-    @outputs, @destination_address, @lock_time, @network} = resource
+    @_setProps(Transaction.PROPS_LIST, resource)
+    # {@value, @fee, @confirmations, @hash, @status, @inputs,
+    # @outputs, @destination_address, @lock_time, @network} = resource
 
 
   sign: ({wallet}, callback) ->
@@ -22,16 +27,12 @@ module.exports = class Transaction
     signature = signatures[0]
 
     txContent = {
-      transaction_hash: txHash,
-      inputs: [{primary: signature}]
+      signatures: {
+        transaction_hash: txHash,
+        inputs: [{primary: signature}]
+      }
     }
-    console.log "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    console.log txHash
-    console.log "!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     @resource.update txContent, (error, resource) =>
-      console.log "+++++++++++++++++++++++++++++++"
-      console.log error
-      console.log "+++++++++++++++++++++++++++++++"
       return callback(error) if error
 
       @resource = resource
@@ -40,10 +41,11 @@ module.exports = class Transaction
 
   approve: ({mfa_token}, callback) ->
     @client.context.setMFA(mfa_token)
-    @resource.approve (error, resource) =>
+    @resource.approve {}, (error, resource) =>
       return callback(error) if error
 
       @resource = resource
+      @_setProps(Transaction.PROPS_LIST, resource)
       callback(null, @)
 
 
@@ -52,4 +54,5 @@ module.exports = class Transaction
       return callback(error) if error
 
       @resource = resource
+      @_setProps(Transaction.PROPS_LIST, resource)
       callback(null, @)

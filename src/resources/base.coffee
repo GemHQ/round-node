@@ -41,7 +41,19 @@ module.exports = class Base
       return callback(error) if error
       
       @resource = resource
+      # Fix: replace with @_setProps once all classes have a PROPS_LIST
       for own key, val of content
         @[key] = val
 
       callback(null, @)
+
+
+  # Used to copy props from a resource to @
+  # Useful during initialization of an object and
+  # when the resource is updated
+  # ARGUMENTS
+  # propsList = an array of the properties that you want to copy
+  # copyed = the object that the properties will be copyed from
+  _setProps: (propsList, copyed) ->
+    propsList.forEach (prop) =>
+      @[prop] = copyed[prop]

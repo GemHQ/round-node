@@ -17,7 +17,6 @@ describe 'Addresses Resource', ->
           wallet = wallets.get(0)
           wallet.accounts (error, accounts) ->
             account = accounts.get(1)
-            console.log account
             account.addresses (error, addrs) ->
               addresses = addrs
               done(error)
@@ -33,5 +32,5 @@ describe 'Addresses Resource', ->
           done(error)
 
       it 'should create an addresses object', ->
-        console.log address
+        console.log address.string
         expect(address).to.be.an.instanceof(Address)
