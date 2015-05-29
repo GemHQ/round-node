@@ -2,8 +2,6 @@
 Users = require('./users')
 Wallets = require('./wallets')
 Base = require('./base')
-OTP = require('speakeasy')
-notp = require('notp')
 TOTP = require('onceler').TOTP
 
 module.exports = class Application extends Base

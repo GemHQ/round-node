@@ -14,7 +14,7 @@
     "base64-url": "1.0.0",
     "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#master",
     "onceler": "0.0.5",
-    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#master",
+    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#master"
   },
   "devDependencies": {
     "chai": "^1.9.2",
