@@ -28,7 +28,7 @@ describe 'Accounts Resource', ->
       account = accounts.get(0)
 
     describe 'account.addresses', ->
-      it 'should create a new Addresses object', (done) ->
+      it 'should return a new Addresses object', (done) ->
         account.addresses (error, addresses) ->
           expect(addresses).to.be.an.instanceof(Addresses)
           done(error)
@@ -65,13 +65,17 @@ describe 'Accounts Resource', ->
       it 'should create a successful transaction', (done) ->
         wallet = wallet.unlock {passphrase: 'password'}
         payees = [{
-          address: 'DB8QuLZComTJ9oa7maXQYUuxUNLkC5ksJm'
+          # bitcoin/coinbase address
+          address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr',
+          # dogecoin/cryptonator address
+          # address: 'DB8QuLZComTJ9oa7maXQYUuxUNLkC5ksJm'
           amount: 50000
         }]
-        account = accounts.get('dogecoin')
-        account.pay {payees}, (error, data) ->
-          console.log "----------------------"
-          console.log error, data
-          console.log "----------------------"
-          expect(data).to.exist
-          done(error)
+        # account = accounts.get('dogecoin')
+        account = accounts.get('bitcoin')
+        account.transactions {status: 'unsigned,signed,unapproved'}, (err, txs) ->
+          
+          account.pay {payees, confirmations: 1}, (error, data) ->
+            console.log error, data
+            expect(data).to.exist
+            done(error)

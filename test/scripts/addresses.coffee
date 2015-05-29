@@ -16,7 +16,7 @@ describe 'Addresses Resource', ->
         app.wallets (error, wallets) ->
           wallet = wallets.get(0)
           wallet.accounts (error, accounts) ->
-            account = accounts.get(1)
+            account = accounts.get(0)
             account.addresses (error, addrs) ->
               addresses = addrs
               done(error)

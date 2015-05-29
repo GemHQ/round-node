@@ -1,6 +1,5 @@
 Addresses = require('./addresses')
 Transactions = require('./transactions')
-PaymentGenerator = require('./payment_generator')
 Base = require('./base')
 
 
@@ -10,7 +9,8 @@ module.exports = class Account extends Base
     @client = client
     @resource = resource
     @wallet = wallet
-    {@name, @balance, @path, @pending, @network} = resource
+    {@name, @balance, @path, @pending, @network,
+    @pending_balance, @available_balance} = resource
 
 
   addresses: (callback) ->
@@ -36,17 +36,14 @@ module.exports = class Account extends Base
       (error, payment) ->
         return callback(error) if error
         
-
         payment.sign {wallet: multiwallet}, (error, signedTx) ->
           return callback(error) if error
 
           if wallet.application?
             mfa_token ?= wallet.application.get_mfa()
             signedTx.approve {mfa_token}, (error, data) ->
-              console.log "approving -----------------------"
               callback(error, signedTx)
           else
-            console.log "other ???????????????????????????"
             callback(null, signedTx)
     )
 
@@ -63,14 +60,3 @@ module.exports = class Account extends Base
       callback: callback
     })
 
-
-
-  # # content takes a name property
-  # update: (content, callback) ->
-  #   @resource().update content, (error, resource) =>
-  #     return callback(error) if error
-
-  #     @resource = -> resource
-  #     {@name} = resource
-
-  #     callback(null, @)
