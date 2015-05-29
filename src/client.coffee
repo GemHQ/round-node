@@ -14,8 +14,7 @@ set_application = (application, client) ->
 
 module.exports = class Client
 
-  constructor: (patchboard, network) ->
-    @network = network
+  constructor: (patchboard) ->
     @patchboard = patchboard
     @resources = patchboard.resources
     @context = patchboard.context
@@ -44,7 +43,11 @@ module.exports = class Client
 
    
   application: ({totp_secret}, callback) ->
-    return @_application if @_application
+    if arguments.length == 1
+      callback = arguments[0]
+      totp_secret = null
+    
+    return callback(null, @_application) if @_application
 
     @resources.app.get (error, resource) =>
       return callback(error) if error
@@ -58,4 +61,5 @@ module.exports = class Client
 
     resource.get (error, resource) =>
       callback(error, new User({resource, client: @}))
+
 

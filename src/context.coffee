@@ -63,7 +63,7 @@ module.exports = class Context
       )
       .join(', ')
     
-    compiled = compiled.concat(", mfa_token=#{@mfa_token}") if @mfa_token
+    compiled = compiled.concat(", mfa_token=\"#{@mfa_token}\"") if @mfa_token
     compiled
 
 

@@ -3,6 +3,8 @@ Users = require('./users')
 Wallets = require('./wallets')
 Base = require('./base')
 OTP = require('speakeasy')
+notp = require('notp')
+TOTP = require('onceler').TOTP
 
 module.exports = class Application extends Base
 
@@ -38,4 +40,5 @@ module.exports = class Application extends Base
 
 
   get_mfa: ->
-    OTP.totp({key: @totp_secret})
+    new TOTP(@totp_secret).now()
+    

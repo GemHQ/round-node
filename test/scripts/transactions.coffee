@@ -24,11 +24,13 @@ describe 'Transactions Resource', ->
   describe 'Transaction', ->
     transactions = null
     before (done) ->
-      accounts.get('dogecoin').transactions (error, txs) ->
+      console.log accounts.get('bitcoin').balance
+        
+      accounts.get('bitcoin').transactions (error, txs) ->
         transactions = txs
         done(error)
     
-    describe 'transaction.cancel', ->
+    describe.only 'transaction.cancel', ->
       it 'should cancel the transaction', (done) ->
         transactions.get(0).cancel (error, tx) ->
           expect(tx).to.be.an.instanceof(Transaction)
@@ -37,9 +39,12 @@ describe 'Transactions Resource', ->
 
 
   describe 'Cancel Txs', ->
-    transactions = null
+    transactions = account= null
     before (done) ->
-      accounts.get('dogecoin').transactions (error, txs) ->
+      account = accounts.get('bitcoin')
+      account.transactions {status: 'unsigned'}, (error, txs) ->
+        txs.get().forEach (tx) ->
+          console.log tx.status
         transactions = txs
         done(error)
 
@@ -60,7 +65,9 @@ describe 'Transactions Resource', ->
             else
               cancelAllTxs(transactions, i+1, canceledTxs, cb)
         
-        console.log transactions.get()
+        # console.log transactions.get()
+        console.log account.available_balance
+        console.log account.pending_balance
         cancelAllTxs transactions.get(), 0, [], (error, canceledTxs) ->
           console.log canceledTxs
           console.log canceledTxs.length

@@ -4,8 +4,8 @@ Context = require "./context"
 Client = require "./client"
 
 
-MAINNET_URL = "https://api.gem.co"
-SANDBOX_URL = "https://api-sandbox.gem.co"
+URL = "https://api.gem.co"
+
 
 NETWORKS = {
   testnet: "bitcoin_testnet",
@@ -19,22 +19,14 @@ NETWORKS = {
 module.exports = {
 
   client: (options, callback) ->
-    # Makes options argument optional
     if arguments.length == 1
       callback = arguments[0]
       options = {}
 
-    # in case options was set to null or undefined it
-    # is assigned to an empty object instead
-    options ?= {}
-
-    network = NETWORKS[options.network] || "bitcoin_testnet"
-    url = options.url || if network == 'bitcoin' then MAINNET_URL else SANDBOX_URL
-
     if @patchboard?
-      callback(null, new Client(@patchboard.spawn(), network))
+      callback(null, new Client(@patchboard.spawn()))
     else
+      url = options.url || URL
       Patchboard.discover url, {context: Context}, (error, @patchboard) =>
-        callback(error, new Client(@patchboard, network)) if callback
-
+        callback(error, new Client(@patchboard)) if callback
 }
