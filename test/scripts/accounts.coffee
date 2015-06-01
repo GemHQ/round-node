@@ -62,19 +62,27 @@ describe 'Accounts Resource', ->
 
 
     describe.only 'account.pay', ->
-      it 'should create a successful transaction', (done) ->
+      it.skip 'should create a successful bitcoin transaction', (done) ->
         wallet = wallet.unlock {passphrase: 'password'}
         payees = [{
-          # bitcoin/coinbase address
           address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr',
-          # dogecoin/cryptonator address
-          # address: 'DB8QuLZComTJ9oa7maXQYUuxUNLkC5ksJm'
           amount: 50000
         }]
-        # account = accounts.get('dogecoin')
         account = accounts.get('bitcoin')
         account.transactions {status: 'unsigned,signed,unapproved'}, (err, txs) ->
-          
+          account.pay {payees, confirmations: 1}, (error, data) ->
+            console.log error, data
+            expect(data).to.exist
+            done(error)
+
+      it 'should create a successful dogecoin transaction', (done) ->
+        wallet = wallet.unlock {passphrase: 'password'}
+        payees = [{
+          address: 'DB8QuLZComTJ9oa7maXQYUuxUNLkC5ksJm'
+          amount: 500000000
+        }]
+        account = accounts.get('dogecoin')
+        account.transactions {status: 'unsigned,signed,unapproved'}, (err, txs) ->
           account.pay {payees, confirmations: 1}, (error, data) ->
             console.log error, data
             expect(data).to.exist
