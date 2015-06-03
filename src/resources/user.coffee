@@ -1,7 +1,9 @@
-
-Wallets = require('./wallets')
 Base = require('./base')
+Wallet = require('./wallet')
 Devices = require('./devices')
+Promise = require('bluebird')
+{promisify} = Promise
+
 
 module.exports = class User extends Base
 
@@ -12,55 +14,16 @@ module.exports = class User extends Base
     @default_wallet} = resource
 
 
-  # wallets: (callback) ->
-  #   @getAssociatedCollection({
-  #     collectionClass: Wallets,
-  #     name: 'wallets',
-  #     callback
-  #   })
+  wallet: ->
+    Promise.resolve(@_wallet) if @_wallet
+
+    @resource.default_wallet.get = promisify(@resource.default_wallet.get)
+    @resource.default_wallet.get()
+    .then (resource) => @_wallet = new Wallet({resource, @client})
+    .catch (error) -> error  
 
 
-  wallet: (callback) ->
-    return callback(null, @_wallet) if @_wallet
-
-    resource = @resource.wallets
-    wallets = new Wallets({resource, @client})
-    wallets.loadCollection (error, wallets) ->
-      return callback(error) if error
-
-      @_wallet = wallets.get(0)
-      callback(null, @_wallet)
-
-
-  devices: (callback) ->
+  devices: ->
     resource = @client.resources.devices_query({@email})
     devices = new Devices({resource, @client})
-    callback(null, devices)
-
-
-
-
-
-
-
-
-    # return callback(null, @_wallets) if @_wallets
-
-    # resource = @resource.wallets
-    # wallets = new Wallets({resource, @client})
-
-    # wallets.loadCollection (error, wallets) =>
-    #   return callback(error) if error
-
-    #   @_wallets = wallets
-    #   callback(null, @_wallets)
-
-
-  # update: ({email, first_name, last_name}, callback) ->
-  #   @resource.update content, (error, resource) =>
-  #     return callback(error) if error
-
-  #     @resource = resource
-  #     {@email, @first_name, @last_name} = resource
-
-  #     callback(null, @)
+    Promise.resolve(devices)

@@ -1,8 +1,8 @@
-
 Users = require('./users')
 Wallets = require('./wallets')
 Base = require('./base')
 TOTP = require('onceler').TOTP
+{promisify} = require('bluebird')
 
 module.exports = class Application extends Base
 
@@ -13,27 +13,25 @@ module.exports = class Application extends Base
     {@name, @api_token, @url} = resource
 
 
-  authorize_instance: ({name}, callback) ->
-    @resource.authorize_instance arguments[0], (error, instance) ->
-      callback(error, instance)
+  authorize_instance: ({name}) ->
+    @resource.authorize_instance = promisify(@resource.authorize_instance)
+    @resource.authorize_instance arguments[0]
 
 
-  users: (callback) ->
+  users: ->
     @getAssociatedCollection({
       collectionClass: Users,
       name: 'users',
-      callback: callback
     })
 
 
-  wallets: (callback) ->
+  wallets: ->
     @getAssociatedCollection({
       collectionClass: Wallets,
       name: 'wallets',
       options: {
         application: @
-      },
-      callback: callback
+      }
     })
 
 

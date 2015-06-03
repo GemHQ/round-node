@@ -1,4 +1,7 @@
 Base = require('./base')
+Promise = require('bluebird')
+{promisify} = Promise
+
 
 module.exports = class Transaction extends Base
 
@@ -9,16 +12,14 @@ module.exports = class Transaction extends Base
     @client = client
     @resource = resource
     @_setProps(Transaction.PROPS_LIST, resource)
-    # {@value, @fee, @confirmations, @hash, @status, @inputs,
-    # @outputs, @destination_address, @lock_time, @network} = resource
 
 
-  sign: ({wallet}, callback) ->
+  sign: ({wallet}) ->
     unless @resource.status == 'unsigned'
-      callback(new Error('Transaction is already signed'))
+      Promise.reject(new Error('Transaction is already signed'))
 
     unless wallet?
-      callback(new Error('A wallet is required to sign a transaction'))
+      Promise.reject(new Error('A wallet is required to sign a transaction'))
 
     {signatures, txHash} = wallet.prepareTransaction(@resource)
     
@@ -32,27 +33,28 @@ module.exports = class Transaction extends Base
         inputs: [{primary: signature}]
       }
     }
-    @resource.update txContent, (error, resource) =>
-      return callback(error) if error
-
+    @resource.update = promisify(@resource.update)
+    @resource.update(txContent)
+    .then (resource) => 
       @resource = resource
-      callback(null, @)
+      @_setProps(Transaction.PROPS_LIST, resource)
+      @
 
 
-  approve: ({mfa_token}, callback) ->
+  approve: ({mfa_token}) ->
     @client.context.setMFA(mfa_token)
-    @resource.approve {}, (error, resource) =>
-      return callback(error) if error
-
+    @resource.approve = promisify(@resource.approve)
+    @resource.approve({})
+    .then (resource) =>
       @resource = resource
       @_setProps(Transaction.PROPS_LIST, resource)
-      callback(null, @)
+      @
 
 
-  cancel: (callback) ->
-    @resource.cancel (error, resource) =>
-      return callback(error) if error
-
+  cancel: ->
+    @resource.cancel = promisify(@resource.cancel)
+    @resource.cancel()
+    .then (resource) =>
       @resource = resource
       @_setProps(Transaction.PROPS_LIST, resource)
-      callback(null, @)
+      @

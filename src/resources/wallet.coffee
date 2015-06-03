@@ -23,7 +23,6 @@ module.exports = class Wallet extends Base
     @getAssociatedCollection({
       collectionClass: Accounts,
       name: 'accounts',
-      callback: callback,
       options: {
         wallet: @
       }
@@ -46,24 +45,3 @@ module.exports = class Wallet extends Base
 
   backup_key: ->
     @multiwallet.trees.backup.seed.toString('hex')
-
-
-  # # content takes a name property
-  # update: (content, callback) ->
-  #   @resource.update content, (error, resource) =>
-  #     return callback(error) if error
-
-  #     @resource = -> resource
-  #     @name = resource.name
-
-  #     callback(null, @)
-
-
-  # Note: Not yet implamented on the API
-  # reset: (callback) ->
-  #   @resource.reset (error, resource) =>
-  #     return callback(error) if error
-
-  #     newWallet = new Wallet(resource, client)
-
-  #     callback(null, newWallet)

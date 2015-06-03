@@ -1,5 +1,6 @@
 Patchboard = require "patchboard-js"
-
+Promise = require "bluebird"
+Patchboard.discover = Promise.promisify(Patchboard.discover)
 Context = require "./context"
 Client = require "./client"
 
@@ -19,14 +20,11 @@ NETWORKS = {
 module.exports = {
 
   client: (options, callback) ->
-    if arguments.length == 1
-      callback = arguments[0]
-      options = {}
-
     if @patchboard?
-      callback(null, new Client(@patchboard.spawn()))
+      Promise.resolve(new Client(@patchboard.spawn()))
     else
       url = options.url || URL
-      Patchboard.discover url, {context: Context}, (error, @patchboard) =>
-        callback(error, new Client(@patchboard)) if callback
+      Patchboard.discover url, {context: Context}
+      .then((@patchboard) => new Client(@patchboard))
+      .catch((error) -> error)
 }

@@ -1,51 +1,61 @@
 Round = require('../../src')
 Devices = require('../../src/resources/devices')
-expect = require('chai').expect
+Wallet = require('../../src/resources/wallet')
+chai = require('chai')
+chai.use(require('chai-as-promised'))
+expect = chai.expect
 credentials = require('../data/credentials')
 devCreds = credentials.developer
+userCreds = credentials.user
 url = credentials.url
 
 
 
 describe 'Users Resource', ->
   client =  application = null
-  before (done) ->
-    Round.client {url}, (error, cli) ->
+  before ->
+    Round.client {url}
+    .then (cli) -> 
+      client = cli
       {api_token, admin_token} = devCreds
-      cli.authenticate_application {api_token, admin_token}, (error, app) ->
-        client = cli; application = app
-        done(error)
+      client.authenticate_application {api_token, admin_token}
+    .then (app) -> application = app
+    .catch (error) -> error
 
 
   describe 'User', ->
     user = null
-    before (done) ->
-      application.users (error, usrs) ->
-        user = usrs.get(0)
-        done(error)
+    before ->
+      application.users().then (usrs) ->
+        user = usrs.get(userCreds.email)
 
     describe 'user.devices', ->
-      it 'should return a Devices object', (done) ->
-        user.devices (error, devices) ->
-          console.log error, devices
-          expect(devices).to.be.an.instanceof(Devices)
-          done(error)
+      it 'should return a Devices object', ->
+        expect(user.devices()).to.eventually.be.an.instanceof(Devices)
+
+    describe 'user.wallet', ->
+      it 'should return a wallet object', (done) ->
+        user.wallet()
+        .then (wallet) ->
+          expect(wallet).to.be.an.instanceof(Wallet); done()
+        .catch (error) -> done(error)
 
 
 
   describe 'Users', ->
-    describe 'users.create', ->
+    describe.skip 'users.create', ->
       it 'should return a device_token', (done) ->
         client.users.create({
           first_name: 'bez',
           last_name: 'reyhan',
-          email: "bez#{Date.now()}@gem.co",
+          email: "bez+#{Date.now()}@gem.co",
           device_name: 'devy',
           passphrase: 'password'
-        }, (error, device_token) ->
-          expect(device_token).to.have.property(exist)
-          done(error)
-        )
+        })
+        .then (device_token) ->
+          expect(device_token).to.exist
+          done()
+        .catch (error) -> done(error)
 
 
 

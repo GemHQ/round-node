@@ -1,3 +1,6 @@
+Promise = require('bluebird')
+{promisify} = Promise
+
 
 module.exports = class Collection
 
@@ -19,20 +22,15 @@ module.exports = class Collection
       @[key] = value
 
 
-  loadCollection: (options, callback) ->
-    # Makes options optional
+  loadCollection: (options={}) ->
     # options is only used in cases where a collection needs
     # additional info at initialization time.
     # ex: when calling wallet.accounts you need to pass the wallet
     # so that all of the accounts can be created with a refrence to
     # the wallet that they belong to.
-    if arguments.length == 1
-      callback = arguments[0]
-      options = {}
-
-    @resource.list (error, resourceArray) =>
-      return callback(error) if error
-
+    @resource.list = promisify(@resource.list)
+    @resource.list()
+    .then((resourceArray) =>
       @_list = resourceArray.map (resource) =>
         options.resource = resource
         options.client = @client
@@ -49,11 +47,13 @@ module.exports = class Collection
 
           @_hash[key] = model
 
-      callback(null, @)
+      return @
+    )
+    .catch (error) -> error
 
 
-  refresh: (callback) ->
-    @loadCollection(callback)
+
+  refresh: (options={}) -> @loadCollection(options)
 
 
   add: (model) ->
@@ -80,5 +80,4 @@ module.exports = class Collection
                       for that value."
 
 
-  getAll: ->
-    @_list
+  getAll: -> @_list

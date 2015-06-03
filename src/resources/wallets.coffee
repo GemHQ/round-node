@@ -3,7 +3,8 @@ Collection = require './collection'
 CoinOp = require('coinop-node')
 PassphraseBox = CoinOp.crypto.PassphraseBox
 MultiWallet = CoinOp.bit.MultiWallet
-
+Promise = require('bluebird')
+{promisify} = Promise
 
 # When generating HDNodes, the netwrok does not really matter.
 # The network is only used to create a serialized address.
@@ -20,9 +21,11 @@ module.exports = class Wallets extends Collection
   key: 'name'
 
   
-  create: ({name, passphrase, multiwallet}, callback) ->
-    return callback(new Error('Must provide a passphrase')) unless passphrase
-    return callback(new Error('Must provide a name')) unless name
+  create: ({name, passphrase, multiwallet}) ->
+    unless passphrase
+      return Promise.reject(new Error('Must provide a passphrase'))
+    unless name
+      return Promise.reject(new Error('Must provide a name'))
 
     multiwallet ?= MultiWallet.generate(['primary', 'backup'], NETWORK)
     primarySeed = multiwallet.trees.primary.seed.toString('hex')
@@ -36,10 +39,11 @@ module.exports = class Wallets extends Collection
       primary_private_seed: encryptedSeed
     }
 
-    @resource.create walletData, (error, resource) =>
-      return callback(error) if error
-
+    @resource.create = promisify(@resource.create)
+    @resource.create(walletData)
+    .then (resource) =>
       wallet = new Wallet({resource, @client, multiwallet, @application})
       @add(wallet)
 
-      callback(null, wallet, backup_seed)
+      {wallet, backup_seed}
+    .catch (error) -> error
