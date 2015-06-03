@@ -1,6 +1,7 @@
 Addresses = require('./addresses')
 Transactions = require('./transactions')
 Base = require('./base')
+Promise = require('bluebird')
 
 
 module.exports = class Account extends Base
@@ -13,50 +14,39 @@ module.exports = class Account extends Base
     @pending_balance, @available_balance} = resource
 
 
-  addresses: (callback) ->
+  addresses: ->
     @getAssociatedCollection({
       collectionClass: Addresses,
-      name: 'addresses',
-      callback: callback
+      name: 'addresses'
     })
 
 
-  pay: ({payees, confirmations, redirect_uri, mfa_token}, callback) ->
+  pay: ({payees, confirmations, redirect_uri, mfa_token}) ->
     unless payees
-      return callback(new Error('Payees must be specified'))
+      return Promise.reject(new Error('Payees must be specified'))
 
     wallet = @wallet
     {multiwallet} = wallet
     unless multiwallet?
-      return callback(new Error('You must unlock the wallet before
+      return Promise.reject(new Error('You must unlock the wallet before
                                  attempting a transaction'))
 
     tx = new Transactions({resource: @resource.transactions({}), @client})
-    tx.create({payees, confirmations, redirect_uri},
-      (error, payment) ->
-        return callback(error) if error
-        
-        payment.sign {wallet: multiwallet}, (error, signedTx) ->
-          return callback(error) if error
-
-          if wallet.application?
-            mfa_token ?= wallet.application.get_mfa()
-            signedTx.approve {mfa_token}, (error, data) ->
-              callback(error, signedTx)
-          else
-            callback(null, signedTx)
-    )
+    tx.create({payees, confirmations, redirect_uri})
+    .then (payment) -> payment.sign({wallet: multiwallet})
+    .then (signedTx) ->
+      if wallet.application?
+        mfa_token ?= wallet.application.get_mfa()
+        signedTx.approve({mfa_token})
+        .then (signedTx) -> signedTx
+      else
+        signedTx
 
 
-  transactions: (query, callback) ->
-    if arguments.length == 1
-      callback = arguments[0]
-      query = {}
-    
+  transactions: (query={}) ->
     @getAssociatedCollection({
       collectionClass: Transactions,
       name: 'transactions',
       resource: @resource.transactions(query)
-      callback: callback
     })
 

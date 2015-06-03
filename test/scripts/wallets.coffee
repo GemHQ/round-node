@@ -25,27 +25,27 @@ describe 'Wallets Resource', ->
     .catch (error) -> error
 
 
-  # describe 'Wallets', ->
+  describe 'Wallets', ->
 
-  #   describe 'wallets.create', ->
-  #     wallet = null
-  #     before (done) ->
-  #       name = "newwallet#{Date.now()}"
-  #       passphrase = 'password'
-  #       wallets.create {name, passphrase}, (error, wallt) ->
-  #         wallet = wallt
-  #         done(error)
+    describe 'wallets.create', ->
+      wallet = null
+      before (done) ->
+        name = "newwallet#{Date.now()}"
+        passphrase = 'password'
+        wallets.create({name, passphrase})
+        .then (data) -> 
+          {wallet, backup_key} = data
+          done()
 
 
-  #     it 'should create a new Wallet object', ->
-  #       expect(wallet).to.be.an.instanceof(Wallet)
+      it 'should create a new Wallet object', ->
+        expect(wallet).to.be.an.instanceof(Wallet)
         
-  #     it 'the created wallet should hold a refrence to the application', ->
-  #       expect(wallet.application).to.be.an.instanceof(Application)
+      it 'the created wallet should hold a refrence to the application', ->
+        expect(wallet.application).to.be.an.instanceof(Application)
 
-  #     it 'the created wallet should have a multiwallet property', ->
-  #       expect(wallet).to.have.a.property('multiwallet')
-
+      it 'the created wallet should have a multiwallet property', ->
+        expect(wallet).to.have.a.property('multiwallet')
 
 
 

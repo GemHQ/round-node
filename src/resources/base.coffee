@@ -1,4 +1,5 @@
 Promise = require('bluebird')
+{promisify} = Promise
 
 
 module.exports = class Base
@@ -37,16 +38,17 @@ module.exports = class Base
 
 
   update: (content) ->
-
-    @resource.update content, (error, resource) =>
-      return callback(error) if error
-      
+    @resource.update = promisify(@resource.update)
+    @resource.update(content)
+    .then((resource) => 
       @resource = resource
       # Fix: replace with @_setProps once all classes have a PROPS_LIST
       for own key, val of content
         @[key] = val
 
-      callback(null, @)
+      return @
+    )
+    .catch (error) -> error
 
 
   # Used to copy props from a resource to @

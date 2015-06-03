@@ -4,7 +4,7 @@ Users = require './resources/users'
 User = require './resources/user'
 Account = require './resources/account'
 Wallet = require './resources/wallet'
-Promise = require 'bluebird'
+{promisify} = require 'bluebird'
 
 
 set_application = (application, client) ->
@@ -16,7 +16,6 @@ module.exports = class Client
   constructor: (patchboard) ->
     @patchboard = patchboard
     @resources = patchboard.resources
-    @resources.app.get = Promise.promisify(@resources.app.get)
     @context = patchboard.context
     @users = new Users({resource: @resources.users, client: @})
 
@@ -43,6 +42,7 @@ module.exports = class Client
   application: ({totp_secret}) ->    
     return @_application if @_application
 
+    @resources.app.get = promisify(@resources.app.get)
     @resources.app.get()
     .then (resource) =>
       @_application = new Application({resource, client: @, totp_secret})
@@ -51,8 +51,7 @@ module.exports = class Client
 
   user: ({email}) ->
     resource = @resources.user_query({email})
-    resource.get = Promise.promisify(resource.get)
-
+    resource.get = promisify(resource.get)
     resource.get()
     .then (resource) => new User({resource, client: @})
     .catch (error) -> error
