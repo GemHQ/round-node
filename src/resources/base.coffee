@@ -1,3 +1,4 @@
+Promise = require('bluebird')
 
 
 module.exports = class Base
@@ -16,9 +17,9 @@ module.exports = class Base
   #            This is used in account.transactions
   # options = non-standard props that a Collection might need.
   #           ex: Wallets needs access to the application it belongs to
-  getAssociatedCollection: ({collectionClass, name, resource, options, callback}) ->
+  getAssociatedCollection: ({collectionClass, name, resource, options}) ->
     # if memoized, return the collection
-    return  callback(null, @["_#{name}"]) if @["_#{name}"]?
+    return  Promise.resolve(@["_#{name}"]) if @["_#{name}"]?
      
     options ?= {}
 
@@ -28,15 +29,15 @@ module.exports = class Base
     collectionInstance = new collectionClass({resource, @client, options})
 
     # populate the collection. loadCollection lives in the Collection class
-    collectionInstance.loadCollection options, (error, collectionInstance) ->
-      return callback(error) if error
-
+    collectionInstance.loadCollection(options)
+    .then (collectionInstance) =>
       # memoize the collection
       @["_#{name}"] = collectionInstance
-      callback(null, collectionInstance)
+    .catch (error) -> error
 
 
-  update: (content, callback) ->
+  update: (content) ->
+
     @resource.update content, (error, resource) =>
       return callback(error) if error
       

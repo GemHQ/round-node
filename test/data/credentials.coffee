@@ -18,7 +18,7 @@ module.exports = credentials  = {
   },
 
   user: {
-    email: 'bez@gem.co',
+    email: 'bez+1433292268547@gem.co',
     first_name: 'bez',
     last_name: 'reyhan',
     passphrase: 'password',

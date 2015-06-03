@@ -12,13 +12,17 @@ url = credentials.url
 
 describe 'Wallets Resource', ->
   client =  application = wallets = null
-  before (done) ->
-    Round.client {url}, (error, cli) ->
+  before ->
+    Round.client {url}
+    .then (cli) -> 
+      client = cli
       {api_token, admin_token} = devCreds
-      cli.authenticate_application {api_token, admin_token}, (error, app) ->
-        app.wallets (error, wallts) ->
-          client = cli; application = app; wallets = wallts
-          done(error)
+      client.authenticate_application {api_token, admin_token}
+    .then (app) -> 
+      application = app
+      application.wallets()
+    .then (wallts) -> wallets = wallts
+    .catch (error) -> error
 
 
   # describe 'Wallets', ->
@@ -50,11 +54,13 @@ describe 'Wallets Resource', ->
     describe 'wallet.accounts', ->
       it 'accounts should hold a reference to the wallet', (done) ->
         wallet = wallets.get(0)
-        wallet.accounts (error, accounts) ->
+        wallet.accounts()
+        .then (accounts) -> 
           expect(accounts).to.be.an.instanceof(Accounts)
           expect(accounts.wallet).to.exist
           expect(accounts.wallet).to.equal(wallet)
-          done(error)
+          done()
+        .catch (error) -> done(error)
 
 
     describe 'wallet.unlock', ->

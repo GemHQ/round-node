@@ -1,9 +1,8 @@
-
 User = require './user'
 CoinOp = require('coinop-node')
 PassphraseBox = CoinOp.crypto.PassphraseBox
 MultiWallet = CoinOp.bit.MultiWallet
-
+{promisify} = require('bluebird')
 Collection = require './collection'
 
 
@@ -23,7 +22,7 @@ module.exports = class Users extends Collection
 
 
   create: ({first_name, last_name, email,
-           passphrase, device_name, redirect_uri}, callback) ->
+           passphrase, device_name, redirect_uri}) ->
 
     multiwallet = MultiWallet.generate(['primary'], NETWORK)
     primary_seed = multiwallet.trees.primary.seed
@@ -37,7 +36,7 @@ module.exports = class Users extends Collection
     params = {email, first_name, last_name, default_wallet: wallet, device_name}
     params.redirect_uri = redirect_uri if redirect_uri?
 
-    @resource.create params, (error, resource) ->
-      return callback(error) if error
-
-      callback(null, resource.metadata.device_token)
+    @resource.create = promisify(@resource.create)
+    @resource.create(params)
+    .then (resource) -> resource.metadata.device_token 
+    .catch (error) -> error

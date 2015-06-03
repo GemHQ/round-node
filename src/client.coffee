@@ -1,11 +1,10 @@
 {SCHEMES} = require './context'
-# Developers = require './resources/developers'
-# Developer = require './resources/developer'
 Application = require './resources/application'
 Users = require './resources/users'
 User = require './resources/user'
 Account = require './resources/account'
 Wallet = require './resources/wallet'
+Promise = require 'bluebird'
 
 
 set_application = (application, client) ->
@@ -17,16 +16,16 @@ module.exports = class Client
   constructor: (patchboard) ->
     @patchboard = patchboard
     @resources = patchboard.resources
+    @resources.app.get = Promise.promisify(@resources.app.get)
     @context = patchboard.context
     @users = new Users({resource: @resources.users, client: @})
 
 
-  authenticate_application: ({admin_token, api_token, totp_secret}, callback) ->
+  authenticate_application: ({admin_token, api_token, totp_secret}) ->
     @patchboard.context.authorize 'Gem-Application', arguments[0]
     @authenticate_identify({api_token})
 
-    @application {totp_secret}, (error, application) ->
-      callback(error, application)
+    @application({totp_secret})
 
 
   authenticate_identify: ({api_token}) ->
@@ -34,32 +33,28 @@ module.exports = class Client
 
 
   # Credentials requires {email, api_token, device_token}
-  authenticate_device: ({email, api_token, device_token}, callback) ->
+  authenticate_device: ({email, api_token, device_token}) ->
     @patchboard.context.authorize 'Gem-Device', arguments[0]
     @authenticate_identify({api_token})
 
-    @user {email}, (error, user) ->
-      callback(error, user)
+    @user {email}
 
    
-  application: ({totp_secret}, callback) ->
-    if arguments.length == 1
-      callback = arguments[0]
-      totp_secret = null
-    
-    return callback(null, @_application) if @_application
+  application: ({totp_secret}) ->    
+    return @_application if @_application
 
-    @resources.app.get (error, resource) =>
-      return callback(error) if error
-
+    @resources.app.get()
+    .then (resource) =>
       @_application = new Application({resource, client: @, totp_secret})
-      callback(null, @_application)
+    .catch (error) -> error
 
 
-  user: ({email}, callback) ->
+  user: ({email}) ->
     resource = @resources.user_query({email})
+    resource.get = Promise.promisify(resource.get)
 
-    resource.get (error, resource) =>
-      callback(error, new User({resource, client: @}))
+    resource.get()
+    .then (resource) => new User({resource, client: @})
+    .catch (error) -> error
 
 
