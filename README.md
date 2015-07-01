@@ -38,40 +38,30 @@ Require Round where needed:
 ```node
   var Round = require("round-node");
 
-  Round.client(function(error, client) {
-      ...
-  });
+  Round.client()
+  .then(function (client) {
+    ...
+  })
+  
 ```
 
 ## Authentication
 
 You must authenticate to interact with the API. Depending on what you are trying to do there are different authentication schemes available.
 
-### Developer
-
-Authenticating as a developer will allow you create and manage your applications. Authenticating in this way requires the developer's email, as well as their private key. The method will return a `Round::Developer` object.
-```node
-var developerCreds = {
-  privkey: PRIVKEY,
-  email: EMAIL@ADDRE.SS
-};
-
-client.authenticateDeveloper(developerCreds, function(error, dev) {
-  ...
-});
-```
 
 ### Application
 
 Authenticating as an application will give you read-only access to your users and their wallets. This requires the `app_url`, the `api_token`, and an `instance_id`. The method will return a Round Application object.
 ```node
 var applicationCreds = {
-  app_url: APP_URL,
+  admin-token: ADMIN_TOKEN,
   api_token: API_TOKEN,
-  instance_id: INSTANCE_ID
+  topt_secret: TOTP_SECRET
 };
 
-client.authenticateApplication(applicationCreds, function(error, app) {
+client.authenticate_application(applicationCreds)
+.then(function(application) {
   ...
 });
 ```
@@ -97,44 +87,17 @@ Authenticating as a device allows you to perform all actions on a wallet permitt
 var deviceCreds = {
   email: USER_EMAIL,
   api_token: API_TOKEN,
-  user_token: USER_TOKEN,
-  device_id: DEVICE_ID
+  device_token: DEVICE_TOKEN
 };
 
-client.authenticateDevice(deviceCreds, function(error, user) {
+client.authenticateDevice(deviceCreds)
+.then(function (user) {
   ...
 });
 ```
-The `user_token` is obtained by a user authorizing your application to operate on their wallet. This level of authorization is received through the `completeDeviceAuthorization` call:
-```node
-var deviceCreds = {
-  api_token: API_TOKEN,
-  device_id: DEVICE_ID,
-  name: DEVICE_NAME,
-  email: USER_EMAIL
-};
-
-
-client.beginDeviceAuthorization(deviceCreds, function(error, key) {
-  deviceCreds.key = key
-});
-```
-
-This will trigger an out of band email to the user that will include a one time pass that will allow you to complete the device authorization:
-```node
-var deviceCreds = {
-  api_token: API_TOKEN,
-  device_id: DEVICE_ID,
-  name: DEVICE_NAME,
-  email: USER_EMAIL,
-  key: KEY,
-  secret: OTP_FROM_EMAIL
-};
-
-client.completeDeviceAuthorization(<DEVICE_NAME>, <DEVICE_ID>, <API_TOKEN>, key, <OTP_FROM_EMAIL>)
-```
 
 ## Basic Usage
+Here is some example code that will walk you through some basic usage of the Gem API: https://gist.github.com/bezreyhan/a7190a6c0e9fe592daa8
 
 ### Wallets
 
@@ -146,10 +109,14 @@ var walletData = {
   passphrase: WALLET_PASSPHRASE
 };
 
-user.wallets(function(error, wallets) {
-  wallets.create(walletData, function(error, backup_seed, wallet) {
-    ...
-  });
+user.wallets()
+.then(function(wallets) {
+  return wallets.create(walletData)
+})
+.then(function(data) {
+  wallet = data.wallet;
+  backup_seed = data.backup_seed
+  ...
 });
 
 ```
@@ -160,20 +127,24 @@ __IMPORTANT__: Creating a wallet this way will automatically generate your backu
 
 Once you have a wallet you're going to want to send and receive funds from it, right? You do this by creating accounts within the wallet:
 ```node
-wallet.accounts(function(error, accounts) {
-  accounts.create({name: ACCOUNT_NAME}, function(error, account) {
-    ...
-  });
+wallet.accounts()
+.then(function(accounts) {
+  return accounts.create({name: ACCOUNT_NAME})
+})
+.then(function(account) {
+  ...
 });
 ```
 
 To receive payments, you'll have to generate a new address:
 ```node
-account.addresses(function(error, addresses) {
-  addresses.create(function(error, address) {
-    ...
-  });
-});
+account.addresses()
+.then(function(addresses) {
+  return addresses.create()
+})
+.then(function(address) {
+  ...
+})
 ```
 
 Sending payments is easy too:
@@ -183,7 +154,8 @@ payees = [
   {address: ADDRESS, amount: PAYMENT_AMOUNT},
   {address: ADDRESS, amount: PAYMENT_AMOUNT}
 ];
-account.pay({payees: payees}, function(error, data) {
+account.pay({payees: payees})
+.then(function(tx) {
   ...
 });
 ```
