@@ -25,7 +25,7 @@ Round.client({url: 'http://localhost:8999'})
 .then(function (wallets) {
   walletInfo = {
     name: 'wallet' + Math.random(),
-    passphrase: 'password'
+    passphrase: 'SECURE_PASSPHRASE'
   }
   return wallets.create(walletInfo);
 })
@@ -74,6 +74,7 @@ Round.client({url: 'http://localhost:8999'})
 // Get your wallet that you funded by the name you gave it.
 .then(function (wallets) {
   var wallet = wallets.get('YOUR_WALLET_NAME')
+  wallet = wallet.unlock({passphrase: 'SECURE_PASSPHRASE'})
   // You can also get the first wallet if that's the wallet
   // that contains the account that you funded.
   // wallet.get(0)
