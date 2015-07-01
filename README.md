@@ -1,6 +1,21 @@
-# Gem Node Client
+# round-node: A Node.js client for the Gem API
+The round client is designed to interact with Gem's API to make building blockchain apps drop dead simple.  All the complexity of altcoin protocols and cryptography has been abstracted away so you can focus on building your product.  Here are a few of the many great things the API and clients provide:
 
-For detailed usage please visit the [documentation page](https://guide.gem.co)
+* Multi-signature wallets with Gem as a cosigner
+* Bitcoin, Testnet, Litecoin, and Dogecoin support (multisig for all!)
+* Webhook notifications automatically subscribed for you
+* Integrated 2FA solution with arbitrary endpoints to build into your app
+* Simplified balance inqueries
+* Easy address management
+* Hardware Security Modules for co-signing key
+* Rules engine for transactions
+* SDKs for many popular languages
+
+## Support information
+* __Support email__: [support@gem.co](mailto:support@gem.co)
+* __Issues__:  Use github issues
+* __Slack room__:[![](https://gem-support-slackin.herokuapp.com/badge.svg)](https://gem-support-slackin.herokuapp.com)
+* __Detailed API Docs__:  [Gem API Docs](http://guide.gem.co)
 
 ## Installation
 
