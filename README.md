@@ -1,4 +1,4 @@
-# round-node: A Python client for the Gem API
+# round-node: A Node.js client for the Gem API
 The round client is designed to interact with Gem's API to make building blockchain apps drop dead simple.  All the complexity of altcoin protocols and cryptography has been abstracted away so you can focus on building your product.  Here are a few of the many great things the API and clients provide:
 
 * Multi-signature wallets with Gem as a cosigner
