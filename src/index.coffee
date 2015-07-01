@@ -19,7 +19,7 @@ NETWORKS = {
 
 module.exports = {
 
-  client: (options, callback) ->
+  client: (options={}) ->
     if @patchboard?
       Promise.resolve(new Client(@patchboard.spawn()))
     else

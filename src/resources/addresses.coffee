@@ -1,6 +1,8 @@
-
 Address = require './address'
 Collection = require './collection'
+Promise = require('bluebird')
+{promisify} = Promise
+
 
 module.exports = class Addresses extends Collection
 
@@ -8,11 +10,11 @@ module.exports = class Addresses extends Collection
   type: Address
 
 
-  create: (callback) ->
-    @resource.create (error, resource) =>
-      return callback(error) if error
-
+  create: ->
+    @resource.create = promisify(@resource.create)
+    @resource.create()
+    .then (resource) =>
       address = new Address({resource, @client})
       @add(address)
-
-      callback(null, address)
+      address
+    .catch (error) -> error

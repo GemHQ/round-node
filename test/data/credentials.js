@@ -1,4 +1,4 @@
-@mfa
+
 URLMap = {
   local: 'http://localhost:8999',
   staging: 'https://api-sandbox.gem.co',
@@ -22,7 +22,7 @@ module.exports = credentials  = {
     first_name: 'bez',
     last_name: 'reyhan',
     passphrase: 'password',
-    device_name: 'devy'
+    device_name: 'devy',
     device_token: '1JaNXjf3Wn7JdWVdlRvV583Hb6faHtE9paRL6NMwe0w'
   }
 

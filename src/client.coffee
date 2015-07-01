@@ -4,7 +4,8 @@ Users = require './resources/users'
 User = require './resources/user'
 Account = require './resources/account'
 Wallet = require './resources/wallet'
-{promisify} = require 'bluebird'
+Promise = require 'bluebird'
+{promisify} = Promise
 
 
 set_application = (application, client) ->
@@ -39,7 +40,7 @@ module.exports = class Client
 
    
   application: ({totp_secret}) ->    
-    return @_application if @_application
+    return Promise.resolve(@_application) if @_application
 
     @resources.app.get = promisify(@resources.app.get)
     @resources.app.get()

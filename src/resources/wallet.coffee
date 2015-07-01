@@ -19,7 +19,7 @@ module.exports = class Wallet extends Base
     @primary_public_seed, @balance, @default_account, @transactions} = resource
 
 
-  accounts: (callback) ->
+  accounts: ->
     @getAssociatedCollection({
       collectionClass: Accounts,
       name: 'accounts',
