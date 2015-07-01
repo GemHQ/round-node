@@ -31,6 +31,7 @@ module.exports = class Context
         credentials: null
         params: ['email', 'api_token', 'device_token']
 
+
   # Supply auth scheme credentials for a particular auth scheme
   # Creates an authorization string that will be placed in the header
   authorize: (scheme, credentials) ->

@@ -31,7 +31,6 @@ module.exports = class Client
     @patchboard.context.authorize('Gem-Identify', arguments[0])
 
 
-  # Credentials requires {email, api_token, device_token}
   authenticate_device: ({email, api_token, device_token}) ->
     @patchboard.context.authorize 'Gem-Device', arguments[0]
     @authenticate_identify({api_token})
