@@ -43,7 +43,7 @@ describe 'Users Resource', ->
 
 
   describe 'Users', ->
-    describe.skip 'users.create', ->
+    describe.only 'users.create', ->
       it 'should return a device_token', (done) ->
         client.users.create({
           first_name: 'bez',
@@ -53,9 +53,7 @@ describe 'Users Resource', ->
           passphrase: 'password'
         })
         .then (device_token) ->
+          console.log device_token
           expect(device_token).to.exist
           done()
         .catch (error) -> done(error)
-
-
-

@@ -37,6 +37,11 @@ module.exports = class Client
     @authenticate_identify({api_token})
 
     @user {email}
+    .then (user) ->
+      get = promisify(user.resource.get)
+      get()
+    .then (resource) -> new User({resource, client: @})
+    .catch (error) -> throw new Error(error)
 
    
   application: ({totp_secret}) ->    
@@ -51,9 +56,7 @@ module.exports = class Client
 
   user: ({email}) ->
     resource = @resources.user_query({email})
-    resource.get = promisify(resource.get)
-    resource.get()
-    .then (resource) => new User({resource, client: @})
-    .catch (error) -> error
+    resource.email = email
+    Promise.resolve(new User({resource, client: @}))
 
 

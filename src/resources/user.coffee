@@ -20,7 +20,7 @@ module.exports = class User extends Base
     @resource.default_wallet.get = promisify(@resource.default_wallet.get)
     @resource.default_wallet.get()
     .then (resource) => @_wallet = new Wallet({resource, @client})
-    .catch (error) -> error  
+    .catch (error) -> throw new Error(error)
 
 
   devices: ->

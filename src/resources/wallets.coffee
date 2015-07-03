@@ -46,4 +46,4 @@ module.exports = class Wallets extends Collection
       @add(wallet)
 
       {wallet, backup_seed}
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)

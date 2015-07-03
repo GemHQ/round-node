@@ -17,4 +17,4 @@ module.exports = class Addresses extends Collection
       address = new Address({resource, @client})
       @add(address)
       address
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)

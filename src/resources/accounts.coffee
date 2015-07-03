@@ -23,4 +23,4 @@ module.exports = class Accounts extends Collection
       account = new Account({resource, @client, @wallet})
       @add(account)
       account
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)

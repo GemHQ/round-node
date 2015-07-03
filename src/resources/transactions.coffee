@@ -23,6 +23,6 @@ module.exports = class Transactions extends Collection
     })
     .then (resource) =>
       payment = new Transaction({resource, @client})
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)
     
 

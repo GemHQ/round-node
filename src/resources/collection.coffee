@@ -49,7 +49,7 @@ module.exports = class Collection
 
       return @
     )
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)
 
 
 

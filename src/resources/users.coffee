@@ -39,4 +39,4 @@ module.exports = class Users extends Collection
     @resource.create = promisify(@resource.create)
     @resource.create(params)
     .then (resource) -> resource.metadata.device_token 
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)

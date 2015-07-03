@@ -34,7 +34,7 @@ module.exports = class Base
     .then (collectionInstance) =>
       # memoize the collection
       @["_#{name}"] = collectionInstance
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)
 
 
   update: (content) ->
@@ -48,7 +48,7 @@ module.exports = class Base
 
       return @
     )
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)
 
 
   # Used to copy props from a resource to @

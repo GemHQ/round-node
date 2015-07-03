@@ -39,6 +39,7 @@ module.exports = class Transaction extends Base
       @resource = resource
       @_setProps(Transaction.PROPS_LIST, resource)
       @
+    .catch (error) -> throw new Error(error)
 
 
   approve: ({mfa_token}) ->
@@ -49,6 +50,7 @@ module.exports = class Transaction extends Base
       @resource = resource
       @_setProps(Transaction.PROPS_LIST, resource)
       @
+    .catch (error) -> throw new Error(error)
 
 
   cancel: ->
@@ -58,3 +60,4 @@ module.exports = class Transaction extends Base
       @resource = resource
       @_setProps(Transaction.PROPS_LIST, resource)
       @
+    .catch (error) -> throw new Error(error)
