@@ -18,12 +18,12 @@ module.exports = credentials  = {
   },
 
   user: {
-    email: 'bez+1433292268547@gem.co',
+    email: 'bez+1436468866014@gem.co',
     first_name: 'bez',
     last_name: 'reyhan',
     passphrase: 'password',
     device_name: 'devy',
-    device_token: '1JaNXjf3Wn7JdWVdlRvV583Hb6faHtE9paRL6NMwe0w'
+    device_token: '_jCt8zpDwIzKflub77GL2lI8fZs2FXtrlRohbEy4kXY'
   }
 
 }
