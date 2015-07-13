@@ -15,7 +15,7 @@
     "bluebird": "^2.9.27",
     "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#master",
     "onceler": "0.0.5",
-    "patchboard-js": "git://github.com/bezreyhan/patchboard-js.git#master"
+    "patchboard-js": "file:../patchboard-js"
   },
   "devDependencies": {
     "chai": "^2.0.3",
