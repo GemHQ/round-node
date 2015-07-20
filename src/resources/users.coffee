@@ -25,7 +25,7 @@ module.exports = class Users extends Collection
            passphrase, device_name, redirect_uri}) ->
 
     multiwallet = MultiWallet.generate(['primary'], NETWORK)
-    primary_seed = multiwallet.trees.primary.seed
+    primary_seed = multiwallet.trees.primary.seed.toString('hex')
     encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
     wallet = {
       primary_public_seed: multiwallet.trees.primary.neutered().toBase58()
