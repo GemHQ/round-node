@@ -12,8 +12,11 @@ var newUserCreds = {
   passphrase: 'secure_password'
 }
 
+/*
+ * RUN THE FOLLOWING THREE SCIPTS SEPERATELY
+*/
 
- // ----------------------- USER CREATION -----------------------
+ // ----------------------- 1) USER CREATION -----------------------
 // Round.client({url: 'http://localhost:8999'})
 // .then(function(client) {
 //   // Authenticate with your api_token
@@ -33,9 +36,9 @@ var newUserCreds = {
 // })
 
 
- // ------------------ USER TRANSACTION ------------------
+ // ------------------ 2) USER TRANSACTION ------------------
 
-//  Round.client({url: 'http://localhost:8999'})
+// Round.client({url: 'http://localhost:8999'})
 // .then(function(client) {
 //   return client.authenticate_device({
 //     api_token: devCreds.api_token,
@@ -53,12 +56,19 @@ var newUserCreds = {
 //   return wallet.accounts()
 // })
 // .then(function(accounts) {
+//   // Gem creates a default_account for every user.
+//   // Accounts are scoped to a currency (bitcoin, litecoin, dogecoin)
+//   // The default_account is scoped to bitcoin
 //   defaultAccount = accounts.get(0)
+//   // You can also get an account by name or get all
+//   // accounts by running accounts.get()
 //   return defaultAccount.addresses()
 // })
+// // create an address so you can fund it
 // .then(function(addresses) {
 //   return addresses.create();
 // })
+// // get the bitcoin address from the address object
 // .then(function(address) {
 //   console.log(address.string)
 // })
@@ -67,6 +77,7 @@ var newUserCreds = {
 // })
 
 
+// ------------------ USER WALLET TRANSACTION ------------------
  Round.client({url: 'http://localhost:8999'})
 .then(function(client) {
   return client.authenticate_device({
@@ -91,6 +102,7 @@ var newUserCreds = {
 })
 .then(function(tx) {
   console.log(tx);
+  console.log(tx.mfa_uri)
 })
 .catch(function(error) {
   throw new Error(error);

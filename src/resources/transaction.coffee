@@ -6,7 +6,7 @@ Promise = require('bluebird')
 module.exports = class Transaction extends Base
 
   @PROPS_LIST: ['value', 'fee', 'confirmations', 'hash', 'status', 'inputs',
-                'outputs', 'destination_address', 'lock_time', 'network']
+                'outputs', 'destination_address', 'lock_time', 'network', 'mfa_uri']
 
   constructor: ({resource, client}) ->
     @client = client
