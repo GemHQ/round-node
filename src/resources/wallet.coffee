@@ -1,9 +1,11 @@
-
 Accounts = require('./accounts')
 Base = require('./base')
 CoinOp = require 'coinop-node'
+{promisify} = require('bluebird')
 PassphraseBox = CoinOp.crypto.PassphraseBox
+PassphraseBox.decrypt = promisify(PassphraseBox.decrypt)
 MultiWallet = CoinOp.bit.MultiWallet
+
 
 module.exports = class Wallet extends Base
 
@@ -30,17 +32,19 @@ module.exports = class Wallet extends Base
 
 
   unlock: ({passphrase}) ->
-    primary_seed = PassphraseBox.decrypt(passphrase, @resource.primary_private_seed)
-    @multiwallet = new MultiWallet({
-      private: {
-        primary: primary_seed
-      },
-      public: {
-        cosigner: @resource.cosigner_public_seed,
-        backup: @resource.backup_public_seed
-      }
-    })
-    return @
+    PassphraseBox.decrypt(passphrase, @resource.primary_private_seed)
+    .then (primary_seed) =>
+      @multiwallet = new MultiWallet({
+        private: {
+          primary: primary_seed
+        },
+        public: {
+          cosigner: @resource.cosigner_public_seed,
+          backup: @resource.backup_public_seed
+        }
+      })
+      return @
+    .catch (error) -> throw new Error
 
 
   backup_key: ->

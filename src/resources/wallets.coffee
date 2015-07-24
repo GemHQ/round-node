@@ -1,10 +1,12 @@
 Wallet = require './wallet'
 Collection = require './collection'
 CoinOp = require('coinop-node')
-PassphraseBox = CoinOp.crypto.PassphraseBox
-MultiWallet = CoinOp.bit.MultiWallet
 Promise = require('bluebird')
 {promisify} = Promise
+PassphraseBox = CoinOp.crypto.PassphraseBox
+PassphraseBox.encrypt = promisify(PassphraseBox.encrypt)
+MultiWallet = CoinOp.bit.MultiWallet
+
 
 # When generating HDNodes, the netwrok does not really matter.
 # The network is only used to create a serialized address.
@@ -29,21 +31,22 @@ module.exports = class Wallets extends Collection
 
     multiwallet ?= MultiWallet.generate(['primary', 'backup'], NETWORK)
     primarySeed = multiwallet.trees.primary.seed.toString('hex')
-    encryptedSeed = PassphraseBox.encrypt(passphrase, primarySeed)
-    backup_seed = multiwallet.trees.backup.seed.toString('hex')
+    PassphraseBox.encrypt(passphrase, primarySeed)
+      .then (encryptedSeed) =>
+        backup_seed = multiwallet.trees.backup.seed.toString('hex')
 
-    walletData = {
-      name: name,
-      backup_public_seed: multiwallet.trees.backup.neutered().toBase58(),
-      primary_public_seed: multiwallet.trees.primary.neutered().toBase58(),
-      primary_private_seed: encryptedSeed
-    }
+        walletData = {
+          name: name,
+          backup_public_seed: multiwallet.trees.backup.neutered().toBase58(),
+          primary_public_seed: multiwallet.trees.primary.neutered().toBase58(),
+          primary_private_seed: encryptedSeed
+        }
 
-    @resource.create = promisify(@resource.create)
-    @resource.create(walletData)
-    .then (resource) =>
-      wallet = new Wallet({resource, @client, multiwallet, @application})
-      @add(wallet)
+        @resource.create = promisify(@resource.create)
+        @resource.create(walletData)
+          .then (resource) =>
+            wallet = new Wallet({resource, @client, multiwallet, @application})
+            @add(wallet)
 
-      {wallet, backup_seed}
-    .catch (error) -> throw new Error(error)
+            {wallet, backup_seed}
+          .catch (error) -> throw new Error(error)

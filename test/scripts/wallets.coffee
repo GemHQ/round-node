@@ -27,7 +27,7 @@ describe 'Wallets Resource', ->
 
   describe 'Wallets', ->
 
-    describe 'wallets.create', ->
+    describe.only 'wallets.create', ->
       wallet = null
       before (done) ->
         name = "newwallet#{Date.now()}"
@@ -64,6 +64,9 @@ describe 'Wallets Resource', ->
 
 
     describe 'wallet.unlock', ->
-      it 'should retrun a wallet that has a multiwallet property', ->
-        wallet = wallets.get(0).unlock({passphrase: 'password'})
-        expect(wallet.multiwallet).to.exist
+      it 'should retrun a wallet that has a multiwallet property', (done) ->
+        wallets.get(0).unlock {passphrase: 'password'}
+        .then (wallet) ->
+          expect(wallet.multiwallet).to.exist
+          done()
+        .catch (error) -> done(error)
