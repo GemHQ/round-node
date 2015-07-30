@@ -33,14 +33,14 @@ module.exports = class Client
 
 
   authenticate_device: ({email, api_token, device_token}) ->
-    @patchboard.context.authorize 'Gem-Device', arguments[0]
+    @patchboard.context.authorize('Gem-Device', arguments[0])
     @authenticate_identify({api_token})
 
-    @user {email}
+    @user({email})
     .then (user) ->
-      get = promisify(user.resource.get)
-      get()
-    .then (resource) -> new User({resource, client: @})
+      user.resource.get = promisify(user.resource.get)
+      user.resource.get()
+    .then (resource) => new User({resource, client: @})
     .catch (error) -> throw new Error(error)
 
    
@@ -56,6 +56,8 @@ module.exports = class Client
 
   user: ({email}) ->
     resource = @resources.user_query({email})
+    # since resource is not a full resource, we need to add the email
+    # property because some methods on the user object require it.
     resource.email = email
     Promise.resolve(new User({resource, client: @}))
 

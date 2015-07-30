@@ -34,8 +34,12 @@ Round.client({url: 'http://localhost:8999'})
 .then(function (data) {
   var wallet = data.wallet;
   // save the backup seed in case you ever need to retrieve the wallet
+  console.log(wallet);
   var backup_seed
   return wallet.accounts();
+})
+.catch(function(error) {
+  console.log(error);
 })
 // Gem creates a default account for you.
 // The network for this account is set to 'bitcoin' (not bitcoin_testnet)
@@ -98,4 +102,3 @@ Round.client({url: 'http://localhost:8999'})
 .catch(function (error) {
   throw new Error(error)
 })
-  

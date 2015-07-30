@@ -11,19 +11,28 @@ module.exports = credentials  = {
 
   
   developer: {
-    email: 'bez@gemm.co',
+    email: 'bez@gem.co',
     api_token: 'c87MDkPcGTstW233_xrZZhgPAZqud4j0t82FNPOE8qw',
     admin_token: 'PKS_5xZI9HyiZDhUAL3CqK99A9YNWKYzmaf0P2DhdrM',
     totp_secret: 'rk2sulvbdcwglqd3'
   },
 
+  developerProd: {
+    email: 'bez+1@gem.co',
+    api_token: '2w7U-HI9UGA2HdG0FFuLhAPD5QO3zUiR1gvvw-CTB0w',
+    totp_secret: '4hu2eodibmny55fz',
+    admin_token: '8s07YTfk50W_qbsyvj3pceHtHsG20i0_N7AhD6D-pmM'
+  },
+
   user: {
-    email: 'bez+1433292268547@gem.co',
     first_name: 'bez',
     last_name: 'reyhan',
-    passphrase: 'password',
+    email: 'bez+1437433242084@gem.co',
     device_name: 'devy',
-    device_token: '1JaNXjf3Wn7JdWVdlRvV583Hb6faHtE9paRL6NMwe0w'
+    passphrase: 'secure_password',
+    redirect_uri: 'http://www.google.com',
+    device_token: 'yvOcRXYx_bezLnP-GJpnJa042iADTFKuU4iRNuJFETc',
+    address: '38zwgWcHZmRb5S9bDw2gW3MsDZBipVr1Ai'
   }
 
 }

@@ -45,15 +45,17 @@ describe 'Users Resource', ->
   describe 'Users', ->
     describe.only 'users.create', ->
       it 'should return a device_token', (done) ->
-        client.users.create({
+        newUserCreds = {
           first_name: 'bez',
           last_name: 'reyhan',
           email: "bez+#{Date.now()}@gem.co",
           device_name: 'devy',
           passphrase: 'password'
-        })
+        }
+        client.users.create(newUserCreds)
         .then (device_token) ->
           console.log device_token
+          console.log newUserCreds.email
           expect(device_token).to.exist
           done()
         .catch (error) -> done(error)

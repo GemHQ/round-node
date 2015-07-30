@@ -26,5 +26,5 @@ module.exports = {
       url = options.url || URL
       Patchboard.discover url, {context: Context}
       .then((@patchboard) => new Client(@patchboard))
-      .catch((error) -> error)
+      .catch((error) -> throw new Error(error))
 }
