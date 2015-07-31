@@ -15,7 +15,7 @@
     "bluebird": "^2.9.27",
     "coinop-node": "git+ssh://git@github.com/GemHQ/coinop-node.git#feature/add-aes",
     "onceler": "0.0.5",
-    "patchboard-js": "file:../patchboard-js"
+    "patchboard-js": "git@github.com:GemHQ/patchboard-js.git"
   },
   "devDependencies": {
     "chai": "^2.0.3",
