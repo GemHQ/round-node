@@ -54,11 +54,23 @@ module.exports = class Client
     .catch (error) -> error
 
 
-  user: ({email}) ->
+  # The user console needs to be able to fetch a user
+  # but since it does not use authenticate_device, it needs
+  # a different way to make the call to get the user, hence the
+  # fetch param.
+  user: ({email}, fetch) ->
     resource = @resources.user_query({email})
-    # since resource is not a full resource, we need to add the email
-    # property because some methods on the user object require it.
-    resource.email = email
-    Promise.resolve(new User({resource, client: @}))
+    if fetch
+      resource.get = promisify(resource.get)
+      resource.get()
+      .then (resource) =>
+        new User({resource, client: @})
+      .catch (error) =>
+        throw new Error(error)
+    else
+      # since resource is not a full resource, we need to add the email
+      # property because some methods on the user object require it.
+      resource.email = email
+      Promise.resolve(new User({resource, client: @}))
 
 
