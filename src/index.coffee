@@ -5,9 +5,6 @@ Context = require "./context"
 Client = require "./client"
 
 
-URL = "https://api.gem.co"
-
-
 NETWORKS = {
   testnet: "bitcoin_testnet",
   bitcoin_testnet: "bitcoin_testnet",
@@ -19,11 +16,14 @@ NETWORKS = {
 
 module.exports = {
 
-  client: (options={}) ->
+  client: ({url, schemes}) ->
     if @patchboard?
       Promise.resolve(new Client(@patchboard.spawn()))
     else
-      url = options.url || URL
+      url ?= "https://api.gem.co"
+      # allow schemes to be merged in to Context.
+      # This functionality is needed for the web console.
+      Context = Context.bind(null, schemes) if schemes?
       Patchboard.discover url, {context: Context}
       .then((@patchboard) => new Client(@patchboard))
       .catch((error) -> throw new Error(error))
