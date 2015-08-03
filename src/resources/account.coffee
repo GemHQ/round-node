@@ -31,8 +31,8 @@ module.exports = class Account extends Base
       return Promise.reject(new Error('You must unlock the wallet before
                                  attempting a transaction'))
 
-    tx = new Transactions({resource: @resource.transactions({}), @client})
-    tx.create({payees, confirmations, redirect_uri})
+    txs = new Transactions({resource: @resource.transactions({}), @client})
+    txs.create({payees, confirmations, redirect_uri})
     .then (payment) -> payment.sign({wallet: multiwallet})
     .then (signedTx) ->
       if wallet.application?
@@ -41,6 +41,7 @@ module.exports = class Account extends Base
         .then (signedTx) -> signedTx
       else
         signedTx
+    .catch (error) -> throw new Error(error)
 
 
   transactions: (query={}) ->
