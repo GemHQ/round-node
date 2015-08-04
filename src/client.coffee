@@ -44,7 +44,7 @@ module.exports = class Client
     .catch (error) -> throw new Error(error)
 
    
-  application: ({totp_secret}) ->    
+  application: ({totp_secret}) ->
     return Promise.resolve(@_application) if @_application
 
     @resources.app.get = promisify(@resources.app.get)

@@ -44,7 +44,7 @@ module.exports = class Wallet extends Base
         }
       })
       return @
-    .catch (error) -> throw new Error
+    .catch (error) -> throw new Error(error)
 
 
   backup_key: ->
