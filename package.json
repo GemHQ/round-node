@@ -6,20 +6,24 @@
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "coffee -o lib -c src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "base64-url": "1.0.0",
     "bluebird": "^2.9.27",
-    "coinop-node": "0.2.0",
+    "coinop-node": "0.2.1",
     "onceler": "0.0.5",
     "patchboard-js": "git@github.com:GemHQ/patchboard-js.git"
   },
   "devDependencies": {
+    "browserify": "^11.0.1",
     "chai": "^2.0.3",
     "chai-as-promised": "^5.0.0",
-    "mocha": "^2.0.1"
+    "gulp": "latest",
+    "mocha": "^2.0.1",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
