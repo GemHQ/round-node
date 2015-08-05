@@ -70,7 +70,7 @@ describe 'Accounts Resource', ->
         expect(account.wallet).to.equal(wallet)
 
 
-    describe.only 'account.pay', ->
+    describe.skip 'account.pay', ->
       it.skip 'should create a successful bitcoin tx', (done) ->
         wallet = wallet.unlock {passphrase: 'password'}
         payees = [{
@@ -86,7 +86,18 @@ describe 'Accounts Resource', ->
         .catch (error) -> done(error)
 
 
-    describe 'account.pay dogecoin', ->
+    describe.only 'account.addresses', ->
+      it 'should get the addresses object', (done) ->
+        account = accounts.get('bitcoin')
+        account.addresses()
+        .then (addresses) ->
+          console.log(addresses)
+          expect(addresses).to.exist
+          done()
+        .catch (error) -> done(error)
+
+
+    describe.skip 'account.pay dogecoin', ->
       it 'should create a successful transaction dogecoin tx', (done) ->
         wallet = wallet.unlock {passphrase: 'password'}
         payees = [{

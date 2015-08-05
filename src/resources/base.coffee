@@ -51,6 +51,17 @@ module.exports = class Base
     .catch (error) -> throw new Error(error)
 
 
+  reset: () ->
+    @resource.reset = promisify(@resource.update)
+    @resource.reset()
+    .then((resource)) =>
+      @resource = resource
+      # Fix: must use setProps to copy props after reset
+      return @
+    )
+    .catch (error) -> throw new Error(error)
+
+
   # Used to copy props from a resource to @
   # Useful during initialization of an object and
   # when the resource is updated
