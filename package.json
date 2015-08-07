@@ -14,7 +14,7 @@
   "dependencies": {
     "base64-url": "1.0.0",
     "bluebird": "^2.9.27",
-    "coinop-node": "0.4.1",
+    "coinop-node": "0.2.3",
     "onceler": "0.0.5",
     "patchboard-js": "git@github.com:GemHQ/patchboard-js.git"
   },
