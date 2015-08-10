@@ -23,14 +23,13 @@ module.exports = class Transaction extends Base
 
     {signatures, txHash} = wallet.prepareTransaction(@resource)
     
-    # Currently just using the first (and only) signature
-    # Eventually this needs to account for more than one signature
-    signature = signatures[0]
+    inputs = signatures.map (sig) ->
+      {primary: sig}
 
     txContent = {
       signatures: {
         transaction_hash: txHash,
-        inputs: [{primary: signature}]
+        inputs: inputs
       }
     }
     @resource.update = promisify(@resource.update)
