@@ -54,13 +54,11 @@ module.exports = class Client
     .catch (error) -> error
 
 
-  # The user console needs to be able to fetch a user
-  # but since it does not use authenticate_device, it needs
-  # a different way to make the call to get the user, hence the
-  # fetch param.
-  user: ({email}, fetch) ->
-    resource = @resources.user_query({email})
-    if fetch
+  # The user console uses a users key to fetch a user
+  user: ({email, key, url}) ->
+    if key
+      throw new Error('must provide a url') unless url
+      resource = @resources.user_query("#{url}/users/#{key}");
       resource.get = promisify(resource.get)
       resource.get()
       .then (resource) =>
@@ -68,6 +66,7 @@ module.exports = class Client
       .catch (error) =>
         throw new Error(error)
     else
+      resource = @resources.user_query({email})
       # since resource is not a full resource, we need to add the email
       # property because some methods on the user object require it.
       resource.email = email
