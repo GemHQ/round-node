@@ -33,8 +33,8 @@ module.exports = class Wallet extends Base
     })
 
 
-  account: ({key, address, name}) ->
-    res = @resource.account_query(arguments[0])
+  account: ({name}) ->
+    res = @resource.account_query({name})
     res.get = promisify(res.get)
     resource.get()
     .then (resource) =>
