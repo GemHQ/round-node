@@ -97,8 +97,8 @@ var newUserCreds = {
 })
 .then(function(accounts) {
   var defaultAccount = accounts.get(0)
-  var payees = [{address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr', amount: 30000}]
-  return defaultAccount.pay({payees: payees})
+  var payees = [{address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr', amount: 20000}]
+  return defaultAccount.pay({payees: payees, confirmations: 1})
 })
 .then(function(tx) {
   console.log(tx);

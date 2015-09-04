@@ -1,4 +1,5 @@
 Users = require('./users')
+Wallet = require('./wallet')
 Wallets = require('./wallets')
 Base = require('./base')
 TOTP = require('onceler').TOTP
@@ -18,21 +19,33 @@ module.exports = class Application extends Base
     @resource.authorize_instance arguments[0]
 
 
-  users: ->
+  users: ({fetch} = {}) ->
     @getAssociatedCollection({
       collectionClass: Users,
       name: 'users',
+      fetch: fetch
     })
 
 
-  wallets: ->
+  wallets: ({fetch} = {}) ->
     @getAssociatedCollection({
       collectionClass: Wallets,
       name: 'wallets',
       options: {
         application: @
-      }
+      },
+      fetch: fetch
     })
+
+
+  wallet: ({name} = {}) ->
+    res = @resource.wallet_query({name})
+    res.get = promisify(res.get)
+    res.get()
+    .then (resource) =>
+      new Wallet({resource, client: @client, application: @})
+    .catch (error) ->
+      throw new Error(error)
 
 
   get_mfa: ->

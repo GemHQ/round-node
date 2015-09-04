@@ -27,14 +27,13 @@ module.exports = credentials  = {
   user: {
     first_name: 'bez',
     last_name: 'reyhan',
-    email: 'bez+1437433242084@gem.co',
+    email: 'bez+1440800342292@gem.co',
     device_name: 'devy',
     passphrase: 'secure_password',
     redirect_uri: 'http://www.google.com',
-    device_token: 'yvOcRXYx_bezLnP-GJpnJa042iADTFKuU4iRNuJFETc',
-    address: '38zwgWcHZmRb5S9bDw2gW3MsDZBipVr1Ai'
+    device_token: 'Na6RMD_YPihn7bwk_IhCsLX378yGOPzCOBIpCT-gEAs',
+    address: '3FnwAGKz5vh5KfvBuVZGeMMTf3oeweTd4Q'
   }
-
 }
 
 

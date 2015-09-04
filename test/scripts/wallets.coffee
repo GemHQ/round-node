@@ -20,14 +20,14 @@ describe 'Wallets Resource', ->
       client.authenticate_application {api_token, admin_token}
     .then (app) -> 
       application = app
-      application.wallets()
+      application.wallets({fetch: true})
     .then (wallts) -> wallets = wallts
     .catch (error) -> error
 
 
   describe 'Wallets', ->
 
-    describe.only 'wallets.create', ->
+    describe 'wallets.create', ->
       wallet = null
       before (done) ->
         name = "newwallet#{Date.now()}"
@@ -52,13 +52,24 @@ describe 'Wallets Resource', ->
   describe 'Wallet', ->
 
     describe 'wallet.accounts', ->
-      it 'accounts should hold a reference to the wallet', (done) ->
+      it.only 'accounts should hold a reference to the wallet', (done) ->
         wallet = wallets.get(0)
-        wallet.accounts()
-        .then (accounts) -> 
+        wallet.accounts({fetch: true})
+        .then (accounts) ->
           expect(accounts).to.be.an.instanceof(Accounts)
           expect(accounts.wallet).to.exist
           expect(accounts.wallet).to.equal(wallet)
+          done()
+        .catch (error) -> done(error)
+
+
+    describe 'wallet.account', -> 
+      it 'should accept query params', (done) ->
+        wallet = wallets.get(0)
+        name = 'newAccount1432690038127'
+        wallet.account({name})
+        .then (account) ->
+          expect(account.resource.name).to.equal(name)
           done()
         .catch (error) -> done(error)
 

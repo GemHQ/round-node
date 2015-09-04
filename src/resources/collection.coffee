@@ -28,8 +28,14 @@ module.exports = class Collection
     # ex: when calling wallet.accounts you need to pass the wallet
     # so that all of the accounts can be created with a refrence to
     # the wallet that they belong to.
-    @resource.list = promisify(@resource.list)
-    @resource.list()
+    if typeof @resource == 'function'
+      # construct the resource without any query params
+      resource = @resource({})
+    else
+      {resource} = @
+
+    resource.list = promisify(resource.list)
+    resource.list()
     .then((resourceArray) =>
       @_list = resourceArray.map (resource) =>
         options.resource = resource
