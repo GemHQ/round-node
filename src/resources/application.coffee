@@ -39,13 +39,10 @@ module.exports = class Application extends Base
 
 
   wallet: ({name} = {}) ->
-    res = @resource.wallet_query({name})
-    res.get = promisify(res.get)
-    res.get()
-    .then (resource) =>
-      new Wallet({resource, client: @client, application: @})
-    .catch (error) ->
-      throw new Error(error)
+    @wallets()
+    .then (wallets) -> wallets.get(name)
+    .catch (error) -> throw new Error(error)
+
 
 
   get_mfa: ->

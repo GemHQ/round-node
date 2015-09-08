@@ -34,13 +34,9 @@ module.exports = class Wallet extends Base
 
 
   account: ({name}) ->
-    res = @resource.account_query({name})
-    res.get = promisify(res.get)
-    resource.get()
-    .then (resource) =>
-      new Account({resource, client: @client, wallet: @})
-    .catch (error) ->
-      throw new Error(error)
+    @accounts()
+    .then (accounts) -> accounts.get(name)
+    .catch (error) -> throw new Error(error)
 
 
   unlock: ({passphrase}) ->

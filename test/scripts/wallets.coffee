@@ -52,9 +52,9 @@ describe 'Wallets Resource', ->
   describe 'Wallet', ->
 
     describe 'wallet.accounts', ->
-      it.only 'accounts should hold a reference to the wallet', (done) ->
-        wallet = wallets.get(0)
-        wallet.accounts({fetch: true})
+      it 'accounts should hold a reference to the wallet', (done) ->
+        wallets.get(0)
+        .then (wallet) -> wallet.accounts({fetch: true})
         .then (accounts) ->
           expect(accounts).to.be.an.instanceof(Accounts)
           expect(accounts.wallet).to.exist
@@ -64,10 +64,10 @@ describe 'Wallets Resource', ->
 
 
     describe 'wallet.account', -> 
-      it 'should accept query params', (done) ->
-        wallet = wallets.get(0)
+      it.only 'should accept query params', (done) ->
         name = 'newAccount1432690038127'
-        wallet.account({name})
+        wallets.get(0)
+        .then (wallet) -> wallet.account({name})
         .then (account) ->
           expect(account.resource.name).to.equal(name)
           done()

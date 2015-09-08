@@ -52,7 +52,7 @@ describe 'Applications Resource', ->
       .then (wallet) ->
         expect(wallet.resource.name).to.equal(name)
         done()
-      .catch (error) -> 
+      .catch (error) ->
         throw new Error(error)
         done()
       
