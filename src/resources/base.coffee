@@ -21,8 +21,13 @@ module.exports = class Base
   # fetch =   if false then .list will not be called on the collection
   #           defaults to false
   getAssociatedCollection: ({collectionClass, name, options, fetch}) ->
+    # fetch should default to false
+    fetch = if fetch == true then true else false
+    
     # if memoized, return the collection
-    return  Promise.resolve(@["_#{name}"]) if @["_#{name}"]?
+    if @["_#{name}"]? and !fetch
+      return  Promise.resolve(@["_#{name}"])
+     
      
     options ?= {}
 
@@ -31,9 +36,8 @@ module.exports = class Base
     resource = @resource[name]
     collectionInstance = new collectionClass({resource, @client, options})
 
-    # fetch should default to false
+    
     # the collection should not make a request if fetch is false
-    fetch = if fetch == true then true else false
     if fetch == false
       return Promise.resolve(collectionInstance)
 
