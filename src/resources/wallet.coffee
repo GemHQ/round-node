@@ -1,3 +1,4 @@
+Account = require('./account')
 Accounts = require('./accounts')
 Base = require('./base')
 CoinOp = require 'coinop-node'
@@ -21,14 +22,21 @@ module.exports = class Wallet extends Base
     @primary_public_seed, @balance, @default_account, @transactions} = resource
 
 
-  accounts: ->
+  accounts: ({fetch} = {})->
     @getAssociatedCollection({
       collectionClass: Accounts,
       name: 'accounts',
       options: {
         wallet: @
-      }
+      },
+      fetch: fetch
     })
+
+
+  account: ({name}) ->
+    @accounts()
+    .then (accounts) -> accounts.get(name)
+    .catch (error) -> throw new Error(error)
 
 
   unlock: ({passphrase}) ->

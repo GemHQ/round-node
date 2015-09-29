@@ -24,3 +24,20 @@ module.exports = class Accounts extends Collection
       @add(account)
       account
     .catch (error) -> throw new Error(error)
+
+
+  # First searches the cached hash. If that doesn't exist
+  # then it performs a query.
+  get: (name) ->
+    super(name)
+    .then (account) -> account
+    .catch (error) =>
+      res = @wallet.resource.account_query({name})
+      res.get = promisify(res.get)
+      res.get()
+      .then (resource) =>
+        account = new Account({resource, client: @client, wallet: @wallet})
+        @add(account)
+        account
+      .catch (error) ->
+        throw new Error(error)

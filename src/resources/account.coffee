@@ -14,10 +14,11 @@ module.exports = class Account extends Base
     @pending_balance, @available_balance} = resource
 
 
-  addresses: ->
+  addresses: ({fetch} = {}) ->
     @getAssociatedCollection({
       collectionClass: Addresses,
-      name: 'addresses'
+      name: 'addresses',
+      fetch: fetch
     })
 
 
@@ -44,10 +45,10 @@ module.exports = class Account extends Base
     .catch (error) -> throw new Error(error)
 
 
-  transactions: (query={}) ->
+  transactions: ({fetch} = {}) ->
     @getAssociatedCollection({
       collectionClass: Transactions,
       name: 'transactions',
-      resource: @resource.transactions(query)
+      fetch: fetch
     })
 

@@ -17,10 +17,10 @@ describe 'Accounts Resource', ->
     .then (client) -> 
       {api_token, admin_token, totp_secret} = devCreds
       client.authenticate_application {api_token, admin_token, totp_secret}
-    .then (app) -> app.wallets()
+    .then (app) -> app.wallets({fetch: true})
     .then (wallts) ->
       wallet = wallts.get(0)
-      wallet.accounts()
+      wallet.accounts({fetch: true})
     .then (accnts) -> 
       accounts = accnts
       done()
@@ -86,7 +86,7 @@ describe 'Accounts Resource', ->
         .catch (error) -> done(error)
 
 
-    describe.only 'account.addresses', ->
+    describe 'account.addresses', ->
       it 'should get the addresses object', (done) ->
         account = accounts.get('bitcoin')
         account.addresses()

@@ -50,3 +50,25 @@ module.exports = class Wallets extends Collection
 
             {wallet, backup_seed}
           .catch (error) -> throw new Error(error)
+
+
+  # First searches the cached hash. If that doesn't exist
+  # then it performs a query.
+  get: (name) ->
+    super(name)
+    .then (wallet) -> wallet
+    .catch (error) =>
+      if @application
+        res = @application.resource.wallet_query({name})
+        res.get = promisify(res.get)
+        res.get()
+        .then (resource) =>
+          wallet = new Wallet({resource, client: @client, application: @application})
+          @add(wallet)
+          wallet
+        .catch (error) ->
+          throw new Error(error)
+      else
+        throw new Error(error)
+
+
