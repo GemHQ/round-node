@@ -88,7 +88,7 @@ Round.client({url: 'http://localhost:8999'})
 // Or if you used the default bitcoin account, get the first account.
 .then(function (accounts) {
   var account = accounts.get(0);
-  // who do you want to pay to and how much?
+  // who do you want to pay to and how much (in satohies)?
   var payees = [{
     address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr',
     amount: 50000
