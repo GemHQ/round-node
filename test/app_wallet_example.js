@@ -16,43 +16,41 @@ Round.client({url: 'http://localhost:8999'})
 .then(function (client) {
   return client.authenticate_application(creds);
 })
-// Pull down the applications wallets. It should not contain
+// Pull down the application's wallets. It should not contain
 // any wallets since you have not created any yet.
 .then(function (application) {
   return application.wallets();
 })
 // Create a wallet for your application
 .then(function (wallets) {
-  walletInfo = {
+  var walletInfo = {
     name: 'wallet' + Math.random(),
     passphrase: 'SECURE_PASSPHRASE'
   }
   return wallets.create(walletInfo);
 })
+// wallets.create returns an object that has 'wallet' and 'backup_seed'
+// as its properties.
 // A wallet has different accounts. Accounts are objects within
 // your wallet that contain funds.
 .then(function (data) {
   var wallet = data.wallet;
   // save the backup seed in case you ever need to retrieve the wallet
-  console.log(wallet);
-  var backup_seed
-  return wallet.accounts();
-})
-.catch(function(error) {
-  console.log(error);
+  var backup_seed = data.backup_seed;
+  return wallet.accounts({fetch: true});
 })
 // Gem creates a default account for you.
 // The network for this account is set to 'bitcoin' (not bitcoin_testnet)
 // Get the first account
 .then(function (accounts) {
-  var account = accounts.get(0)
+  var account = accounts.get(0);
   // An account is where all your funds are stored, therefor
   // an account contains addresses.
-  return account.addresses()
+  return account.addresses();
 })
 // Create an address since you don't have one.
 .then(function (addresses) {
-  return addresses.create()
+  return addresses.create();
 })
 // Fund the address!
 .then(function (address) {
@@ -73,21 +71,23 @@ Round.client({url: 'http://localhost:8999'})
 })
 // Pull down the applications wallets.
 .then(function (application) {
-  return application.wallets();
+  return application.wallets({fetch: true});
 })
 // Get your wallet that you funded by the name you gave it.
 .then(function (wallets) {
-  var wallet = wallets.get('YOUR_WALLET_NAME')
-  wallet = wallet.unlock({passphrase: 'SECURE_PASSPHRASE'})
+  var wallet = wallets.get(devCreds.walletName);
+  return wallet.unlock({passphrase: 'SECURE_PASSPHRASE'});
   // You can also get the first wallet if that's the wallet
   // that contains the account that you funded.
   // wallet.get(0)
-  return wallet.accounts()
+})
+.then(function (wallet) {
+  return wallet.accounts({fetch: true});
 })
 // Get the account that you funded by the name you gave it.
 // Or if you used the default bitcoin account, get the first account.
 .then(function (accounts) {
-  var account = accounts.get(0)
+  var account = accounts.get(0);
   // who do you want to pay to and how much?
   var payees = [{
     address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr',
