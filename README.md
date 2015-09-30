@@ -19,18 +19,11 @@ The round client is designed to interact with Gem's API to make building blockch
 
 ## Installation
 
-### Install gem dependencies:
-Round depends on libsodium. On a Mac run:
-  
-      $ brew install libsodium
+      $ npm install round-node --save
 
-For Linux, follow the instructions on: 
+Or clone the repo, then install its dependencies:
       
-      http://doc.libsodium.org/installation/README.html
-  
-Install the rest of the dependencies: 
-
-      $ npm install
+      $ npm install 
 
 ## Configuration
 
