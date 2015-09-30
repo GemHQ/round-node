@@ -44,7 +44,7 @@ module.exports = class Client
     .catch (error) -> throw new Error(error)
 
    
-  application: ({totp_secret}) ->    
+  application: ({totp_secret}) ->
     return Promise.resolve(@_application) if @_application
 
     @resources.app.get = promisify(@resources.app.get)
@@ -54,11 +54,22 @@ module.exports = class Client
     .catch (error) -> error
 
 
-  user: ({email}) ->
-    resource = @resources.user_query({email})
-    # since resource is not a full resource, we need to add the email
-    # property because some methods on the user object require it.
-    resource.email = email
-    Promise.resolve(new User({resource, client: @}))
+  # The user console uses a users key to fetch a user
+  user: ({email, key, url}) ->
+    if key
+      throw new Error('must provide a url') unless url
+      resource = @resources.user_query("#{url}/users/#{key}");
+      resource.get = promisify(resource.get)
+      resource.get()
+      .then (resource) =>
+        new User({resource, client: @})
+      .catch (error) =>
+        throw new Error(error)
+    else
+      resource = @resources.user_query({email})
+      # since resource is not a full resource, we need to add the email
+      # property because some methods on the user object require it.
+      resource.email = email
+      Promise.resolve(new User({resource, client: @}))
 
 

@@ -33,10 +33,27 @@ describe 'Applications Resource', ->
 
   describe 'application.wallets', ->
     it 'should hold a refrence the application it belongs to', (done) ->
-      application.wallets().then (wallets) -> 
+      application.wallets({fetch: true}).then (wallets) ->
+        wallets.getAll().forEach (wallet) ->
+          console.log wallet.resource.name
+
         expect(wallets).to.be.an.instanceof(Wallets)
         # makes sure _list is not null - at the least it should be []
         expect(wallets._list).to.exist
         expect(wallets.application).to.be.an.instanceof(Application)
         expect(wallets.application).to.equal(application)
         done()
+
+
+  describe 'application.wallet', ->
+    it.only 'should return a single wallet', (done) ->
+      name = 'newwallet1432670089328'
+      application.wallet({name})
+      .then (wallet) ->
+        expect(wallet.resource.name).to.equal(name)
+        done()
+      .catch (error) ->
+        throw new Error(error)
+        done()
+      
+        

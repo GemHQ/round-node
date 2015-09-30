@@ -12,10 +12,10 @@ module.exports = class Collection
     @resource = resource
     @client = client
     # an arry of models is populated for all resource types
-    @_list = null
+    @_list = []
     # a hash table is populated if the model provides a key
     # ex: Accounts has a key property of 'name'
-    @_hash = null
+    @_hash = {}
     # options allows a Collection to add non-standard props
     # ex: wallets needs access to the application
     for key, value of options
@@ -28,8 +28,14 @@ module.exports = class Collection
     # ex: when calling wallet.accounts you need to pass the wallet
     # so that all of the accounts can be created with a refrence to
     # the wallet that they belong to.
-    @resource.list = promisify(@resource.list)
-    @resource.list()
+    if typeof @resource == 'function'
+      # construct the resource without any query params
+      resource = @resource({})
+    else
+      {resource} = @
+
+    resource.list = promisify(resource.list)
+    resource.list()
     .then((resourceArray) =>
       @_list = resourceArray.map (resource) =>
         options.resource = resource
@@ -66,7 +72,7 @@ module.exports = class Collection
 
   get: (key) ->
     # Return entire collection if no key is provided
-    return @_list unless key?
+    return Promise.resolve(@_list) unless key?
 
     if _isNumber(key)
       model = @_list[key]
@@ -74,10 +80,11 @@ module.exports = class Collection
       model = @_hash[key]
 
     if model?
-      return model
+      return Promise.resolve(model)
     else
-      throw new Error "No object in the #{@type.name}s collection
-                      for that value."
+      Promise.reject(
+        "No object in the #{@type.name}s collection for that value."
+      )
 
 
   getAll: -> @_list

@@ -16,20 +16,30 @@ module.exports = class Context
   }
 
 
-  constructor: ->
+  constructor: (schemes) ->
     # mfa_token is set on account.pay if the transaction
     # is being initiated by an application wallet
     @mfa_token = null
-    @schemes =
-      'Gem-Identify':
-        credentials: null
-        params: ['api_token']
-      'Gem-Application':
-        credentials: null
+    @schemes = {
+      'Gem-Identify': {
+        credentials: null,
+        params: ['api_token'],
+      },
+      'Gem-Application': {
+        credentials: null,
         params: ['admin_token', 'api_token']
-      'Gem-Device':
-        credentials: null
+      },
+      'Gem-Device': {
+        credentials: null,
         params: ['email', 'api_token', 'device_token']
+      }
+    }
+    # Merge in any schemes that may be passed in.
+    # This is needed for the web console because it uses
+    # schemes that the clients don't contain.
+    if schemes?
+      for own key, value of schemes
+        @schemes[key] = value
 
 
   # Supply auth scheme credentials for a particular auth scheme

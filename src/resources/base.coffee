@@ -18,16 +18,28 @@ module.exports = class Base
   #            This is used in account.transactions
   # options = non-standard props that a Collection might need.
   #           ex: Wallets needs access to the application it belongs to
-  getAssociatedCollection: ({collectionClass, name, resource, options}) ->
+  # fetch =   if false then .list will not be called on the collection
+  #           defaults to false
+  getAssociatedCollection: ({collectionClass, name, options, fetch}) ->
+    # fetch should default to false
+    fetch = if fetch == true then true else false
+    
     # if memoized, return the collection
-    return  Promise.resolve(@["_#{name}"]) if @["_#{name}"]?
+    if @["_#{name}"]? and !fetch
+      return  Promise.resolve(@["_#{name}"])
+     
      
     options ?= {}
 
     # resource is the collection's resource
     # this would be similar to user.resource.users
-    resource = resource || @resource[name]
+    resource = @resource[name]
     collectionInstance = new collectionClass({resource, @client, options})
+
+    
+    # the collection should not make a request if fetch is false
+    if fetch == false
+      return Promise.resolve(collectionInstance)
 
     # populate the collection. loadCollection lives in the Collection class
     collectionInstance.loadCollection(options)
@@ -49,6 +61,17 @@ module.exports = class Base
       return @
     )
     .catch (error) -> throw new Error(error)
+
+
+  # reset: () ->
+  #   @resource.reset = promisify(@resource.update)
+  #   @resource.reset()
+  #   .then((resource)) =>
+  #     @resource = resource
+  #     # Fix: must use setProps to copy props after reset
+  #     return @
+  #   )
+  #   .catch (error) -> throw new Error(error)
 
 
   # Used to copy props from a resource to @
