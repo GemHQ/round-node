@@ -26,20 +26,12 @@ The round client is designed to interact with Gem's API to make building blockch
 ## Getting Started Tutorial
 #### Table of Contents
 * [Introduction](README.md#Introduction)
-* [1. Run the client](README.md#1-run-the-client)
-* [2. Configure your application and API token](README.md#2-configure-your-application-and-api-token)
-* [3. Create your User and Wallet](README.md#3-create-your-user-and-wallet)
-* [4. Authenticate your User](README.md#4-authenticate-your-user)
-* [5. Access the wallet and Default Account](README.md#5-access-the-wallet-and-default-account)
-* [6. Generate an Address and Add Funds](README.md#6-generate-an-address-and-add-funds)
-* [7. Make a Payment](README.md#7-make-a-payment)
-* [Advanced Topics](docs/advanced.md)
-    * [More about Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
-    * [More about Transactions](docs/advanced.md#transactions-and-payments)
-    * [Subscriptions](docs/advanced.md#subscriptions)
-    * [Integrated 2FA](docs/advanced.md#integrated-2fa)
-    * [Operational/Custodail wallet models](docs/advanced.md#operationalcustodial-wallets)
-    * [Operational/Custodial payments](docs/advanced.md#payments)
+* [1. Get Your Credentials](README.md#1-get-your-credentials)
+* [2. Authenticate as an Application](README.md#2-authenticate-as-an-application)
+* [3. Create a Wallet](README.md#3-create-a-wallet)
+* [4. Access the Wallet and Default Account](README.md#4-access-the-wallet-and-default-account)
+* [5. Create and fund an address](README.md#5-create-and-fund-an-address)
+* [6. Make a Payment](README.md#6-make-a-payment)
 
 ### Introduction
 This tutorial will run you through the process of setting up an application with Gem, creating a wallet, funding an address and creating a transaction.
@@ -53,7 +45,7 @@ This tutorial assumes that you have completed the developer signup and that you 
 
 [[top]](README.md#getting-started-tutorial)
 
-### 2. Authenticate as an application
+### 2. Authenticate as an Application
 In this step you will authenticate as one of your Gem applications.
 
   ```JavaScript
@@ -99,7 +91,7 @@ In this step you will create a Gem wallet, which is a 2-of-3 multisig bitcoin wa
   
 [[top]](README.md#getting-started-tutorial)
 
-### 4. Access the wallet and Default Account
+### 4. Access the Wallet and Default Account
 [Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
 Gem wallets have accounts that are scoped to a network (i.e. bitcoin, testnet, litecoin, dogecoin). A wallet comes with a default account named 'default'. The default account is a bitcoin account (not testnet).
 
@@ -134,7 +126,7 @@ Gem wallets have accounts that are scoped to a network (i.e. bitcoin, testnet, l
 
 [[top]](README.md#getting-started-tutorial)
 
-### 5. Create and fund an address
+### 5. Create and Fund an Address
 
   ```JavaSctipt
   account.addresses()
