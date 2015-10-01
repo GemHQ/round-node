@@ -17,144 +17,154 @@ The round client is designed to interact with Gem's API to make building blockch
 * __Support Slack room__:  [![](https://chat.gem.co/badge.svg)](https://chat.gem.co)
 * __Detailed API Docs__:  [Gem API Docs](http://guide.gem.co)
 
-## Installation
-
-      $ npm install round-node --save
-
-Or clone the repo, then install its dependencies:
-      
-      $ npm install 
-
-## Configuration
-
-Require Round where needed:
-```node
-  var Round = require("round-node");
-
-  Round.client()
-  .then(function (client) {
-    ...
-  })
-  
-```
-
-## Authentication
-
-You must authenticate to interact with the API. Depending on what you are trying to do there are different authentication schemes available.
-
-
-### Application
-
-Authenticating as an application will give you read-only access to your users and their wallets. This requires the `app_url`, the `api_token`, and an `instance_id`. The method will return a Round Application object.
-```node
-var applicationCreds = {
-  admin-token: ADMIN_TOKEN,
-  api_token: API_TOKEN,
-  topt_secret: TOTP_SECRET
-};
-
-client.authenticate_application(applicationCreds)
-.then(function(application) {
-  ...
-});
-```
-
-Your `instance_id` is provided to you via email when you authorize an application instance using Developer auth:
-```node
-client.authenticateDeveloper(developerCreds, function (error, developer) {
-  developer.applications(function(error, apps) {
-    var app = apps.get('default');
+## Installing round-node:
     
-    app.authorizeInstance({name: INSTANCE_NAME}, function(error) {
-      // handle error if error
-      // an instance_id has been sent to your developer email
+   ```bash
+   $ npm install round-node --save
+   ```
+      
+## Getting Started Tutorial
+#### Table of Contents
+* [Introduction](README.md#Introduction)
+* [1. Get Your Credentials](README.md#1-get-your-credentials)
+* [2. Authenticate as an Application](README.md#2-authenticate-as-an-application)
+* [3. Create a Wallet](README.md#3-create-a-wallet)
+* [4. Access the Wallet and Default Account](README.md#4-access-the-wallet-and-default-account)
+* [5. Create and fund an address](README.md#5-create-and-fund-an-address)
+* [6. Make a Payment](README.md#6-make-a-payment)
+
+### Introduction
+This tutorial will run you through the process of setting up an application with Gem, creating a wallet, funding an address and creating a transaction.
+
+This tutorial assumes that you have completed the developer signup and that you have successfully installed the client
+
+### 1. Get Your Credentials
+
+1. Get your credentials by going to the [Gem Developer Console](https://developers.gem.co). You will need to grab an api_token, an admin_token, and your totp_secret. When you  sign up/in you will see a default application that Gem has created for you. You will also see the api_token for that application as well. After you click on the application you will be directed to a page where you can view your totp_secret as well as create an admin_token. (Learn more about admin_tokens [here](http://guide.gem.co/#admin-tokens)).
+
+
+[[top]](README.md#getting-started-tutorial)
+
+### 2. Authenticate as an Application
+In this step you will authenticate as one of your Gem applications.
+
+  ```JavaScript
+   var creds = {
+    api_token: API_TOKEN,
+    admin_token: ADMIN_TOKEN,
+    totp_secret: TOTP_SECRET
+   }
+  
+   Round.client()
+   .then(function (client) {
+     return client.authenticate_application(creds);
+   })
+   .then(function (application) {
+     ...
+   })
+  ```
+
+[[top]](README.md#getting-started-tutorial)
+
+### 3. Create a Wallet
+In this step you will create a Gem wallet, which is a 2-of-3 multisig bitcoin wallet.
+
+1. Create a wallet:
+
+  ```JavaScript
+    // application.wallets() returns a 'wallets' resource which
+    // will allow you to create a wallet.
+    application.wallets()
+    .then(function (wallets) {
+      return wallets.create({
+        name: WALLET_NAME,
+        passphrase: SECURE_PASSPHRASE
+      }); 
+    })
+    .then(function (data) {
+      var wallet = data.wallet;
+      var backup_seed = data.backup_seed
     });
-  });
-});
-```
+  ```
+**IMPORTANT: Save the backup_seed somewhere safe, ideally on a piece of papper. You will need your backup_seed in case you forget your wallet's password. Gem wallets are multi-sig wallets and we only keep an encrypted copy of your primary pivate seed (which is decrypted client-side usig your wallet's passphrase). Therefor, if you forget your wallet's passphrase there is no way for us to recover a wallet without a backup_seed.**
 
-### Device
+  
+[[top]](README.md#getting-started-tutorial)
 
-Authenticating as a device allows you to perform all actions on a wallet permitted by a user. Requires an `email`, an `api_token`, a `user_token`, and a `device_id`. The method will return a Round User object.
-```node
-var deviceCreds = {
-  email: USER_EMAIL,
-  api_token: API_TOKEN,
-  device_token: DEVICE_TOKEN
-};
+### 4. Access the Wallet and Default Account
+[Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
+Gem wallets have accounts that are scoped to a network (i.e. bitcoin, testnet, litecoin, dogecoin). A wallet comes with a default account named 'default'. The default account is a bitcoin account (not testnet).
 
-client.authenticateDevice(deviceCreds)
-.then(function (user) {
-  ...
-});
-```
+1. Access the default account
 
-## Basic Usage
-Here is some example code that will walk you through some basic usage of the Gem API: https://gist.github.com/bezreyhan/a7190a6c0e9fe592daa8
+  ```JavaSctipt
+    wallet.accounts()
+    .then(function (accounts) {
+      // get the default account
+      return accounts.get('default');
+    })
+    .then(function (account) {
+     ...
+    })
+  ```
+  
+2. Or, create a new account
 
-### Wallets
+  ```JavaSctipt
+    wallet.accounts()
+    .then(function (accounts) {
+      return accounts.create({
+        name: ACCOUNT_NAME,
+        network: NETWORK_OF_YOUR_CHOICE
+      });
+    })
+    .then(function (account) {
+     ...
+    })
+  ```
+  
 
-Once you've got a User authenticated with a device you can start to do fun stuff like create wallets:
+[[top]](README.md#getting-started-tutorial)
 
-```node
-var walletData = {
-  name: WALLET_NAME,
-  passphrase: WALLET_PASSPHRASE
-};
+### 5. Create and Fund an Address
 
-user.wallets()
-.then(function(wallets) {
-  return wallets.create(walletData)
-})
-.then(function(data) {
-  wallet = data.wallet;
-  backup_seed = data.backup_seed
-  ...
-});
+  ```JavaSctipt
+  account.addresses()
+  .then(function (addresses) {
+    return addresses.create();
+  })
+  .then(function (address) {
+  // fund this address
+   console.log(address.string)
+  })
+  ```
+  
+Payments have to be confirmed by the network and on Testnet that can be slow.  To monitor for confirmations: input the address into the following url `https://live.blockcypher.com/btc-testnet/address/<YOUR ADDRESS>`.  The current standard number of confirmations for a transaction to be considered safe is 6.
 
-```
+You will be able to make a payment with only one confirmation, however.  While you wait for that to happen, feel free to read more details about:
+[Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
 
-__IMPORTANT__: Creating a wallet this way will automatically generate your backup key tree. You can get it by accessing `wallet.multiWallet`. This will return the `CoinOp.Bit.MultiWallet` object containing both private seeds. __Make sure you save it somewhere__.
 
-### Accounts
+[[top]](README.md#getting-started-tutorial)
 
-Once you have a wallet you're going to want to send and receive funds from it, right? You do this by creating accounts within the wallet:
-```node
-wallet.accounts()
-.then(function(accounts) {
-  return accounts.create({name: ACCOUNT_NAME})
-})
-.then(function(account) {
-  ...
-});
-```
 
-To receive payments, you'll have to generate a new address:
-```node
-account.addresses()
-.then(function(addresses) {
-  return addresses.create()
-})
-.then(function(address) {
-  ...
-})
-```
+### 6. Make a Payment
+In this section you’ll learn how to create a payment using your wallet. Once your address gets one confirmation we’ll be able to send a payment out of the wallet. To make a payment, you'll unlock a wallet, generate a list of payees and then call the pay method.
 
-Sending payments is easy too:
-```node
-payees = [
-  {address: ADDRESS, amount: PAYMENT_AMOUNT},
-  {address: ADDRESS, amount: PAYMENT_AMOUNT},
-  {address: ADDRESS, amount: PAYMENT_AMOUNT}
-];
-account.pay({payees: payees})
-.then(function(tx) {
-  ...
-});
-```
+    ```Javascript
+    var payees = [{
+      address: '18XcgfcK4F8d2VhwqFbCbgqrT44r2yHczr',
+      amount: 50000
+    }]
+    return account.pay({payees: payees});
+    })
+    .then(function (tx) {
+      console.log(tx)
+    })
+    ```
 
-You can add as many payees as you need.
-Don't forget to unlock the wallet before trying to pay someone:
-```node
-wallet.unlock(PASSPHRASE);
-```
+The pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  `utxo_confirmations` default to 6 and represents the number of confirmations an unspent output needs to have in order to be selected for the transaction.
+
+**CONGRATS** - now build something cool.
+
+[[top]](README.md#getting-started-tutorial)
