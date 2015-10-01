@@ -23,7 +23,9 @@ module.exports = credentials  = {
     email: 'bez+1@gem.co',
     api_token: '2w7U-HI9UGA2HdG0FFuLhAPD5QO3zUiR1gvvw-CTB0w',
     totp_secret: '4hu2eodibmny55fz',
-    admin_token: '8s07YTfk50W_qbsyvj3pceHtHsG20i0_N7AhD6D-pmM'
+    admin_token: '8s07YTfk50W_qbsyvj3pceHtHsG20i0_N7AhD6D-pmM',
+    address: '3HotGWs2wcbZo4pmrj2QBuCVwmTyeiaXQj',
+    walletName: 'wallet0.10906896693632007'
   },
 
   user: {

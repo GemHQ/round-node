@@ -16,7 +16,7 @@ NETWORKS = {
 
 module.exports = {
 
-  client: ({url, schemes}) ->
+  client: ({url, schemes} = {}) ->
     if @patchboard?
       Promise.resolve(new Client(@patchboard.spawn()))
     else
