@@ -16,7 +16,8 @@ module.exports = credentials  = {
     admin_token: 'PKS_5xZI9HyiZDhUAL3CqK99A9YNWKYzmaf0P2DhdrM',
     totp_secret: 'rk2sulvbdcwglqd3',
     address: '3MMw681KJGBx52hq7f2kGi8WPVvNL6EjeY',
-    walletName: 'wallet0.9745947408955544'
+    walletName: 'wallet0.9745947408955544',
+    passphrase: 'SECURE_PASSPHRASE'
   },
 
   developerProd: {
@@ -25,7 +26,8 @@ module.exports = credentials  = {
     totp_secret: '4hu2eodibmny55fz',
     admin_token: '8s07YTfk50W_qbsyvj3pceHtHsG20i0_N7AhD6D-pmM',
     address: '3HotGWs2wcbZo4pmrj2QBuCVwmTyeiaXQj',
-    walletName: 'wallet0.10906896693632007'
+    walletName: 'wallet0.10906896693632007',
+    passphrase: 'SECURE_PASSPHRASE'
   },
 
   user: {
