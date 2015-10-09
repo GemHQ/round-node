@@ -73,3 +73,12 @@ module.exports = class Client
       Promise.resolve(new User({resource, client: @}))
 
 
+  # used by web wallet and management console
+  confirm_email: ({email_confirmation_token, key, url}) ->
+      resource = @resources.user_query("#{url}/users/#{key}");
+      resource.confirm_email = promisify(resource.confirm_email)
+      resource.confirm_email({token: email_confirmation_token})
+      .then (resource) => 
+        new User({resource, client: @})
+      catch (error) ->
+        throw new Error(error)
