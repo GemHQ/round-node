@@ -82,3 +82,7 @@ module.exports = class Client
       new User({resource, client: @})
     .catch (error) ->
       throw new Error(error)
+
+
+  wrapUserResource: ({resource}) ->
+    new User({resource, client: @})
