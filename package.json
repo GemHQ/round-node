@@ -1,6 +1,6 @@
 {
   "name": "round-node",
-  "version": "0.5.31",
+  "version": "0.5.32",
   "description": "Client for the Gem cryptocurrency API",
   "repository": "git@github.com:GemHQ/round-node.git",
   "main": "lib/index.js",
