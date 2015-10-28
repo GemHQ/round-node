@@ -8,12 +8,12 @@ PassphraseBox.encrypt = promisify(PassphraseBox.encrypt)
 MultiWallet = CoinOp.bit.MultiWallet
 
 
-# When generating HDNodes, the netwrok does not really matter.
+# When generating HDNodes, the network does not matter.
 # The network is only used to create a serialized address.
-# For the primary_public_seed, we send the API a base58 encocded
-# master node. The API will strip out the netwrok specific data.
-# Though, bitcoinjs still requires a netwrok. We default the network across
-# all clients to 'bitcoin' for consistency sake.
+# For the primary_public_seed, we send the API a base58 encoded
+# master node. The API will strip out the network specific data.
+# Though, bitcoinjs still requires a network. We default the network
+# across all clients to 'bitcoin' for consistency sake.
 NETWORK = 'bitcoin'
 
 

@@ -10,7 +10,7 @@ module.exports = class Base
   # collectionClass = the class of the collection which you want to
   #                   populate and retreive
   # ARGUMENTS
-  # name = the name of the collection that you wan to retreive
+  # name = the name of the collection that you want to retreive
   # callback = provided by the developer. It ss called after the instance
   #            has been populated
   # resource = normally the respurce can be accessed via @resource, but if  

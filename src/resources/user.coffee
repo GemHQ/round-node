@@ -1,5 +1,6 @@
 Base = require('./base')
 Wallet = require('./wallet')
+Wallets = require('./wallets')
 Devices = require('./devices')
 Promise = require('bluebird')
 {promisify} = Promise
@@ -12,6 +13,14 @@ module.exports = class User extends Base
     @resource = resource
     {@email, @url, @first_name, @last_name, @user_token,
     @default_wallet, @key} = resource
+
+
+  wallets: ({fetch} = {}) ->
+    @getAssociatedCollection({
+      collectionClass: Wallets,
+      name: 'wallets',
+      fetch: fetch
+    })
 
 
   wallet: ->
