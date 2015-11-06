@@ -18,7 +18,7 @@ module.exports = class Wallet extends Base
     # down from the api it needs to be unlocked. @unlock will reset @multiwallet
     @multiwallet = multiwallet
     @application = application
-    {@name, @cosigner_public_seed, @backup_public_seed,
+    {@name, @cosigner_public_seed, @backup_public_seed, @key,
     @primary_public_seed, @balance, @default_account, @transactions} = resource
 
 
