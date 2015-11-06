@@ -12,7 +12,7 @@ module.exports = class User extends Base
     @client = client
     @resource = resource
     {@email, @url, @first_name, @last_name, @user_token,
-    @default_wallet, @key} = resource
+    @default_wallet, @key, @phone_number} = resource
 
 
   wallets: ({fetch} = {}) ->
