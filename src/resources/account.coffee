@@ -10,7 +10,7 @@ module.exports = class Account extends Base
     @client = client
     @resource = resource
     @wallet = wallet
-    {@name, @balance, @path, @pending, @network,
+    {@name, @balance, @path, @pending, @network, @key,
     @pending_balance, @available_balance} = resource
 
 
