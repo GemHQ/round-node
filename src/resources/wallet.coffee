@@ -40,7 +40,7 @@ module.exports = class Wallet extends Base
 
 
   unlock: ({passphrase}) ->
-    PassphraseBox.decrypt(passphrase, @resource.primary_private_seed)
+    PassphraseBox.decrypt({passphrase, encrypted: @resource.primary_private_seed})
     .then (primary_seed) =>
       @multiwallet = new MultiWallet({
         private: {

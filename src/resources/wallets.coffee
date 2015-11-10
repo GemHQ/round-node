@@ -31,7 +31,7 @@ module.exports = class Wallets extends Collection
 
     multiwallet ?= MultiWallet.generate(['primary', 'backup'], NETWORK)
     primarySeed = multiwallet.trees.primary.seed.toString('hex')
-    PassphraseBox.encrypt(passphrase, primarySeed)
+    PassphraseBox.encrypt({passphrase, plaintext: primarySeed})
       .then (encryptedSeed) =>
         backup_seed = multiwallet.trees.backup.seed.toString('hex')
 
