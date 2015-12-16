@@ -66,15 +66,15 @@ module.exports = class Client
     else
       resource = @resources.user_query({email})
       if fetch
-        # since resource is not a full resource, we need to add the email
-        # property because some methods on the user object require it.
-        resource.email = email
-        Promise.resolve(new User({resource, client: @}))
-      else
         resource.get = promisify(resource.get)
         resource.get()
         .then (resource) => new User({resource, client: @})
         .catch (error) => throw new Error(error)
+      else
+        # since resource is not a full resource, we need to add the email
+        # property because some methods on the user object require it.
+        resource.email = email
+        Promise.resolve(new User({resource, client: @}))
 
 
   # used by web wallet and management console
