@@ -55,22 +55,26 @@ module.exports = class Client
 
 
   # The user console uses a users key to fetch a user
-  user: ({email, key, url}) ->
+  user: ({email, key, url, fetch}) ->
     if key
       return Promise.reject(new Error('must provide a url')) unless url
       resource = @resources.user_query("#{url}/users/#{key}");
       resource.get = promisify(resource.get)
       resource.get()
-      .then (resource) =>
-        new User({resource, client: @})
-      .catch (error) =>
-        throw new Error(error)
+      .then (resource) => new User({resource, client: @})
+      .catch (error) => throw new Error(error)
     else
       resource = @resources.user_query({email})
-      # since resource is not a full resource, we need to add the email
-      # property because some methods on the user object require it.
-      resource.email = email
-      Promise.resolve(new User({resource, client: @}))
+      if fetch
+        # since resource is not a full resource, we need to add the email
+        # property because some methods on the user object require it.
+        resource.email = email
+        Promise.resolve(new User({resource, client: @}))
+      else
+        resource.get = promisify(resource.get)
+        resource.get()
+        .then (resource) => new User({resource, client: @})
+        .catch (error) => throw new Error(error)
 
 
   # used by web wallet and management console
