@@ -27,7 +27,7 @@ describe 'Wallets Resource', ->
 
   describe 'Wallets', ->
 
-    describe 'wallets.create', ->
+    describe.only 'wallets.create', ->
       wallet = null
       before (done) ->
         name = "newwallet#{Date.now()}"
@@ -64,7 +64,7 @@ describe 'Wallets Resource', ->
 
 
     describe 'wallet.account', -> 
-      it.only 'should accept query params', (done) ->
+      it 'should accept query params', (done) ->
         name = 'newAccount1432690038127'
         wallets.get(0)
         .then (wallet) -> wallet.account({name})

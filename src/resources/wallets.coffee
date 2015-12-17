@@ -42,8 +42,9 @@ module.exports = class Wallets extends Collection
           primary_private_seed: encryptedSeed
         }
 
-        @resource.create = promisify(@resource.create)
-        @resource.create(walletData)
+        resource = @resource({})
+        resource.create = promisify(resource.create)
+        resource.create(walletData)
           .then (resource) =>
             wallet = new Wallet({resource, @client, multiwallet, @application})
             @add(wallet)
