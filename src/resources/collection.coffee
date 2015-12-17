@@ -36,7 +36,8 @@ module.exports = class Collection
 
     resource.list = promisify(resource.list)
     resource.list()
-    .then((resourceArray) =>
+    .then((data) =>
+      resourceArray = data.elements
       @_list = resourceArray.map (resource) =>
         options.resource = resource
         options.client = @client
