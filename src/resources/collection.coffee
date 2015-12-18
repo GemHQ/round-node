@@ -68,7 +68,7 @@ module.exports = class Collection
       key = model
       @_hash[key] = model
 
-    @_list.push(model)
+    @_list = @_list.concat(model)
 
 
   get: (key) ->

@@ -38,6 +38,9 @@ module.exports = class Wallet extends Base
     @getAssociatedCollection({
       collectionClass: Assets,
       name: 'assets',
+      options: {
+        wallet: @
+      },
       fetch: fetch
     })
 
