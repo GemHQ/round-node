@@ -34,7 +34,7 @@ module.exports = class Wallet extends Base
     })
 
 
-  assets: ({feth} = {}) ->
+  assets: ({fetch} = {}) ->
     @getAssociatedCollection({
       collectionClass: Assets,
       name: 'assets',
