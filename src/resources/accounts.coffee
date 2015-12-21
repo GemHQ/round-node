@@ -4,7 +4,7 @@ Promise = require 'bluebird'
 {promisify} = Promise
 
 
-VALID_NETWORKS = ['bitcoin', 'bitcoin_testnet', 'litecoin', 'dogecoin']
+VALID_NETWORKS = ['bitcoin', 'bitcoin_testnet', 'litecoin', 'dogecoin', 'bcy']
 
 module.exports = class Accounts extends Collection
 
