@@ -17,8 +17,9 @@ module.exports = class Accounts extends Collection
       return Promise.reject(new Error("Network must be one of the
                                 following: #{VALID_NETWORKS.join(' ')}"))
 
-    @resource.create = promisify(@resource.create)
-    @resource.create(arguments[0])
+    rsrc = @resource({})
+    rsrc.create = promisify(rsrc.create)
+    rsrc.create(arguments[0])
     .then (resource) =>
       account = new Account({resource, @client, @wallet})
       @add(account)

@@ -15,8 +15,9 @@ module.exports = class Transactions extends Collection
 
     confirmations ?= 6
 
-    @resource.create = promisify(@resource.create)
-    @resource.create({
+    rsrc = @resource({})
+    rsrc.create = promisify(rsrc.create)
+    rsrc.create({
       utxo_confirmations: confirmations,
       payees: payees,
       redirect_uri: redirect_uri

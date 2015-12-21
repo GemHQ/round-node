@@ -11,8 +11,10 @@ module.exports = class Devices
   create: ({name, redirect_uri}) ->
     params = {name}
     params.redirect_uri = redirect_uri if redirect_uri
-    @resource.create = promisify(@resource.create)
-    @resource.create(params)
+
+    rsrc = @resource
+    rsrc.create = promisify(rsrc.create)
+    rsrc.create(params)
     .then (authRequestResource) ->
       {
         device_token: authRequestResource.metadata.device_token,

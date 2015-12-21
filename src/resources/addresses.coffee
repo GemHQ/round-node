@@ -11,8 +11,9 @@ module.exports = class Addresses extends Collection
 
 
   create: ->
-    @resource.create = promisify(@resource.create)
-    @resource.create()
+    rsrc = @resource({})
+    rsrc.create = promisify(rsrc.create)
+    rsrc.create()
     .then (resource) =>
       address = new Address({resource, @client})
       @add(address)
