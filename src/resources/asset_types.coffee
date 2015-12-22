@@ -16,7 +16,7 @@ module.exports = class AssetTypes extends Collection
     @resource.create = promisify(@resource.create)
     @resource.create({name, network, protocol})
     .then (resource) =>
-      asset = new Asset({resource, @client, @wallet})
+      asset = new AssetType({resource, @client, @wallet})
       @add(asset)
       asset
     .catch (error) -> throw new Error(error)
