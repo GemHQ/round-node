@@ -38,8 +38,7 @@ module.exports = class Users extends Collection
         params = {email, first_name, last_name, default_wallet: wallet, device_name}
         params.redirect_uri = redirect_uri if redirect_uri?
 
-        rsrc = @resource({})
-        rsrc.create = promisify(rsrc.create)
-        rsrc.create(params)
+        @resource.create = promisify(@resource.create)
+        @resource.create(params)
           .then (resource) -> resource.metadata.device_token 
           .catch (error) -> throw new Error(error)
