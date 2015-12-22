@@ -1,6 +1,6 @@
 Account = require('./account')
 Accounts = require('./accounts')
-Assets = require('./assets')
+AssetTypes = require('./asset_types')
 Base = require('./base')
 CoinOp = require 'coinop-node'
 {promisify} = require('bluebird')
@@ -36,7 +36,7 @@ module.exports = class Wallet extends Base
 
   assetTypes: ({fetch} = {}) ->
     @getAssociatedCollection({
-      collectionClass: Assets,
+      collectionClass: AssetTypes,
       name: 'asset_types',
       options: {
         wallet: @
