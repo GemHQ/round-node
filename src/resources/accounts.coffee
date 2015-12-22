@@ -37,7 +37,7 @@ module.exports = class Accounts extends Collection
       res.get = promisify(res.get)
       res.get()
       .then (resource) =>
-        account = new Account({resource, client: @client, wallet: @wallet})
+        account = new Account({resource, @client, @wallet})
         @add(account)
         account
       .catch (error) ->

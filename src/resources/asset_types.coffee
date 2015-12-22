@@ -1,13 +1,13 @@
-Asset = require './asset'
+AssetType = require './asset_type'
 Collection = require './collection'
 Promise = require('bluebird')
 {promisify} = Promise
 
 
-module.exports = class Assets extends Collection
+module.exports = class AssetTypes extends Collection
 
 
-  type: Asset
+  type: AssetType
 
 
   create: ({name, network, protocol}) ->
