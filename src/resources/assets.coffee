@@ -4,7 +4,7 @@ Promise = require('bluebird')
 {promisify} = Promise
 
 
-module.exports = class Assetes extends Collection
+module.exports = class Assets extends Collection
 
 
   type: Asset
