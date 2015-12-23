@@ -54,11 +54,9 @@ module.exports = class Client
         bcyNetwork = data.elements.reduce (acc, next) ->
           return next if next.name == network
         assetTypesResource = bcyNetwork.asset_types({})
-        assetTypesResource.list = promisify(assetTypesResource.list)
-        assetTypesResource
+        assetTypes = new AssetTypes({client, resource: assetTypesResource})
+        assetTypes.loadCollection()
       .then (assetTypesResource) -> assetTypesResource.list()
-      .then (assetTypesResource) -> 
-        new AssetTypes({client, resources: assetTypesResource})
       .catch (error) -> throw new Error(error)
 
 
