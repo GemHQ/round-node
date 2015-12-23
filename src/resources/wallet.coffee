@@ -45,6 +45,22 @@ module.exports = class Wallet extends Base
     })
 
 
+  # takes the asset_type key, returns your balance for that
+  # asset type.
+  balancesFor: ({asset_type, utxo_confirmations, network}) ->
+    if !asset_type
+      throw new Error('You must supply asset_type: key')
+
+    utxo_confirmations ?= 0
+    network ?= 'bcy'
+    @resource.available = promisify(@resource.available)
+    @resource.available({asset_type, utxo_confirmations, network})
+      .then (balanceData) -> balanceData
+      .catch (error) -> throw new Error(error)
+
+
+
+
   account: ({name}) ->
     @accounts()
     .then (accounts) -> accounts.get(name)
