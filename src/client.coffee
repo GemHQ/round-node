@@ -56,7 +56,6 @@ module.exports = class Client
         assetTypesResource = bcyNetwork.asset_types({})
         assetTypes = new AssetTypes({client, resource: assetTypesResource})
         assetTypes.loadCollection()
-      .then (assetTypesResource) -> assetTypesResource.list()
       .catch (error) -> throw new Error(error)
 
 
