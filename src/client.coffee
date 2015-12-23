@@ -47,17 +47,19 @@ module.exports = class Client
    
   assetTypes: ({network} = {network: 'bcy'}) ->
     client = @
-    @resources.networks = promisify(@resources.networks)
-    @resources.networks()
+    networksResource = @resources.networks()
+    networksResource.list = promisify(networksResource.list)
+    networksResource.list()
       .then (data) -> 
         bcyNetwork = data.elements.reduce (acc, next) ->
-          return next if next.name == 'bcy'
+          return next if next.name == network
         assetTypesResource = bcyNetwork.asset_types({})
         assetTypesResource.list = promisify(assetTypesResource.list)
         assetTypesResource
       .then (assetTypesResource) -> assetTypesResource.list()
       .then (assetTypesResource) -> 
         new AssetTypes({client, resources: assetTypesResource})
+      .catch (error) -> throw new Error(error)
 
 
   application: ({totp_secret}) ->
@@ -67,7 +69,7 @@ module.exports = class Client
     @resources.app.get()
     .then (resource) =>
       @_application = new Application({resource, client: @, totp_secret})
-    .catch (error) -> error
+    .catch (error) -> throw new Error(error)
 
 
   # The user console uses a users key to fetch a user
@@ -100,8 +102,7 @@ module.exports = class Client
     resource.confirm_email({token: email_confirmation_token})
     .then (resource) => 
       new User({resource, client: @})
-    .catch (error) ->
-      throw new Error(error)
+    .catch (error) -> throw new Error(error)
 
 
   wrapUserResource: ({resource}) ->
