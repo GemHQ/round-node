@@ -4,6 +4,7 @@ Users = require './resources/users'
 User = require './resources/user'
 Account = require './resources/account'
 Wallet = require './resources/wallet'
+AssetTypes = require './resources/asset_types'
 Promise = require 'bluebird'
 {promisify} = Promise
 
@@ -44,6 +45,21 @@ module.exports = class Client
     .catch (error) -> throw new Error(error)
 
    
+  assetTypes: ({network} = {network: 'bcy'}) ->
+    client = @
+    @resources.networks = promisify(@resources.networks)
+    @resources.networks()
+      .then (data) -> 
+        bcyNetwork = data.elements.reduce (acc, next) ->
+          return next if next.name == 'bcy'
+        assetTypesResource = bcyNetwork.asset_types({})
+        assetTypesResource.list = promisify(assetTypesResource.list)
+        assetTypesResource
+      .then (assetTypesResource) -> assetTypesResource.list()
+      .then (assetTypesResource) -> 
+        new AssetTypes({client, resources: assetTypesResource})
+
+
   application: ({totp_secret}) ->
     return Promise.resolve(@_application) if @_application
 
