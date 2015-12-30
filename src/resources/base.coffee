@@ -45,7 +45,7 @@ module.exports = class Base
       return Promise.resolve(collectionInstance)
 
     # populate the collection. loadCollection lives in the Collection class
-    collectionInstance.loadCollection(options, query)
+    collectionInstance.loadCollection({options, query})
     .then (collectionInstance) =>
       # memoize the collection
       @["_#{name}"] = collectionInstance
