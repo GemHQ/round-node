@@ -22,15 +22,18 @@ module.exports = class Collection
       @[key] = value
 
 
-  loadCollection: (options={}) ->
+  loadCollection: (options, query) ->
     # options is only used in cases where a collection needs
     # additional info at initialization time.
     # ex: when calling wallet.accounts you need to pass the wallet
     # so that all of the accounts can be created with a refrence to
     # the wallet that they belong to.
+
+    query ?= {}
+
     if typeof @resource == 'function'
       # construct the resource without any query params
-      resource = @resource({})
+      resource = @resource(query)
     else
       {resource} = @
 

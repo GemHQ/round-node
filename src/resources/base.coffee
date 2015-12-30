@@ -20,7 +20,8 @@ module.exports = class Base
   #           ex: Wallets needs access to the application it belongs to
   # fetch =   if false then .list will not be called on the collection
   #           defaults to false
-  getAssociatedCollection: ({collectionClass, name, options, fetch}) ->
+  # query =   some collections take a query parameter. 
+  getAssociatedCollection: ({collectionClass, name, options, fetch, query}) ->
     # fetch should default to false
     fetch = if fetch == true then true else false
     
@@ -30,6 +31,8 @@ module.exports = class Base
      
      
     options ?= {}
+    query ?= {}
+
 
     # resource is the collection's resource
     # this would be similar to user.resource.users
@@ -42,7 +45,7 @@ module.exports = class Base
       return Promise.resolve(collectionInstance)
 
     # populate the collection. loadCollection lives in the Collection class
-    collectionInstance.loadCollection(options)
+    collectionInstance.loadCollection(options, query)
     .then (collectionInstance) =>
       # memoize the collection
       @["_#{name}"] = collectionInstance

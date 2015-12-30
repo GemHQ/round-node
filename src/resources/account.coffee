@@ -45,10 +45,11 @@ module.exports = class Account extends Base
     .catch (error) -> throw new Error(error)
 
 
-  transactions: ({fetch} = {}) ->
+  transactions: ({fetch, query} = {}) ->
     @getAssociatedCollection({
       collectionClass: Transactions,
       name: 'transactions',
-      fetch: fetch
+      fetch,
+      query 
     })
 
