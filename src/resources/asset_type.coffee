@@ -23,9 +23,9 @@ module.exports = class AssetType extends Base
     })
 
 
-  transfer: ({outputs}) ->
+  transfer: ({outputs, metadata}) ->
     @resource.transfer = promisify(@resource.transfer)
-    @resource.transfer({outputs})
+    @resource.transfer({outputs, metadata})
       .then (resource) => new Transaction({resource, @client})
       .catch (error) -> throw new Error(error)
 
