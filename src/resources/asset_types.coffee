@@ -10,13 +10,13 @@ module.exports = class AssetTypes extends Collection
   type: AssetType
 
 
-  create: ({name, network, protocol}) ->
+  create: ({name, network, protocol, ticker_symbol}) ->
     network ?= 'bcy'
     protocol ?= 'openassets'
 
     rsrc = @resource({})
     rsrc.create = promisify(rsrc.create)
-    rsrc.create({name, network, protocol})
+    rsrc.create({name, network, protocol, ticker_symbol})
     .then (resource) =>
       assetType = new AssetType({resource, @client, @wallet})
       @add(assetType)
