@@ -37,8 +37,8 @@ module.exports = class AssetType extends Base
       .catch (error) -> throw new Error(error)
 
 
-  destroy: ({outputs, metadata}) ->
+  destroy: ({amount, metadata}) ->
     @resource.destroy = promisify(@resource.destroy)
-    @resource.destroy({outputs, metadata})
+    @resource.destroy({amount, metadata})
       .then (resource) => new Transaction({resource, @client})
       .catch (error) -> throw new Error(error)
