@@ -30,9 +30,9 @@ module.exports = class AssetType extends Base
       .catch (error) -> throw new Error(error)
 
 
-  issue: ({outputs}) ->
+  issue: ({outputs, metadata}) ->
     @resource.issue = promisify(@resource.issue)
-    @resource.issue({outputs})
+    @resource.issue({outputs, metadata})
       .then (resource) => new Transaction({resource, @client})
       .catch (error) -> throw new Error(error)
 
